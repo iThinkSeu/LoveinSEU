@@ -26,16 +26,21 @@ def register():
 			state = 'successful'
 			reason = ''
 			token = hashToken(username,password)
+			id=u.id
 		else:
 			state = 'fail'
 			reason = '用户名已被注册'
 			token = 'Haveresiger'
+			id=''
 	except Exception, e:
 		state = 'fail'
 		reason ='异常'
 		token = 'exception'
+		id=''
 
-	response = jsonify({'state':state,
+	response = jsonify({
+						'id':id,
+						'state':state,
 		                'reason':reason,
 		                'token':token})
 	return response
@@ -95,7 +100,9 @@ def login():
 			state = 'successful'
 			token = getTokeninformation(username).token
 			reason = ''
+			id = u.id
 		else:
+			id=''
 			state = 'fail'
 			token = 'None'
 			reason = '用户名密码错误'
@@ -103,8 +110,10 @@ def login():
 		state = 'fail'
 		reason='异常'
 		token = 'None'
+		id = ''
 
-	response = jsonify({'state':state,
+	response = jsonify({'id':id,
+						'state':state,
 		                'reason':reason,
 		                'token':token})
 	return response
@@ -438,12 +447,9 @@ def editpreferinformation():
 @app.route("/getprofile",methods=['GET','POST'])
 def getprofile():
 		try:
-			print 'test1'
 			token = request.json['token']
-			print 'test1'
 			u=getuserinformation(token)
 
-	 		print "test2"
 	 		if u!=None:
 				state = 'successful'
 				reason = ''
