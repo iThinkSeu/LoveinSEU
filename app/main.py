@@ -80,7 +80,7 @@ def uploadavatar():
 
 			shutil.move(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			if type =="1":
+			if type =="0":
 				fp = Image.open(dst)
 				fp.thumbnail((100,100))
 				fp.save(dst + '_thumbnail.jpg')
