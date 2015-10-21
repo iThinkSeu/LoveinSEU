@@ -43,7 +43,7 @@ def register():
 
 @app.route("/uploadavatar", methods=['POST'])
 def uploadavatar():
-    try:
+	try:
 		jsonstring = request.form.get('json')
 		jsonstring = json.loads(jsonstring)
 		token = jsonstring['token']
@@ -70,19 +70,19 @@ def uploadavatar():
 			fp.save(dst + '_thumbnail.jpg')
 			state = 'successful'
 			reason = ''
-        except Exception, e:
-            print e
-            state = 'fail'
-            reason = '非图片文件'
-    except Exception, e:
-        print e
-        state = 'fail'
-        reason='异常'
+		except Exception, e:
+			print e
+			state = 'fail'
+			reason = '非图片文件'
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason='异常'
 
-    response = jsonify({'id':id,
-    					'state':state,
-                        'reason':reason})
-    return response
+	response = jsonify({'id':id,
+						'state':state,
+						'reason':reason})
+	return response
 
 
 @app.route("/login",methods=['POST'])
