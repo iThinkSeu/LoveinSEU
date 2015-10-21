@@ -79,7 +79,8 @@ def uploadavatar():
         state = 'fail'
         reason='异常'
 
-    response = jsonify({'state':state,
+    response = jsonify({'id':id,
+    					'state':state,
                         'reason':reason})
     return response
 
