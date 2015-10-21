@@ -44,16 +44,20 @@ def register():
 @app.route("/uploadavatar", methods=['POST'])
 def uploadavatar():
     try:
-        jsonstring = request.form.get('json')
-        jsonstring = json.loads(jsonstring)
-        token = jsonstring['token']
-        id = getuserinformation(token).id
-        src = request.form.get('avatar_path')
-        #print avatar
-        #avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
-        #print avatar_type
-        try:
-			dst = '/home/www/avatar/' + str(id)
+		jsonstring = request.form.get('json')
+		jsonstring = json.loads(jsonstring)
+		token = jsonstring['token']
+		type = jsonstring['type'] 
+		id = getuserinformation(token).id
+		src = request.form.get('avatar_path')
+		#print avatar
+		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
+		#print avatar_type
+		try:
+			if type=="1":
+				dst = '/home/www/avatar/' + str(id)
+			else:
+				dst = '/home/www/picture/' + str(id)
 			'''
 			if os.path.exists(dst):
 				os.remove(dst)
