@@ -59,30 +59,41 @@ def uploadavatar():
 		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
 		#print avatar_type
 		try:
-			if type=="1":
+			if type=="0":
 				dst = '/home/www/avatar/' + str(id)
+			elif type=="1":
+				dst = '/home/www/picture/qianshoudongda/' + str(id)
+			elif type=="2"
+				dst = '/home/www/picture/autumn-1/' + str(id)
+			elif type=="3"
+				dst = '/home/www/picture/autumn-2' + str(id)
+			elif type =="4"
+				dst = '/home/www/picture/autumn-2' + str(id)
 			else:
-				dst = '/home/www/picture/' + str(id)
+				dst = '/home/www/avatar/' + str(id)
+
 			'''
 			if os.path.exists(dst):
 				os.remove(dst)
 				os.remove(dst + '_thumbnail.jpg')
 			'''
+
 			shutil.move(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			fp = Image.open(dst)
-			fp.thumbnail((100,100))
-			fp.save(dst + '_thumbnail.jpg')
+			if type =="1":
+				fp = Image.open(dst)
+				fp.thumbnail((100,100))
+				fp.save(dst + '_thumbnail.jpg')
 			state = 'successful'
 			reason = ''
 		except Exception, e:
-			print e
 			state = 'fail'
 			reason = '非图片文件'
 	except Exception, e:
-		print e
+		id=''
 		state = 'fail'
 		reason='异常'
+
 
 	response = jsonify({'id':id,
 						'state':state,
