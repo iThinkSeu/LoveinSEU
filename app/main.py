@@ -63,11 +63,11 @@ def uploadavatar():
 				dst = '/home/www/avatar/' + str(id)
 			elif type=="1":
 				dst = '/home/www/picture/qianshoudongda/' + str(id)
-			elif type=="2"
+			elif type=="2":
 				dst = '/home/www/picture/autumn-1/' + str(id)
-			elif type=="3"
+			elif type=="3":
 				dst = '/home/www/picture/autumn-2' + str(id)
-			elif type =="4"
+			elif type =="4":
 				dst = '/home/www/picture/autumn-2' + str(id)
 			else:
 				dst = '/home/www/avatar/' + str(id)
