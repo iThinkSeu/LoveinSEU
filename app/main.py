@@ -93,13 +93,13 @@ def uploadavatar():
 			if type=="0":
 				dst = '/home/www/avatar/' + str(id)
 			elif type=="1":
-				dst = '/home/www/picture/qianshoudongda/' + str(id)+str(type)+str(number)
+				dst = '/home/www/picture/qianshoudongda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="2":
-				dst = '/home/www/picture/autumn-1/' + str(id)+str(type)+str(number)
+				dst = '/home/www/picture/autumn-1/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="3":
-				dst = '/home/www/picture/autumn-2' + str(id)+str(type)+str(number)
+				dst = '/home/www/picture/autumn-2' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type =="4":
-				dst = '/home/www/picture/autumn-2' + str(id)+str(type)+str(number)
+				dst = '/home/www/picture/autumn-2' + str(id)+'-'+str(type)+'-'+str(number)
 			else:
 				dst = '/home/www/avatar/' + str(id)
 
