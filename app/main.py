@@ -122,7 +122,7 @@ def uploadavatar():
 			reason = '非图片文件'
 	except Exception, e:
 		id=''
-		state = 'fail's
+		state = 'fail'
 		reason='异常'
 
 
