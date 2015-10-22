@@ -625,10 +625,10 @@ def followers():
 		if u is not None:
 			if direct == 'followers':
 				pageitems = u.followers.paginate(x, per_page=4, error_out=False)
-				followview = [{'userid':item.follower.id,'name':item.follower.name,'gender':item.follower.gender,'school':item.follower.school,'timestamp':item.timestamp} for item in pageitems.items]
+				followview = [{'id':item.follower.id,'name':item.follower.name,'gender':item.follower.gender,'school':item.follower.school,'timestamp':item.timestamp} for item in pageitems.items]
 			else:
 				pageitems = u.followeds.paginate(x, per_page=4, error_out=False)
-				followview = [{'userid':item.followed.id, 'timestamp':item.timestamp} for item in pageitems.items]
+				followview = [{'id':item.followed.id, 'name':item.followed.name,'gender':item.followed.gender,'school':item.followed.school,'timestamp':item.timestamp} for item in pageitems.items]
 			print followview
 			state = 'successful'
 			reason = ''
