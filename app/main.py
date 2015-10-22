@@ -617,15 +617,15 @@ def followers():
 		print token
 		u=getuserinformation(token)
 		page = request.json.get('page','1')
-		print page
+		#print page
 		x=string.atoi(page)
-		print x
+		#print x
 		direct = request.json.get('direction', 'followers');
-		print direct 
+		#print direct 
 		if u is not None:
 			if direct == 'followers':
 				pageitems = u.followers.paginate(x, per_page=4, error_out=False)
-				followview = [{'userid':item.follower.id, 'timestamp':item.timestamp} for item in pageitems.items]
+				followview = [{'userid':item.follower.id,'name':item.follower.name,'gender':item.follower.gender,'school':item.follower.school,'timestamp':item.timestamp} for item in pageitems.items]
 			else:
 				pageitems = u.followeds.paginate(x, per_page=4, error_out=False)
 				followview = [{'userid':item.followed.id, 'timestamp':item.timestamp} for item in pageitems.items]
@@ -642,17 +642,11 @@ def followers():
 		followview = {};
 		reason = 'e'
 		direct=''
-	if direct == 'followers':
-		response = jsonify({'state':state,
-			'reason':reason,
-			'followers': followview})
-	else:
-		response = jsonify({'state':state,
-			'reason':reason,
-			'followeds': followview})
+
+	response = jsonify({'state':state,
+		'reason':reason,
+		'result': followview})
 	return response;
-
-
 
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)),debug=True)
