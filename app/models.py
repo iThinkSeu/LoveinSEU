@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import *
+import random
 #from flask.ext.sqlalchemy import SQLALchemy
 
 app = Flask(__name__)
@@ -166,7 +168,7 @@ def getuserinformation(token):
 def getTokeninformation(username):
 	u=User.query.filter_by(username=username).first()
 	return u 
-	
+
 def getuserbyid(id):
 	u=User.query.filter_by(id=id).first()
 	return u 
@@ -174,7 +176,23 @@ def getuserbyid(id):
 
 	
 def getActivityInformation(id):
-	a=Activity.query.filter_by(id=id).first()
+	a = Activity.query.filter_by(id = id).first()
 	return a 
+
+def getranduser(gender):
+	if gender == '男':
+		u = User.query.filter_by(gender="女").all()
+	else:
+		u = User.query.filter_by(gender="男").all()
+	length = len(u)
+	print length
+	if length>0:
+		num = random.randint(0,length-1)
+		return u[num]
+	else:
+		return None
+
+
+
 
 

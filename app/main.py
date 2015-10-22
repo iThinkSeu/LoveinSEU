@@ -229,25 +229,25 @@ def getactivityinformation():
  			if (act1!=None) and (act2!=None) and (act3!=None) and (act4!=None):
  				state = 'successful'
  				reason=''
- 				title1 = act1.title if act1.title!=None else 'None'  
- 				time1 = act1.time if act1.time!=None else 'None'
- 				location1=act1.location if act1.location!=None else 'None'
- 				number1=act1.number if act1.number!=None else 'None'
+ 				title1 = act1.title if act1.title!=None else ''  
+ 				time1 = act1.time if act1.time!=None else ''
+ 				location1=act1.location if act1.location!=None else ''
+ 				number1=act1.number if act1.number!=None else ''
 
- 				title2 = act2.title if act2.title!=None else 'None'  
- 				time2 = act2.time if act2.time!=None else 'None'
- 				location2=act2.location if act2.location!=None else 'None'
- 				number2=act2.number if act2.number!=None else 'None'
+ 				title2 = act2.title if act2.title!=None else ''  
+ 				time2 = act2.time if act2.time!=None else ''
+ 				location2=act2.location if act2.location!=None else ''
+ 				number2=act2.number if act2.number!=None else ''
 
- 				title3 = act3.title if act3.title!=None else 'None'  
- 				time3 = act3.time if act3.time!=None else 'None'
- 				location3=act3.location if act3.location!=None else 'None'
- 				number3=act3.number if act3.number!=None else 'None'
+ 				title3 = act3.title if act3.title!=None else ''  
+ 				time3 = act3.time if act3.time!=None else ''
+ 				location3=act3.location if act3.location!=None else ''
+ 				number3=act3.number if act3.number!=None else ''
 
- 				title4 = act4.title if act4.title!=None else 'None'  
- 				time4 = act4.time if act4.time!=None else 'None'
- 				location4=act4.location if act4.location!=None else 'None'
- 				number4=act4.number if act4.number!=None else 'None'
+ 				title4 = act4.title if act4.title!=None else ''  
+ 				time4 = act4.time if act4.time!=None else ''
+ 				location4=act4.location if act4.location!=None else ''
+ 				number4=act4.number if act4.number!=None else ''
 
 			else:
 				state = 'fail'
@@ -468,23 +468,23 @@ def getprofile():
 	 		if u!=None:
 				state = 'successful'
 				reason = ''
-				username = u.username if u.username!=None else 'None'
-				token = u.token if u.token!=None else 'None'    
-				school = u.school if u.school!=None else 'None' 				
-				degree = u.degree if u.degree!=None else 'None'
-				department = u.department if u.department!=None else 'None'
-				enrollment = u.enrollment if u.enrollment!=None else 'None'
-				name = u.name if u.name!=None else 'None'
-				gender = u.gender if u.gender!=None else 'None'
-				birthday = u.birthday if u.birthday!=None else 'None'
-				hobby = u.hobby if u.hobby!=None else 'None'
-				preference = u.preference if u.preference!=None else 'None' 
-				phone = u.phone if u.phone!=None else 'None'
-				id = u.id if u.id!=None else 'None'
-				qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else 'None'
-				autumn1 = u.autumn1 if u.autumn1!=None else 'None'
-				autumn2 = u.autumn2 if u.autumn2!=None else 'None'
-				autumn3 = u.autumn3 if u.autumn3!=None else 'None'
+				username = u.username if u.username!=None else ''
+				token = u.token if u.token!=None else ''    
+				school = u.school if u.school!=None else '' 				
+				degree = u.degree if u.degree!=None else ''
+				department = u.department if u.department!=None else ''
+				enrollment = u.enrollment if u.enrollment!=None else ''
+				name = u.name if u.name!=None else ''
+				gender = u.gender if u.gender!=None else ''
+				birthday = u.birthday if u.birthday!=None else ''
+				hobby = u.hobby if u.hobby!=None else ''
+				preference = u.preference if u.preference!=None else '' 
+				phone = u.phone if u.phone!=None else ''
+				id = u.id if u.id!=None else ''
+				qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
+				autumn1 = u.autumn1 if u.autumn1!=None else ''
+				autumn2 = u.autumn2 if u.autumn2!=None else ''
+				autumn3 = u.autumn3 if u.autumn3!=None else ''
 			else:
 				state = 'fail'
 				reason = '用户不存在'
@@ -548,6 +548,92 @@ def getprofile():
 		return response
 
 
+@app.route("/getprofilebyid",methods=['GET','POST'])
+def getprofilebyid():
+		try:
+			id = request.json['id']
+			u=getuserbyid(id)
+	 		if u!=None:
+				state = 'successful'
+				reason = ''
+				username = u.username if u.username!=None else ''
+				token = u.token if u.token!=None else ''    
+				school = u.school if u.school!=None else '' 				
+				degree = u.degree if u.degree!=None else ''
+				department = u.department if u.department!=None else ''
+				enrollment = u.enrollment if u.enrollment!=None else ''
+				name = u.name if u.name!=None else ''
+				gender = u.gender if u.gender!=None else ''
+				birthday = u.birthday if u.birthday!=None else ''
+				hobby = u.hobby if u.hobby!=None else ''
+				preference = u.preference if u.preference!=None else '' 
+				phone = u.phone if u.phone!=None else ''
+				id = u.id if u.id!=None else ''
+				qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
+				autumn1 = u.autumn1 if u.autumn1!=None else ''
+				autumn2 = u.autumn2 if u.autumn2!=None else ''
+				autumn3 = u.autumn3 if u.autumn3!=None else ''
+			else:
+				state = 'fail'
+				reason = '用户不存在'
+				username = 'Nouser'
+				token=''
+				school=''
+				degree=''
+				department = ''
+				enrollment = ''
+				name = ''
+				gender = ''
+				birthday = ''
+				hobby = ''
+				preference = ''
+				phone = ''
+				id = ''
+				qianshoudongda =''
+				autumn1 = ''
+				autumn2=''
+				autumn3 = ''
+
+
+		except Exception, e:
+			state = 'fail'
+			reason = '异常'	
+			username='e'
+			token=''
+			school=''
+			degree=''
+			department = ''
+			enrollment = ''
+			name = ''
+			gender = ''
+			birthday = ''
+			hobby = ''
+			preference = ''
+			phone = ''
+			id = ''
+			qianshoudongda=''
+			autumn1 = ''
+			autumn2 = ''
+			autumn3 = ''
+
+			
+
+		response = jsonify({'username':username,
+							'token':token,
+							'state':state,
+							'reason':reason,
+		 	                'school':school,
+		 	                'degree':degree,
+		 	                'department':department,
+		 	                'enrollment':enrollment,
+		 	                'name':name,
+		 	                'gender':gender,
+		 	                'birthday':birthday,
+		 	                'preference':preference,
+		 	                'hobby':hobby,
+		 	                'phone':phone,
+		 	                'id':id})
+		return response
 
 @app.route("/follow",methods=['GET','POST'])
 def follow():
@@ -625,10 +711,10 @@ def followers():
 		if u is not None:
 			if direct == 'followers':
 				pageitems = u.followers.paginate(x, per_page=4, error_out=False)
-				followview = [{'id':item.follower.id,'name':item.follower.name,'gender':item.follower.gender,'school':item.follower.school,'timestamp':item.timestamp} for item in pageitems.items]
+				followview = [{'id':item.follower.id,'name':item.follower.name if item.follower.name!=None else '','gender':item.follower.gender if item.follower.gender!=None else '','school':item.follower.school if item.follower.school!=None else '','timestamp':item.timestamp} for item in pageitems.items]
 			else:
 				pageitems = u.followeds.paginate(x, per_page=4, error_out=False)
-				followview = [{'id':item.followed.id, 'name':item.followed.name,'gender':item.followed.gender,'school':item.followed.school,'timestamp':item.timestamp} for item in pageitems.items]
+				followview = [{'id':item.followed.id, 'name':item.followed.name if item.followed.name!=None else '','gender':item.followed.gender if item.followed.gender!=None else '','school':item.followed.school if item.followed.school!=None else '','timestamp':item.timestamp} for item in pageitems.items]
 			print followview
 			state = 'successful'
 			reason = ''
@@ -647,6 +733,57 @@ def followers():
 		'reason':reason,
 		'result': followview})
 	return response;
+
+@app.route("/getrecommenduser",methods=['GET','POST'])
+def getrecommenduser():
+		try:
+			token = request.json['token']
+			u=getuserinformation(token)
+	 		if u != None:
+				recommend = getranduser(u.gender)
+				if recommend != None:
+					state = 'successful'
+					reason = ''
+					id = recommend.id
+					name = recommend.name  if recommend.name != None else ""
+					gender = recommend.gender if recommend.gender != None else ""
+					school = recommend.school if recommend.school != None else ""
+				else:
+					state = 'fail'
+					reason = '无不同性别'
+					id = ""
+					name = ""
+					gender = "nogender"
+					school = ""
+			else:
+				state = 'fail'
+				reason = '用户不存在'
+				id = ""
+				name = "nouser"
+				gender = ""
+				school = ""
+
+
+		except Exception, e:
+			state = 'fail'
+			reason = '异常'	
+			id = ""
+			name = "e"
+			gender = ""
+			school = ""
+
+			
+
+		response = jsonify({'state':state,
+							'reason':reason,
+		 	                'school':school,
+		 	                'name':name,
+		 	                'gender':gender,
+		 	                'id':id})
+		return response
+
+
+
 
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)),debug=True)
