@@ -41,9 +41,39 @@ def register():
 	response = jsonify({
 						'id':id,
 						'state':state,
-		                'reason':reason,
-		                'token':token})
+						'reason':reason,
+						'token':token})
 	return response
+
+
+@app.route("/login",methods=['POST'])
+def login():
+	try:
+		username = request.json['username']
+		password = request.json['password']
+		u=User(username=username,password=password)
+		if u.isExisted():
+			state = 'successful'
+			token = getTokeninformation(username).token
+			reason = ''
+			id = getuserinformation(token).id
+		else:
+			id=''
+			state = 'fail'
+			token = 'None'
+			reason = '用户名密码错误'
+	except Exception, e:
+		state = 'fail'
+		reason='异常'
+		token = 'None'
+		id = ''
+
+	response = jsonify({'id':id,
+						'state':state,
+						'reason':reason,
+						'token':token})
+	return response
+
 
 
 @app.route("/uploadavatar", methods=['POST'])
@@ -53,6 +83,7 @@ def uploadavatar():
 		jsonstring = json.loads(jsonstring)
 		token = jsonstring['token']
 		type = jsonstring['type'] 
+		number = jsonstring['number']
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 		#print avatar
@@ -62,13 +93,13 @@ def uploadavatar():
 			if type=="0":
 				dst = '/home/www/avatar/' + str(id)
 			elif type=="1":
-				dst = '/home/www/picture/qianshoudongda/' + str(id)
+				dst = '/home/www/picture/qianshoudongda/' + str(id)+str(type)+str(number)
 			elif type=="2":
-				dst = '/home/www/picture/autumn-1/' + str(id)
+				dst = '/home/www/picture/autumn-1/' + str(id)+str(type)+str(number)
 			elif type=="3":
-				dst = '/home/www/picture/autumn-2' + str(id)
+				dst = '/home/www/picture/autumn-2' + str(id)+str(type)+str(number)
 			elif type =="4":
-				dst = '/home/www/picture/autumn-2' + str(id)
+				dst = '/home/www/picture/autumn-2' + str(id)+str(type)+str(number)
 			else:
 				dst = '/home/www/avatar/' + str(id)
 
@@ -101,35 +132,6 @@ def uploadavatar():
 	return response
 
 
-@app.route("/login",methods=['POST'])
-def login():
-	try:
-		username = request.json['username']
-		password = request.json['password']
-		u=User(username=username,password=password)
-		if u.isExisted():
-			state = 'successful'
-			token = getTokeninformation(username).token
-			reason = ''
-			id = getuserinformation(token).id
-		else:
-			id=''
-			state = 'fail'
-			token = 'None'
-			reason = '用户名密码错误'
-	except Exception, e:
-		state = 'fail'
-		reason='异常'
-		token = 'None'
-		id = ''
-
-	response = jsonify({'id':id,
-						'state':state,
-		                'reason':reason,
-		                'token':token})
-	return response
-
-
 
 @app.route("/signup",methods=['POST'])
 def signup():
@@ -140,39 +142,39 @@ def signup():
 		u=getuserinformation(token)
 
 		if u!=None:
-			if activity=='1':
-				if u.qianshoudongda!='yes':
-					writestate=editDBcolumn(token,'qianshoudongda','yes')
+			if activity =='1':
+				if u.qianshoudongda != 'yes':
+					writestate = editDBcolumn(token,'qianshoudongda','yes')
 				else:
-					writestate=2
+					writestate = 2
 			elif activity == '2':
 				if u.autumn1!='yes':
 					writestate=editDBcolumn(token,'autumn1','yes')
 				else:
-					writestate=2
+					writestate = 2
 
 			elif activity == '3':
-				if u.autumn2!='yes':
-					writestate=editDBcolumn(token,'autumn2','yes')
+				if u.autumn2 != 'yes':
+					writestate = editDBcolumn(token,'autumn2','yes')
 				else:
-					writestate=2
+					writestate = 2
 			elif activity == '4':
-				if u.autumn3!='yes':
-					writestate=editDBcolumn(token,'autumn3','yes')
+				if u.autumn3 != 'yes':
+					writestate = editDBcolumn(token,'autumn3','yes')
 				else:
-					writestate=2
+					writestate = 2
 			else:
 				writestate = 1
 
 			if not writestate:
 				state = 'successful'
 				reason = ''
-			elif writestate==2:
+			elif writestate == 2:
 				state = 'fail'
 				reason = '已报名'
 			else:
-				state='fail'
-				reason='无此活动'
+				state ='fail'
+				reason ='无此活动'
 
 		else:
 			state = 'fail'
