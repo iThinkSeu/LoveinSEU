@@ -9,6 +9,7 @@ from hashmd5 import hashToken
 import os, stat
 from PIL import Image
 import shutil
+import string;
 
 app = Flask(__name__)
 
@@ -548,6 +549,108 @@ def getprofile():
 
 
 
+@app.route("/follow",methods=['GET','POST'])
+def follow():
+	try:
+		token = request.json['token']
+		id = request.json['id']
+		u=getuserinformation(token)
+		u2=User.query.filter_by(id=id).first()
+		if (u is not None) and (u2 is not None):
+			temp = u.follow(u2);
+			if temp == 0:
+				state = 'successful'
+				reason = ''
+			elif temp==1:
+				state = 'fail'
+				reason = 'already follow';
+			else:
+				state='fail'
+				reason='e'
+		else:
+			state = 'fail'
+			reason = 'Nouser'
+
+	except Exception, e:
+			state = 'e'
+			reason = 'e'
+
+	response = jsonify({'state':state,
+		                'reason':reason})
+	return response
+
+@app.route("/unfollow",methods=['GET','POST'])
+def unfollow():
+	try:
+		token = request.json['token']
+		id = request.json['id']
+		u=getuserinformation(token)
+		u2=User.query.filter_by(id=id).first()
+		if (u is not None) and (u2 is not None):
+			temp = u.unfollow(u2);
+			if temp == 0:
+				state = 'successful'
+				reason = ''
+			elif temp ==1:
+				state = 'fail'
+				reason = 'already unfollow'
+			else:
+				state='fail'
+				reason = 'e';
+		else:
+			state = 'fail'
+			reason = 'Nouser'
+
+	except Exception, e:
+			state = 'e'
+			reason = 'e'
+
+	response = jsonify({'state':state,
+		                'reason':reason})
+	return response
+
+# show the users that follow me or I follow
+@app.route("/followview", methods=['POST'])
+def followers():
+	try:
+		token = request.json['token']
+		print token
+		u=getuserinformation(token)
+		page = request.json.get('page','1')
+		print page
+		x=string.atoi(page)
+		print x
+		direct = request.json.get('direction', 'followers');
+		print direct 
+		if u is not None:
+			if direct == 'followers':
+				pageitems = u.followers.paginate(x, per_page=4, error_out=False)
+				followview = [{'userid':item.follower.id, 'timestamp':item.timestamp} for item in pageitems.items]
+			else:
+				pageitems = u.followeds.paginate(x, per_page=4, error_out=False)
+				followview = [{'userid':item.followed.id, 'timestamp':item.timestamp} for item in pageitems.items]
+			print followview
+			state = 'successful'
+			reason = ''
+		else:
+			state = 'fail'
+			followview = {};
+			reason = 'User not exist'
+
+	except Exception ,e:
+		state = 'fail'
+		followview = {};
+		reason = 'e'
+		direct=''
+	if direct == 'followers':
+		response = jsonify({'state':state,
+			'reason':reason,
+			'followers': followview})
+	else:
+		response = jsonify({'state':state,
+			'reason':reason,
+			'followeds': followview})
+	return response;
 
 
 

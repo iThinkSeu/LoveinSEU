@@ -1,5 +1,6 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
+from datetime import *
 #from flask.ext.sqlalchemy import SQLALchemy
 
 app = Flask(__name__)
@@ -7,6 +8,12 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']="mysql://admin:admin@123.57.2.8:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
+
+class Follow(db.Model):
+	__tablename__='follows'
+	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default = datetime.utcnow)
 
 
 class User(db.Model):
@@ -29,6 +36,11 @@ class User(db.Model):
 	autumn1=db.Column(db.String(32))
 	autumn2=db.Column(db.String(32))
 	autumn3=db.Column(db.String(32))
+	#relation
+	#all users followed by this
+	followeds = db.relationship('Follow', foreign_keys = [Follow.follower_id], backref = db.backref('follower', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#all users that follow this
+	followers = db.relationship('Follow', foreign_keys = [Follow.followed_id], backref = db.backref('followed', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 
 	def add(self):
@@ -46,14 +58,46 @@ class User(db.Model):
 			db.session.rollback()
 			return 2
 		
-
-
 	def isExisted(self):
 		tempuser = User.query.filter_by(username=self.username,password=self.password).first()
 		if tempuser is None:
 			return 0
 		else:
 			return 1
+
+	def is_following(self, user):
+		u=self.followeds.filter_by(followed_id=user.id).first()
+		return  u is not None
+
+	def is_followed_by(self, user):
+		return self.followers.filter_by(follower_id=user.id).first() is not None
+
+	def follow(self, user):
+		try:
+			if not self.is_following(user):
+				f = Follow(follower=self, followed=user)
+				db.session.add(f)
+				db.session.commit()
+				return 0
+			else:
+				return 1	
+		except Exception, e:
+			db.session.rollback()
+			return 2
+
+	def unfollow(self, user):
+		try:
+			f = self.followeds.filter_by(followed_id=user.id).first()
+			if f:
+				db.session.delete(f)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			db.session.rollback()
+			return 2
+
 
 class Activity(db.Model):
 	__tablename__="activitys"
