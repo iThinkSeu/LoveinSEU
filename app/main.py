@@ -26,7 +26,7 @@ def register():
 			state = 'successful'
 			reason = ''
 			token = hashToken(username,password)
-			id=u.id
+			id = getuserinformation(token).id
 		else:
 			state = 'fail'
 			reason = '用户名已被注册'
@@ -111,7 +111,7 @@ def login():
 			state = 'successful'
 			token = getTokeninformation(username).token
 			reason = ''
-			id = u.id
+			id = getuserinformation(token).id
 		else:
 			id=''
 			state = 'fail'
