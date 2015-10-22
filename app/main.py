@@ -122,7 +122,7 @@ def uploadavatar():
 			reason = '非图片文件'
 	except Exception, e:
 		id=''
-		state = 'fail'
+		state = 'fail's
 		reason='异常'
 
 
@@ -544,6 +544,8 @@ def getprofile():
 		 	                'phone':phone,
 		 	                'id':id})
 		return response
+
+
 
 
 
