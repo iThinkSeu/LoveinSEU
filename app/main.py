@@ -253,51 +253,51 @@ def getactivityinformation():
 				state = 'fail'
 				reason = '活动不存在'
  				title1 = 'NoActivity'  
- 				time1 ='NoActivity'
- 				location1='NoActivity'
- 				number1='NoActivity'
+ 				time1 =''
+ 				location1=''
+ 				number1=''
 
- 				title2 ='NoActivity'  
- 				time2 = 'NoActivity'
- 				location2='NoActivity'
- 				number2='NoActivity'
+ 				title2 =''  
+ 				time2 = ''
+ 				location2=''
+ 				number2=''
 
- 				title3 ='NoActivity'  
- 				time3 = 'NoActivity'
- 				location3='NoActivity'
- 				number3='NoActivity'
+ 				title3 =''  
+ 				time3 = ''
+ 				location3=''
+ 				number3=''
 
- 				title4 ='NoActivity'  
- 				time4 ='NoActivity'
- 				location4='NoActivity'
- 				number4='NoActivity'
+ 				title4 =''  
+ 				time4 =''
+ 				location4=''
+ 				number4=''
  		else:
 
  			state = 'fail'
  			reason = '用户不存在'
-			title1 = 'Nouser'  
-			time1 ='Nouser'
-			location1='Nouser'
-			number1='Nouser'
-			state1='Nouser'
+			title1 = ''  
+			time1 =''
+			location1=''
+			number1=''
+			state1=''
 
-			title2 ='Nouser'  
-			time2 = 'Nouser'
-			location2='Nouser'
-			number2='Nouser'
-			state2='Nouser'
+			title2 =''  
+			time2 = ''
+			location2=''
+			number2=''
+			state2=''
 
-			title3 ='Nouser'  
-			time3 = 'Nouser'
-			location3='Nouser'
-			number3='Nouser'
-			state3='Nouser'
+			title3 =''  
+			time3 = ''
+			location3=''
+			number3=''
+			state3=''
 
-			title4 ='Nouser'  
-			time4 ='Nouser'
-			location4='Nouser'
-			number4='Nouser'
-			state4='Nouser'
+			title4 =''  
+			time4 =''
+			location4=''
+			number4=''
+			state4=''
 
 
 
@@ -738,48 +738,62 @@ def followers():
 def getrecommenduser():
 		try:
 			token = request.json['token']
+			print token
 			u=getuserinformation(token)
 	 		if u != None:
 				recommend = getranduser(u.gender)
-				if recommend != None:
+				print "testlen"
+				print len(recommend)
+				if len(recommend)==4:
+					print "in"
 					state = 'successful'
 					reason = ''
-					id = recommend.id
-					name = recommend.name  if recommend.name != None else ""
-					gender = recommend.gender if recommend.gender != None else ""
-					school = recommend.school if recommend.school != None else ""
+					response = jsonify({'state':state,
+										'reason':reason,
+										'result':[{"id":recommend[0].id,
+													"name":recommend[0].name,
+													"gender":recommend[0].gender,
+													"school":recommend[0].school},
+													{"id":recommend[1].id,
+													"name":recommend[1].name,
+													"gender":recommend[1].gender,
+													"school":recommend[1].school},
+													{"id":recommend[2].id,
+													"name":recommend[2].name,
+													"gender":recommend[2].gender,
+													"school":recommend[2].school},
+													{"id":recommend[3].id,
+													"name":recommend[3].name,
+													"gender":recommend[3].gender,
+													"school":recommend[3].school}]
+					 	                })
+
 				else:
-					state = 'fail'
-					reason = '无不同性别'
-					id = ""
-					name = ""
-					gender = "nogender"
-					school = ""
+						state = 'fail'
+						reason = 'no gender'
+						response = jsonify({'state':state,
+											'reason':reason,
+											'result':[]
+											})
+
 			else:
 				state = 'fail'
-				reason = '用户不存在'
-				id = ""
-				name = "nouser"
-				gender = ""
-				school = ""
-
+				reason = 'Nouser'
+				response = jsonify({'state':state,
+									'reason':reason,
+									'result':[]
+									})
 
 		except Exception, e:
+			print e
 			state = 'fail'
-			reason = '异常'	
-			id = ""
-			name = "e"
-			gender = ""
-			school = ""
+			reason = 'e'	
+			response = jsonify({'state':state,
+								'reason':reason,
+								'result':[]
+								})
+		
 
-			
-
-		response = jsonify({'state':state,
-							'reason':reason,
-		 	                'school':school,
-		 	                'name':name,
-		 	                'gender':gender,
-		 	                'id':id})
 		return response
 
 

@@ -180,17 +180,26 @@ def getActivityInformation(id):
 	return a 
 
 def getranduser(gender):
-	if gender == '男':
-		u = User.query.filter_by(gender="女").all()
+	if gender == u'男':
+		print "tesboy"
+		u = User.query.filter_by(gender=u"女").all()
 	else:
-		u = User.query.filter_by(gender="男").all()
-	length = len(u)
-	print length
-	if length>0:
-		num = random.randint(0,length-1)
-		return u[num]
+		print "testgirl"
+		u = User.query.filter_by(gender=u"男").all()
+	print "dbtest"	
+	print len(u)
+	if len(u)>3:	
+		return random.sample(u,4)
 	else:
-		return None
+		return []
+
+	# length = len(u)
+	# print length
+	# if length>0:
+	# 	num = random.randint(0,length-1)
+	# 	return u[num]
+	# else:
+	# 	return None
 
 
 
