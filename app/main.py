@@ -121,11 +121,11 @@ def uploadavatar():
 			reason = ''
 		except Exception, e:
 			state = 'fail'
-			reason = '非图片文件'
+			reason = '上传图片失败,请重传'
 	except Exception, e:
 		id=''
 		state = 'fail'
-		reason='异常'
+		reason='异常,请重传'
 
 
 	response = jsonify({'id':id,
@@ -145,39 +145,21 @@ def signup():
 
 		if u!=None:
 			if activity =='1':
-				if u.qianshoudongda != 'yes':
-					writestate = editDBcolumn(token,'qianshoudongda','yes')
-				else:
-					writestate = 2
+				writestate = editDBcolumn(token,'qianshoudongda','yes')
 			elif activity == '2':
-				if u.autumn1!='yes':
-					writestate=editDBcolumn(token,'autumn1','yes')
-				else:
-					writestate = 2
-
+				writestate=editDBcolumn(token,'autumn1','yes')
 			elif activity == '3':
-				if u.autumn2 != 'yes':
-					writestate = editDBcolumn(token,'autumn2','yes')
-				else:
-					writestate = 2
+				writestate = editDBcolumn(token,'autumn2','yes')
 			elif activity == '4':
-				if u.autumn3 != 'yes':
-					writestate = editDBcolumn(token,'autumn3','yes')
-				else:
-					writestate = 2
+				writestate = editDBcolumn(token,'autumn3','yes')
 			else:
 				writestate = 1
-
 			if not writestate:
 				state = 'successful'
 				reason = ''
-			elif writestate == 2:
-				state = 'fail'
-				reason = '已报名'
 			else:
 				state ='fail'
-				reason ='无此活动'
-
+				reason ='异常，请重新报名'
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -702,7 +684,7 @@ def followers():
 		token = request.json['token']
 		print token
 		u=getuserinformation(token)
-		page = request.json.get('page','1')
+		page = request.json['page']
 		#print page
 		x=string.atoi(page)
 		#print x
@@ -715,7 +697,7 @@ def followers():
 			else:
 				pageitems = u.followeds.paginate(x, per_page=4, error_out=False)
 				followview = [{'id':item.followed.id, 'name':item.followed.name if item.followed.name!=None else '','gender':item.followed.gender if item.followed.gender!=None else '','school':item.followed.school if item.followed.school!=None else '','timestamp':item.timestamp} for item in pageitems.items]
-			print followview
+			#print followview
 			state = 'successful'
 			reason = ''
 		else:
@@ -769,12 +751,12 @@ def getrecommenduser():
 					 	                })
 
 				else:
-						state = 'fail'
-						reason = 'no gender'
-						response = jsonify({'state':state,
-											'reason':reason,
-											'result':[]
-											})
+					state = 'fail'
+					reason = 'no gender'
+					response = jsonify({'state':state,
+										'reason':reason,
+										'result':[]
+										})
 
 			else:
 				state = 'fail'
@@ -795,9 +777,6 @@ def getrecommenduser():
 		
 
 		return response
-
-
-
 
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)),debug=True)
