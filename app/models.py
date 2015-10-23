@@ -193,14 +193,10 @@ def getranduser(gender):
 	else:
 		return []
 
-	# length = len(u)
-	# print length
-	# if length>0:
-	# 	num = random.randint(0,length-1)
-	# 	return u[num]
-	# else:
-	# 	return None
-
+def Regular_Express_Mail(email):
+	p=re.compile('[^\._-][\w\.-]+@(?:[A-Za-z0-9]+\.)')
+	isMatch=p.match(email)
+	return isMatch
 
 
 

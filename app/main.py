@@ -5,7 +5,7 @@ from flask import render_template
 from flask import redirect
 from models import *
 from wtforms import Form,TextField,PasswordField,validators
-from hashmd5 import hashToken
+from hashmd5 import *
 import os, stat
 from PIL import Image
 import shutil
@@ -17,7 +17,16 @@ app = Flask(__name__)
 @app.route("/register",methods=['POST'])
 def register():
 	try:
-		username=request.json['username']
+		username=request.json[u'username']
+		temp = checkName(username)
+		if temp==False:		
+			print 'te'
+			response = jsonify({
+								'id':'',
+								'state':'fail',
+								'reason':'用户名不能包含中文且至少要两个字母',
+								'token':'chinese'})
+			return response
 		password=request.json['password']
 		token= hashToken(username,password)
 		u=User(username=username,password=password,token=token)
@@ -34,6 +43,7 @@ def register():
 			token = 'Haveresiger'
 			id=''
 	except Exception, e:
+		print e
 		state = 'fail'
 		reason ='异常'
 		token = 'exception'
@@ -712,8 +722,8 @@ def followers():
 		direct=''
 
 	response = jsonify({'state':state,
-		'reason':reason,
-		'result': followview})
+						'reason':reason,
+						'result': followview})
 	return response;
 
 @app.route("/getrecommenduser",methods=['GET','POST'])
