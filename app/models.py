@@ -3,6 +3,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import *
 import random
+
 #from flask.ext.sqlalchemy import SQLALchemy
 
 app = Flask(__name__)
@@ -181,22 +182,14 @@ def getActivityInformation(id):
 
 def getranduser(gender):
 	if gender == u'男':
-		print "tesboy"
 		u = User.query.filter_by(gender=u"女").all()
 	else:
-		print "testgirl"
 		u = User.query.filter_by(gender=u"男").all()
-	print "dbtest"	
-	print len(u)
 	if len(u)>3:	
 		return random.sample(u,4)
 	else:
 		return []
 
-def Regular_Express_Mail(email):
-	p=re.compile('[^\._-][\w\.-]+@(?:[A-Za-z0-9]+\.)')
-	isMatch=p.match(email)
-	return isMatch
 
 
 

@@ -97,7 +97,6 @@ def uploadavatar():
 		number = jsonstring['number']
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
-		print src 
 		#print avatar
 		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
 		#print avatar_type
@@ -148,7 +147,6 @@ def uploadavatar():
 @app.route("/signup",methods=['POST'])
 def signup():
 	try:
-		print "sign"
 		token = request.json['token']
 		activity = request.json['activity']
 		u=getuserinformation(token)
@@ -363,7 +361,6 @@ def getactivityinformation():
 @app.route("/editprofile/editschoolinformation",methods=['POST'])
 def editschoolinformation():
 	try:
-		print "editschool"
 		token = request.json['token']
 		school = request.json['school']
 		degree = request.json['degree']
@@ -380,11 +377,11 @@ def editschoolinformation():
 		else:
 			state = 'fail'
 			reason = '用户不存在'
-		print token
-		print school
+
 		# state='s'
 		# reason= 'r'
 	except Exception, e:
+		print e
 		state = 'fail'
 		reason ='异常'
 	
@@ -396,7 +393,6 @@ def editschoolinformation():
 @app.route("/editprofile/editpersonalinformation",methods=['POST'])
 def editpersonalinformation():
 	try:
-		print "Editpersonal"
 		token = request.json['token']
 		name = request.json['name']
 		gender = request.json['gender']
@@ -413,8 +409,8 @@ def editpersonalinformation():
 		else:
 			state = 'fail'
 			reason = '用户不存在'
-		print token
 	except Exception, e:
+		print e
 		state = 'fail'
 		reason ='异常'
 	
@@ -426,7 +422,6 @@ def editpersonalinformation():
 @app.route("/editprofile/editpreferinformation",methods=['POST'])
 def editpreferinformation():
 	try:
-		print "Editprefer"
 		token = request.json['token']
 		hobby = request.json['hobby']
 		preference = request.json['preference']
@@ -439,8 +434,8 @@ def editpreferinformation():
 		else:
 			state = 'fail'
 			reason = '用户不存在'
-		print token
 	except Exception, e:
+		print e
 		state = 'fail'
 		reason ='异常'
 	
@@ -680,6 +675,7 @@ def unfollow():
 			reason = 'Nouser'
 
 	except Exception, e:
+			print e
 			state = 'e'
 			reason = 'e'
 
@@ -692,7 +688,6 @@ def unfollow():
 def followers():
 	try:
 		token = request.json['token']
-		print token
 		u=getuserinformation(token)
 		page = request.json['page']
 		#print page
@@ -730,14 +725,10 @@ def followers():
 def getrecommenduser():
 		try:
 			token = request.json['token']
-			print token
 			u=getuserinformation(token)
 	 		if u != None:
 				recommend = getranduser(u.gender)
-				print "testlen"
-				print len(recommend)
 				if len(recommend)==4:
-					print "in"
 					state = 'successful'
 					reason = ''
 					response = jsonify({'state':state,
