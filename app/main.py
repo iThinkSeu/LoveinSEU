@@ -43,7 +43,6 @@ def register():
 			token = 'Haveresiger'
 			id=''
 	except Exception, e:
-		print e
 		state = 'fail'
 		reason ='异常'
 		token = 'exception'
