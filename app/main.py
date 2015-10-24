@@ -20,7 +20,7 @@ def register():
 		username=request.json[u'username']
 		temp = checkName(username)
 		if temp==False:		
-			print 'te'
+			print 'te2'
 			response = jsonify({
 								'id':'',
 								'state':'fail',
