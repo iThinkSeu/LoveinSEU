@@ -8,7 +8,7 @@ import random
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://admin:admin@123.57.2.8:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@101.200.201.22:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
 
@@ -189,8 +189,5 @@ def getranduser(gender):
 		return random.sample(u,4)
 	else:
 		return []
-
-
-
 
 
