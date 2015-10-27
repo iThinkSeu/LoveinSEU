@@ -180,14 +180,22 @@ def getActivityInformation(id):
 	a = Activity.query.filter_by(id = id).first()
 	return a 
 
-def getranduser(gender):
+def getranduser(token):
+	u = getuserinformation(token)
+	gender = u.gender
+
 	if gender == u'男':
-		u = User.query.filter_by(gender=u"女").all()
+		udif = User.query.filter_by(gender=u"女").all()
 	else:
-		u = User.query.filter_by(gender=u"男").all()
-	if len(u)>3:	
-		return random.sample(u,4)
-	else:
+		udif = User.query.filter_by(gender=u"男").all()
+
+	L1 = [x.id for x in udif]
+	f2 = u.followeds.all()
+	L2 = [y.followed_id for y in f2]
+	L = list(set(L1).difference(set(L2)))
+	if len(L)>3:	
+		return random.sample(L,4)
+	elif len(L)==0:
 		return []
-
-
+	else:
+		return L
