@@ -17,6 +17,7 @@ app = Flask(__name__)
 @app.route("/register",methods=['POST'])
 def register():
 	try:
+		print "test"
 		username=request.json[u'username']
 		temp = checkName(username)
 		if temp==False:		
