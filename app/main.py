@@ -110,6 +110,8 @@ def uploadavatar():
 				dst = '/home/www/picture/autumn-2/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type =="4":
 				dst = '/home/www/picture/autumn-3/' + str(id)+'-'+str(type)+'-'+str(number)
+			elif type = "-1":
+				dst = '/home/www/background/' + str(id)+'-'+str(type)+'-'+str(number)
 			else:
 				dst = '/home/www/avatar/' + str(id)
 
@@ -606,8 +608,6 @@ def getprofilebyid():
 			autumn2 = ''
 			autumn3 = ''
 
-			
-
 		response = jsonify({'username':username,
 							'token':token,
 							'state':state,
@@ -764,9 +764,46 @@ def getrecommenduser():
 								'reason':reason,
 								'result':[]
 								})
-		
-
 		return response
+
+@app.route("/searchuser",methods = ['GET','POST'])
+def searchuser():
+	try:
+		token = request.json['token']
+		text = request.json['text']
+		u = getuserinformation(token)
+		if u != None:
+			L = []
+			temp = getuserbyid(text)
+			L.append(temp)
+			if temp != None:
+				state = "successful"
+				reason = ''
+				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in L]
+			else:
+				tempname = getuserbyname(text)
+				L = []
+				L.append(tempname)
+				if tempname != None:
+					state = "successful"
+					reason = ''
+					result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in L]
+
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = [];
+
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = []
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'result':result})
+	return response
 
 
 if __name__ == '__main__':

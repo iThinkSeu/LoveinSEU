@@ -224,7 +224,10 @@ def getTokeninformation(username):
 def getuserbyid(id):
 	u=User.query.filter_by(id=id).first()
 	return u 
-	
+
+def getuserbyname(name):
+	u=User.query.filter_by(name=name).first()
+	return u 			
 
 	
 def getActivityInformation(id):
