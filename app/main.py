@@ -110,7 +110,7 @@ def uploadavatar():
 				dst = '/home/www/picture/autumn-2/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type =="4":
 				dst = '/home/www/picture/autumn-3/' + str(id)+'-'+str(type)+'-'+str(number)
-			elif type = "-1":
+			elif type == "-1":
 				dst = '/home/www/background/' + str(id)+'-'+str(type)+'-'+str(number)
 			else:
 				dst = '/home/www/avatar/' + str(id)
