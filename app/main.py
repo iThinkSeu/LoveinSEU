@@ -105,7 +105,7 @@ def uploadavatar():
 				dst = '/home/www/avatar/' + str(id)
 			elif type=="1":
 				dst = '/home/www/picture/qianshoudongda/' + str(id)+'-'+str(type)+'-'+str(number)
-			elif type=="2":
+			elif type=="5":
 				dst = '/home/www/picture/yaoda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="3":
 				dst = '/home/www/picture/autumn-2/' + str(id)+'-'+str(type)+'-'+str(number)
@@ -114,7 +114,7 @@ def uploadavatar():
 			elif type == "-1":
 				dst = '/home/www/background/' + str(id) 
 			else:
-				dst = '/home/www/avatar/' + str(id)
+				dst = '/home/www/picture/temp/' + str(id)
 
 			'''
 			if os.path.exists(dst):
@@ -157,7 +157,7 @@ def signup():
 		if u!=None:
 			if activity =='1':
 				writestate = editDBcolumn(token,'qianshoudongda','yes')
-			elif activity == '2':
+			elif activity == '5':
 				writestate=editDBcolumn(token,'yaoda','yes')
 			elif activity == '3':
 				writestate = editDBcolumn(token,'autumn2','yes')
@@ -192,18 +192,18 @@ def getactivityinformation():
 
 		token = request.json['token']
 		u=getuserinformation(token)
-		act1 = getActivityInformation(1)
-		act2 = getActivityInformation(2)
+		act1 = getActivityInformation(5)
+		act2 = getActivityInformation(1)
 		act3 = getActivityInformation(3)
 		act4 = getActivityInformation(4)
 
  		if u!=None:
- 			if u.qianshoudongda!='yes':
+ 			if u.yaoda!='yes':
  				state1='no'
  			else:
  				state1='yes'
 
- 			if u.autumn1!='yes':
+ 			if u.qianshoudongda!='yes':
  				state2='no'
  			else:
  				state2='yes'
@@ -324,14 +324,14 @@ def getactivityinformation():
 
 	response = jsonify({
 							'result':[{
-							'id':'1',
+							'id':'5',
 							'title':title1,
 							'time':time1,
 							'location':location1,
 							'number':number1,
 							'state':state1},
 							{
-							'id':'2',
+							'id':'1',
 							'title':title2,
 							'time':time2,
 							'location':location2,
