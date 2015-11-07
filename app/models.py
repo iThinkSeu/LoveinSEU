@@ -11,7 +11,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@101.200.201.22:3306/flasktestdb?charset=utf8"
 
-
 db = SQLAlchemy(app)
 
 class Follow(db.Model):
@@ -35,12 +34,17 @@ class User(db.Model):
 	gender = db.Column(db.String(32))
 	phone = db.Column(db.String(32))
 	birthday = db.Column(db.String(32))
+	wechat = db.Column(db.String(32))
+	qq = db.Column(db.String(32))
+	hometown = db.Column(db.String(32))
 	hobby = db.Column(db.String(128))
 	preference = db.Column(db.String(128))
 	qianshoudongda = db.Column(db.String(32))
 	autumn1=db.Column(db.String(32))
 	autumn2=db.Column(db.String(32))
 	autumn3=db.Column(db.String(32))
+	yaoda = db.Column(db.String(32))
+
 	#relation
 	#all users followed by this
 	followeds = db.relationship('Follow', foreign_keys = [Follow.follower_id], backref = db.backref('follower', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
@@ -113,12 +117,43 @@ class Activity(db.Model):
 	number=db.Column(db.String(32))
 	state = db.Column(db.String(32))
 
-	
-		
-	
+
+# class Message(db.Model):
+# 	__tablename__ = "Message"
+# 	id = db.Column(db.Integer,primary_key = True)
+# 	SendId = db.Column(db.String(32))
+# 	RecId = db.Column(db.String(32))
+# 	MessageId = db.Column(db.String(32))
+# 	state = db.Column(db.String(32))
+
+# 	def add(self):
+# 		try:
+# 			db.session.add(self)
+# 			db.session.commit()
+# 		except Exception, e:
+# 			db.session.rollback()
+# 			return 2
+
+
+# class MessageText(db.Model):
+# 	__tablename__ = "MessageText"
+# 	id = db.Column(db.Integer,primary_key = True)
+# 	text = db.Column(db.String(128))
+# 	image = db.Column(db.String(32))
+# 	vedio = db.Column(db.String(32))
+# 	pdate = db.Column(db.String(32))
+
+# 	def add(self):
+# 		try:
+# 			db.session.add(self)
+# 			db.session.commit()
+# 		except Exception, e:
+# 			db.session.rollback()
+# 			return 2
+
+			
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
-
 	if u!=None:
 		u.school = school
 		u.degree = degree
@@ -134,13 +169,16 @@ def editschooldb(token,school,degree,department,enrollment):
 	else:
 		return 2 
 
-def editpersonaldb(token,name,gender,birthday,phone):
+def editpersonaldb(token,name,gender,birthday,phone,wechat,qq,hometown):
 	u=User.query.filter_by(token=token).first()
 	if u!=None:
 		u.name = name
 		u.gender = gender
 		u.birthday = birthday
 		u.phone = phone
+		u.wechat = wechat
+		u.qq = qq 
+		u.hometown = hometown
 		try:
 			db.session.add(u)
 			db.session.commit()
@@ -203,6 +241,9 @@ def editDBcolumn(token,modifycol,valuecol):
 			u.autumn3=valuecol
 		if modifycol=='phone':
 			u.phone=valuecol
+		if modifycol == 'yaoda':
+			u.yaoda = valuecol
+			
 	else:#
 		return 1 
 
@@ -256,6 +297,6 @@ def getranduser(token):
 	else:
 		return L
 
+# def addMessageText(text):
 
-
-
+	

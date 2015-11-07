@@ -10,6 +10,7 @@ import os, stat
 from PIL import Image
 import shutil
 import string;
+import datetime
 
 app = Flask(__name__)
 
@@ -105,7 +106,7 @@ def uploadavatar():
 			elif type=="1":
 				dst = '/home/www/picture/qianshoudongda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="2":
-				dst = '/home/www/picture/autumn-1/' + str(id)+'-'+str(type)+'-'+str(number)
+				dst = '/home/www/picture/yaoda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="3":
 				dst = '/home/www/picture/autumn-2/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type =="4":
@@ -157,7 +158,7 @@ def signup():
 			if activity =='1':
 				writestate = editDBcolumn(token,'qianshoudongda','yes')
 			elif activity == '2':
-				writestate=editDBcolumn(token,'autumn1','yes')
+				writestate=editDBcolumn(token,'yaoda','yes')
 			elif activity == '3':
 				writestate = editDBcolumn(token,'autumn2','yes')
 			elif activity == '4':
@@ -216,7 +217,6 @@ def getactivityinformation():
  				state4='no'
  			else:
  				state4='yes'
-
 
  			if (act1!=None) and (act2!=None) and (act3!=None) and (act4!=None):
  				state = 'successful'
@@ -375,6 +375,7 @@ def editschoolinformation():
 		if not writestate:
 			state = 'successful'
 			reason = ''
+
 		elif writestate == 2:
 			state = 'fail'
 			reason = 'no user'
@@ -401,8 +402,11 @@ def editpersonalinformation():
 		gender = request.json['gender']
 		birthday = request.json['birthday']
 		phone = request.json['phone']
+		wechat = request.json.get('wechat',' ')
+		qq = request.json.get('qq',' ')
+		hometown = request.json.get('hometown',' ')
 
-		writestate = editpersonaldb(token,name,gender,birthday,phone)
+		writestate = editpersonaldb(token,name,gender,birthday,phone,wechat,qq,hometown)
 		if not writestate:
 			state = 'successful'
 			reason = ''
@@ -471,6 +475,9 @@ def getprofile():
 				hobby = u.hobby if u.hobby!=None else ''
 				preference = u.preference if u.preference!=None else '' 
 				phone = u.phone if u.phone!=None else ''
+				wechat = u.wechat if u.wechat != None else ''
+				qq = u.qq if u.qq != None else ''
+				hometown = u.hometown if u.hometown != None else ''
 				id = u.id if u.id!=None else ''
 				qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
 				autumn1 = u.autumn1 if u.autumn1!=None else ''
@@ -491,6 +498,9 @@ def getprofile():
 				hobby = ''
 				preference = ''
 				phone = ''
+				wechat = ''
+				qq =''
+				hometown = ''
 				id = ''
 				qianshoudongda =''
 				autumn1 = ''
@@ -513,6 +523,9 @@ def getprofile():
 			hobby = ''
 			preference = ''
 			phone = ''
+			wechat = ''
+			qq = ''
+			hometown = ''
 			id = ''
 			qianshoudongda=''
 			autumn1 = ''
@@ -535,6 +548,9 @@ def getprofile():
 		 	                'preference':preference,
 		 	                'hobby':hobby,
 		 	                'phone':phone,
+		 	                'wechat':wechat,
+		 	                'qq':qq,
+		 	                'hometown':hometown,
 		 	                'id':id})
 		return response
 
@@ -559,6 +575,9 @@ def getprofilebyid():
 				hobby = u.hobby if u.hobby!=None else ''
 				preference = u.preference if u.preference!=None else '' 
 				phone = u.phone if u.phone!=None else ''
+				wechat = u.wechat if u.wechat != None else ''
+				qq = u.qq if u.qq !=None else ''
+				hometown = u.hometown if u.hometown != None else ''
 				id = u.id if u.id!=None else ''
 				qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
 				autumn1 = u.autumn1 if u.autumn1!=None else ''
@@ -579,6 +598,9 @@ def getprofilebyid():
 				hobby = ''
 				preference = ''
 				phone = ''
+				wechat = ''
+				qq = ''
+				hometown = ''
 				id = ''
 				qianshoudongda =''
 				autumn1 = ''
@@ -601,6 +623,9 @@ def getprofilebyid():
 			hobby = ''
 			preference = ''
 			phone = ''
+			wechat = ''
+			qq = ''
+			hometown = ''
 			id = ''
 			qianshoudongda=''
 			autumn1 = ''
@@ -621,6 +646,9 @@ def getprofilebyid():
 		 	                'preference':preference,
 		 	                'hobby':hobby,
 		 	                'phone':phone,
+		 	                'wechat':wechat,
+		 	                'qq':qq,
+		 	                'hometown':hometown,
 		 	                'id':id})
 		return response
 
@@ -738,7 +766,6 @@ def getrecommenduser():
 										'reason':reason,
 										'result':result
 					 	                })
-
 				else:
 					state = 'fail'
 					reason = 'no gender'
@@ -746,7 +773,6 @@ def getrecommenduser():
 										'reason':reason,
 										'result':[]
 										})
-
 			else:
 				state = 'fail'
 				reason = 'Nouser'
@@ -803,6 +829,30 @@ def searchuser():
 						'reason':reason,
 						'result':result})
 	return response
+
+
+# @app.route("/sendmessage")
+# def sendmessage():
+# 	try:
+# 		token = request.json['token']
+# 		text = request.json['text']
+# 		SendId = request.json['SendId']
+# 		RecId = request.json['RecId']
+# 		u = getuserinformation(token)
+# 		if u != None:
+# 			now = datetime.datetime.now()
+# 			messageTextTemp = MessageText(text = text, pdate = now) 
+# 			messageTextTemp.add()
+
+# 		else:
+# 			state = 'fail'
+# 			reason = 'no user'
+# 			result = [];
+		
+		
+# 	except Exception, e:
+# 		raise
+
 
 
 if __name__ == '__main__':
