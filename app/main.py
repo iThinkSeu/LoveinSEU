@@ -11,6 +11,8 @@ from PIL import Image
 import shutil
 import string;
 import datetime
+from sqlalchemy import or_
+
 
 app = Flask(__name__)
 
@@ -557,61 +559,36 @@ def getprofile():
 
 @app.route("/getprofilebyid",methods=['GET','POST'])
 def getprofilebyid():
-		try:
-			id = request.json['id']
-			u=getuserbyid(id)
-	 		if u!=None:
-				state = 'successful'
-				reason = ''
-				username = u.username if u.username!=None else ''
-				token = u.token if u.token!=None else ''    
-				school = u.school if u.school!=None else '' 				
-				degree = u.degree if u.degree!=None else ''
-				department = u.department if u.department!=None else ''
-				enrollment = u.enrollment if u.enrollment!=None else ''
-				name = u.name if u.name!=None else ''
-				gender = u.gender if u.gender!=None else ''
-				birthday = u.birthday if u.birthday!=None else ''
-				hobby = u.hobby if u.hobby!=None else ''
-				preference = u.preference if u.preference!=None else '' 
-				phone = u.phone if u.phone!=None else ''
-				wechat = u.wechat if u.wechat != None else ''
-				qq = u.qq if u.qq !=None else ''
-				hometown = u.hometown if u.hometown != None else ''
-				id = u.id if u.id!=None else ''
-				qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
-				autumn1 = u.autumn1 if u.autumn1!=None else ''
-				autumn2 = u.autumn2 if u.autumn2!=None else ''
-				autumn3 = u.autumn3 if u.autumn3!=None else ''
-			else:
-				state = 'fail'
-				reason = '用户不存在'
-				username = 'Nouser'
-				token=''
-				school=''
-				degree=''
-				department = ''
-				enrollment = ''
-				name = ''
-				gender = ''
-				birthday = ''
-				hobby = ''
-				preference = ''
-				phone = ''
-				wechat = ''
-				qq = ''
-				hometown = ''
-				id = ''
-				qianshoudongda =''
-				autumn1 = ''
-				autumn2=''
-				autumn3 = ''
-
-
-		except Exception, e:
+	try:
+		id = request.json['id']
+		u=getuserbyid(id)
+ 		if u!=None:
+			state = 'successful'
+			reason = ''
+			username = u.username if u.username!=None else ''
+			token = u.token if u.token!=None else ''    
+			school = u.school if u.school!=None else '' 				
+			degree = u.degree if u.degree!=None else ''
+			department = u.department if u.department!=None else ''
+			enrollment = u.enrollment if u.enrollment!=None else ''
+			name = u.name if u.name!=None else ''
+			gender = u.gender if u.gender!=None else ''
+			birthday = u.birthday if u.birthday!=None else ''
+			hobby = u.hobby if u.hobby!=None else ''
+			preference = u.preference if u.preference!=None else '' 
+			phone = u.phone if u.phone!=None else ''
+			wechat = u.wechat if u.wechat != None else ''
+			qq = u.qq if u.qq !=None else ''
+			hometown = u.hometown if u.hometown != None else ''
+			id = u.id if u.id!=None else ''
+			qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
+			autumn1 = u.autumn1 if u.autumn1!=None else ''
+			autumn2 = u.autumn2 if u.autumn2!=None else ''
+			autumn3 = u.autumn3 if u.autumn3!=None else ''
+		else:
 			state = 'fail'
-			reason = '异常'	
-			username='e'
+			reason = '用户不存在'
+			username = 'Nouser'
 			token=''
 			school=''
 			degree=''
@@ -627,30 +604,55 @@ def getprofilebyid():
 			qq = ''
 			hometown = ''
 			id = ''
-			qianshoudongda=''
+			qianshoudongda =''
 			autumn1 = ''
-			autumn2 = ''
+			autumn2=''
 			autumn3 = ''
 
-		response = jsonify({'username':username,
-							'token':token,
-							'state':state,
-							'reason':reason,
-		 	                'school':school,
-		 	                'degree':degree,
-		 	                'department':department,
-		 	                'enrollment':enrollment,
-		 	                'name':name,
-		 	                'gender':gender,
-		 	                'birthday':birthday,
-		 	                'preference':preference,
-		 	                'hobby':hobby,
-		 	                'phone':phone,
-		 	                'wechat':wechat,
-		 	                'qq':qq,
-		 	                'hometown':hometown,
-		 	                'id':id})
-		return response
+
+	except Exception, e:
+		state = 'fail'
+		reason = '异常'	
+		username='e'
+		token=''
+		school=''
+		degree=''
+		department = ''
+		enrollment = ''
+		name = ''
+		gender = ''
+		birthday = ''
+		hobby = ''
+		preference = ''
+		phone = ''
+		wechat = ''
+		qq = ''
+		hometown = ''
+		id = ''
+		qianshoudongda=''
+		autumn1 = ''
+		autumn2 = ''
+		autumn3 = ''
+
+	response = jsonify({'username':username,
+						'token':token,
+						'state':state,
+						'reason':reason,
+	 	                'school':school,
+	 	                'degree':degree,
+	 	                'department':department,
+	 	                'enrollment':enrollment,
+	 	                'name':name,
+	 	                'gender':gender,
+	 	                'birthday':birthday,
+	 	                'preference':preference,
+	 	                'hobby':hobby,
+	 	                'phone':phone,
+	 	                'wechat':wechat,
+	 	                'qq':qq,
+	 	                'hometown':hometown,
+	 	                'id':id})
+	return response
 
 @app.route("/follow",methods=['GET','POST'])
 def follow():
@@ -753,43 +755,43 @@ def followers():
 
 @app.route("/getrecommenduser",methods=['GET','POST'])
 def getrecommenduser():
-		try:
-			token = request.json['token']
-			u=getuserinformation(token)
-	 		if u != None:
-				L = getranduser(token)
-				if len(L)>0:
-					state = 'successful'
-					reason = ''
-					result = [{"id":getuserbyid(recommend).id,"name":getuserbyid(recommend).name,"gender":getuserbyid(recommend).gender,"school":getuserbyid(recommend).school} for recommend in L]
-					response = jsonify({'state':state,
-										'reason':reason,
-										'result':result
-					 	                })
-				else:
-					state = 'fail'
-					reason = 'no gender'
-					response = jsonify({'state':state,
-										'reason':reason,
-										'result':[]
-										})
+	try:
+		token = request.json['token']
+		u=getuserinformation(token)
+ 		if u != None:
+			L = getranduser(token)
+			if len(L)>0:
+				state = 'successful'
+				reason = ''
+				result = [{"id":getuserbyid(recommend).id,"name":getuserbyid(recommend).name,"gender":getuserbyid(recommend).gender,"school":getuserbyid(recommend).school} for recommend in L]
+				response = jsonify({'state':state,
+									'reason':reason,
+									'result':result
+				 	                })
 			else:
 				state = 'fail'
-				reason = 'Nouser'
+				reason = 'no gender'
 				response = jsonify({'state':state,
 									'reason':reason,
 									'result':[]
 									})
-
-		except Exception, e:
-			print e
+		else:
 			state = 'fail'
-			reason = 'e'	
+			reason = 'Nouser'
 			response = jsonify({'state':state,
 								'reason':reason,
 								'result':[]
 								})
-		return response
+
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'e'	
+		response = jsonify({'state':state,
+							'reason':reason,
+							'result':[]
+							})
+	return response
 
 @app.route("/searchuser",methods = ['GET','POST'])
 def searchuser():
@@ -918,7 +920,6 @@ def getSendUserList():
 				result.append(output)
 			state = 'successful'
 			reason = ''
-
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -948,20 +949,23 @@ def getMessageDetailList():
 		if u != None:
 			id = u.id
 			result = []
-			senduser = getuserbyid(SendId)
 			pageitems = getMessageTwoidPage(SendId,id,x)
 			L = pageitems.items
 			for i in range(len(L)):
+				senduser = getuserbyid(L[i].SendId)
+				name = senduser.name
+				gender = senduser.gender
+				school = senduser.school
+
 				text = L[i].messagecontents.text
 				image = L[i].messagecontents.image
 				vedio = L[i].messagecontents.vedio
 				time = L[i].sendtime
 				readstate = L[i].state
-				output = {"text":text,"image":image,"vedio":vedio,"time":time,"readstate":readstate}
+
+				output = {"text":text,"image":image,"vedio":vedio,"time":time,"readstate":readstate,"SendId":L[i].SendId,"name":name,"school":school}
 				result.append(output)
-			name = senduser.name
-			gender = senduser.gender
-			school = senduser.school
+
 			state = 'successful'
 			reason = ''
 
@@ -977,10 +981,6 @@ def getMessageDetailList():
 
 	response = jsonify({'state':state,
 						'reason':reason,
-						'SendId':SendId,
-						'name':name,
-						'gender':gender,
-						'school':school,
 						'result':result})
 	return response
 

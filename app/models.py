@@ -3,6 +3,8 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import *
 import random
+from sqlalchemy import or_
+from sqlalchemy import and_
 
 #from flask.ext.sqlalchemy import SQLALchemy
 
@@ -312,7 +314,7 @@ def getMessageTwoid(SendId, RecId):
 	a = Message.query.filter_by(SendId = SendId, RecId = RecId).all()
 	return a
 
+#
 def getMessageTwoidPage(SendId, RecId, page):
-
-	a = Message.query.filter_by(SendId = SendId, RecId = RecId).order_by(Message.sendtime.desc()).paginate(page, per_page=3, error_out=False)
-	return a
+	m = Message.query.filter(or_(and_(Message.SendId == SendId, Message.RecId == RecId), and_(Message.SendId == RecId, Message.RecId == SendId))).order_by(Message.sendtime.desc()).paginate(page, per_page=5, error_out=False)
+	return m
