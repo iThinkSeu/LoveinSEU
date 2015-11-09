@@ -97,8 +97,11 @@ def uploadavatar():
 		token = jsonstring['token']
 		type = jsonstring['type'] 
 		number = jsonstring['number']
+		messageid = jsonstring.get('message','')
+
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
+
 		#print avatar
 		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
 		#print avatar_type
@@ -963,7 +966,7 @@ def getMessageDetailList():
 				time = L[i].sendtime
 				readstate = L[i].state
 
-				output = {"text":text,"image":image,"vedio":vedio,"time":time,"readstate":readstate,"SendId":L[i].SendId,"name":name,"school":school}
+				output = {"messageid":L[i].id,"text":text,"image":image,"vedio":vedio,"time":time,"readstate":readstate,"SendId":L[i].SendId,"name":name,"school":school}
 				result.append(output)
 
 			state = 'successful'
