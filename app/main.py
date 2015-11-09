@@ -831,29 +831,157 @@ def searchuser():
 	return response
 
 
-# @app.route("/sendmessage")
-# def sendmessage():
-# 	try:
-# 		token = request.json['token']
-# 		text = request.json['text']
-# 		SendId = request.json['SendId']
-# 		RecId = request.json['RecId']
-# 		u = getuserinformation(token)
-# 		if u != None:
-# 			now = datetime.datetime.now()
-# 			messageTextTemp = MessageText(text = text, pdate = now) 
-# 			messageTextTemp.add()
+@app.route("/sendmessage",methods = ['POST'])
+def sendmessage():
+	try:
+		token = request.json['token']
+		text = request.json.get('text','')
+		RecId = request.json.get('RecId','-1')
+		u = getuserinformation(token)
+		if u != None:
+			SendId = u.id
+			messageContentTemp = MessageContent(text = text)
+			messageTemp = Message(SendId = SendId, RecId = RecId, messagecontents = messageContentTemp)
+			messageContentTemp.add()		
+			messageTemp.add()
+			id = messageTemp.id
+			state = 'successful'
+			reason = ''
 
-# 		else:
-# 			state = 'fail'
-# 			reason = 'no user'
-# 			result = [];
+		else:
+			state = 'fail'
+			reason = 'no user'
+			id = ''
+	
 		
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		id = ''
+
+	response = jsonify({'id':id,
+						'state':state,
+						'reason':reason})
+	return response
+
+@app.route("/readmessage",methods = ['POST'])
+def readmessage():
+	try:
+		token = request.json['token']
+		id = request.json.get('id','')
+		u = getuserinformation(token)
+		m = getMessagebyid(id)
+		if u != None:
+			print 'sss'
+			m.state = 0
+			m.add()			
+			state = 'successful'
+			reason = ''
+
+		else:
+			state = 'fail'
+			reason = 'no user'
+	
 		
-# 	except Exception, e:
-# 		raise
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
 
+	response = jsonify({'state':state,
+						'reason':reason})
+	return response
+@app.route("/getSendUserList",methods = ['POST'])
+def getSendUserList():
+	try:
+		token = request.json['token']
+		u = getuserinformation(token)
+		if u != None:
+			id = u.id
+			m = getMessageList(id)
+			L = [x.SendId for x in m]
+			L = list(set(L))
+			result = []
+			for i in range(len(L)):
+				unReadnum = 0
+				SendId = L[i]
+				mSendi = getMessageTwoid(SendId,id)
+				mSendi.reverse()
+				text = mSendi[0].messagecontents.text
+				for j in range(len(mSendi)):
+					if mSendi[j].state == '1':
+						unReadnum=unReadnum+1
+				senduser = getuserbyid(SendId)
+				output = {"SendId":SendId,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text}
+				result.append(output)
+			state = 'successful'
+			reason = ''
 
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	
+		
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'result':result})
+	return response
+
+@app.route("/getMessageDetailList", methods = ['POST'])
+def getMessageDetailList():
+	try:
+		token = request.json['token']
+		SendId = request.json['SendId']
+		page = request.json['page']
+		#print page
+		x=string.atoi(page)
+		u = getuserinformation(token)
+		if u != None:
+			id = u.id
+			result = []
+			senduser = getuserbyid(SendId)
+			pageitems = getMessageTwoidPage(SendId,id,x)
+			L = pageitems.items
+			for i in range(len(L)):
+				text = L[i].messagecontents.text
+				image = L[i].messagecontents.image
+				vedio = L[i].messagecontents.vedio
+				time = L[i].sendtime
+				readstate = L[i].state
+				output = {"text":text,"image":image,"vedio":vedio,"time":time,"readstate":readstate}
+				result.append(output)
+			name = senduser.name
+			gender = senduser.gender
+			school = senduser.school
+			state = 'successful'
+			reason = ''
+
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'SendId':SendId,
+						'name':name,
+						'gender':gender,
+						'school':school,
+						'result':result})
+	return response
 
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)))

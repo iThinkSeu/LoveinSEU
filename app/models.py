@@ -111,6 +111,7 @@ class User(db.Model):
 class Activity(db.Model):
 	__tablename__="activitys"
 	id = db.Column(db.Integer,primary_key=True)
+	rank = db.Column(db.String(32),unique = True)
 	title=db.Column(db.String(32),primary_key=True)
 	time=db.Column(db.String(32))
 	location=db.Column(db.String(32))
@@ -118,38 +119,40 @@ class Activity(db.Model):
 	state = db.Column(db.String(32))
 
 
-# class Message(db.Model):
-# 	__tablename__ = "Message"
-# 	id = db.Column(db.Integer,primary_key = True)
-# 	SendId = db.Column(db.String(32))
-# 	RecId = db.Column(db.String(32))
-# 	MessageId = db.Column(db.String(32))
-# 	state = db.Column(db.String(32))
+class Message(db.Model):
+	__tablename__ = "Message"
+	id = db.Column(db.Integer,primary_key = True)
+	SendId = db.Column(db.String(32))
+	RecId = db.Column(db.String(32))
+	MessageId = db.Column(db.Integer, db.ForeignKey('MessageContent.id'))
+	state = db.Column(db.String(32),default = '1')
+	sendtime = db.Column(db.DateTime, default = datetime.utcnow)
 
-# 	def add(self):
-# 		try:
-# 			db.session.add(self)
-# 			db.session.commit()
-# 		except Exception, e:
-# 			db.session.rollback()
-# 			return 2
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			db.session.rollback()
+			return 2
 
 
-# class MessageText(db.Model):
-# 	__tablename__ = "MessageText"
-# 	id = db.Column(db.Integer,primary_key = True)
-# 	text = db.Column(db.String(128))
-# 	image = db.Column(db.String(32))
-# 	vedio = db.Column(db.String(32))
-# 	pdate = db.Column(db.String(32))
+class MessageContent(db.Model):
+	__tablename__ = "MessageContent"
+	id = db.Column(db.Integer,primary_key = True)
+	text = db.Column(db.String(128))
+	image = db.Column(db.String(32))
+	vedio = db.Column(db.String(32))
+	messages = db.relationship('Message',backref = 'messagecontents')
 
-# 	def add(self):
-# 		try:
-# 			db.session.add(self)
-# 			db.session.commit()
-# 		except Exception, e:
-# 			db.session.rollback()
-# 			return 2
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			db.session.rollback()
+			return 2
+
 
 			
 def editschooldb(token,school,degree,department,enrollment):
@@ -297,6 +300,19 @@ def getranduser(token):
 	else:
 		return L
 
-# def addMessageText(text):
+def getMessagebyid(id):
+	a = Message.query.filter_by(id = id).first()
+	return a 
 
-	
+def getMessageList(RecId):
+	a = Message.query.filter_by(RecId = RecId).all()
+	return a
+
+def getMessageTwoid(SendId, RecId):
+	a = Message.query.filter_by(SendId = SendId, RecId = RecId).all()
+	return a
+
+def getMessageTwoidPage(SendId, RecId, page):
+
+	a = Message.query.filter_by(SendId = SendId, RecId = RecId).order_by(Message.sendtime.desc()).paginate(page, per_page=3, error_out=False)
+	return a
