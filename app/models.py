@@ -17,7 +17,7 @@ class Follow(db.Model):
 	__tablename__='follows'
 	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
 	followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-	timestamp = db.Column(db.DateTime, default = datetime.utcnow)
+	timestamp = db.Column(db.DateTime, default = datetime.now)
 
 
 class User(db.Model):
@@ -126,7 +126,7 @@ class Message(db.Model):
 	RecId = db.Column(db.String(32))
 	MessageId = db.Column(db.Integer, db.ForeignKey('MessageContent.id'))
 	state = db.Column(db.String(32),default = '1')
-	sendtime = db.Column(db.DateTime, default = datetime.utcnow)
+	sendtime = db.Column(db.DateTime, default = datetime.now)
 
 	def add(self):
 		try:

@@ -909,11 +909,12 @@ def getSendUserList():
 				mSendi = getMessageTwoid(SendId,id)
 				mSendi.reverse()
 				text = mSendi[0].messagecontents.text
+				lasttime = mSendi[0].sendtime
 				for j in range(len(mSendi)):
 					if mSendi[j].state == '1':
 						unReadnum=unReadnum+1
 				senduser = getuserbyid(SendId)
-				output = {"SendId":SendId,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text}
+				output = {"SendId":SendId,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
 				result.append(output)
 			state = 'successful'
 			reason = ''
