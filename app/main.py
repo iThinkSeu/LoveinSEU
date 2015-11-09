@@ -957,9 +957,9 @@ def getMessageDetailList():
 				gender = senduser.gender
 				school = senduser.school
 
-				text = L[i].messagecontents.text
-				image = L[i].messagecontents.image
-				vedio = L[i].messagecontents.vedio
+				text = L[i].messagecontents.text if L[i].messagecontents.text != None else ''
+				image = L[i].messagecontents.image if L[i].messagecontents.image != None else ''
+				vedio = L[i].messagecontents.vedio if L[i].messagecontents.vedio != None else ''
 				time = L[i].sendtime
 				readstate = L[i].state
 
