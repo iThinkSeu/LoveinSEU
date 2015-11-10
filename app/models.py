@@ -155,6 +155,16 @@ class MessageContent(db.Model):
 			db.session.rollback()
 			return 2
 
+class ImageURL(db.Model):
+	__tablename__ = "ImageURL"
+	id = db.Column(db.Integer,primary_key = True)
+	image1 = db.Column(db.String(32))
+	image2 = db.Column(db.String(32))
+	image3 = db.Column(db.String(32))
+	image4 = db.Column(db.String(32))
+	image5 = db.Column(db.String(32))
+	image6 = db.Column(db.String(32))
+	image7 = db.Column(db.String(32))
 
 			
 def editschooldb(token,school,degree,department,enrollment):
@@ -190,7 +200,7 @@ def editpersonaldb(token,name,gender,birthday,phone,wechat,qq,hometown):
 			return 0
 		except Exception, e:
 			db.session.rollback()
-			return 1   
+			return 1
 	else:
 		return 2 
 
