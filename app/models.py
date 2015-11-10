@@ -10,8 +10,9 @@ from sqlalchemy import and_
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@101.200.201.22:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
 
@@ -121,12 +122,18 @@ class Activity(db.Model):
 	state = db.Column(db.String(32))
 
 
+class MessageAndimage(db.Model):
+	__tablename__ = 'MessageAndimage'
+	message_id = db.Column(db.Integer,db.ForeignKey('Message.id'),primary_key = True)
+	image_id = db.Column(db.Integer,db.ForeignKey('imageURL.id'),primary_key = True)
+
 class Message(db.Model):
 	__tablename__ = "Message"
 	id = db.Column(db.Integer,primary_key = True)
 	SendId = db.Column(db.String(32))
 	RecId = db.Column(db.String(32))
-	MessageId = db.Column(db.Integer, db.ForeignKey('MessageContent.id'))
+	imagedb = db.relationship('MessageAndimage', foreign_keys = [MessageAndimage.message_id],backref = db.backref('content1',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+	text = db.Column(db.String(256))
 	state = db.Column(db.String(32),default = '1')
 	sendtime = db.Column(db.DateTime, default = datetime.now)
 
@@ -137,25 +144,29 @@ class Message(db.Model):
 		except Exception, e:
 			db.session.rollback()
 			return 2
+	def addimage(self,image):
+		try:
+			f = MessageAndimage(content1=self, content2=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			db.session.rollback()
+			return 2
 
-
-class MessageContent(db.Model):
-	__tablename__ = "MessageContent"
-	id = db.Column(db.Integer,primary_key = True)
-	text = db.Column(db.String(128))
-	image = db.Column(db.String(128))
-	vedio = db.Column(db.String(128))
-	messages = db.relationship('Message',backref = 'messagecontents')
-
+class imageURL(db.Model):
+	__tablename__ = "imageURL"
+	id = db.Column(db.Integer, primary_key = True)
+	number = db.Column(db.String(32))
+	messagedb = db.relationship('MessageAndimage', foreign_keys = [MessageAndimage.image_id],backref = db.backref('content2',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	def add(self):
 		try:
 			db.session.add(self)
 			db.session.commit()
 		except Exception, e:
 			db.session.rollback()
-			return 2
+			return 2		
 
-			
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
 	if u!=None:
@@ -317,3 +328,7 @@ def getMessageTwoid(SendId, RecId):
 def getMessageTwoidPage(SendId, RecId, page):
 	m = Message.query.filter(or_(and_(Message.SendId == SendId, Message.RecId == RecId), and_(Message.SendId == RecId, Message.RecId == SendId))).order_by(Message.sendtime.desc()).paginate(page, per_page=5, error_out=False)
 	return m
+
+def getMessageImageURLbyid(id):
+	a = imageURL.query.filter_by(id = id).first()
+	return a 

@@ -118,15 +118,12 @@ def uploadavatar():
 			elif type == "-1":
 				dst = '/home/www/background/' + str(id)
 			elif type == "-2":
+				image_number = getMessageImageURLbyid(number)
+				message_send = getMessagebyid(messageid)
+				message_send.addimage(image_number)
 				dst = '/home/www/message/image/' + str(messageid) + '-' + str(number)
-				mt = getMessagebyid(messageid).messagecontents
-				mt.image = "http://218.244.147.240:80/message/image/" + str(messageid) + '-' + str(number)
-				mt.add() 
 			elif type == "-3":
 				dst = '/home/www/message/vedio/' + str(messageid) + '-' + str(number)
-				mt = getMessagebyid(messageid).messagecontents
-				mt.vedio = "http://218.244.147.240:80/message/vedio/" + str(messageid) + '-' + str(number)
-				mt.add() 
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
@@ -856,9 +853,7 @@ def sendmessage():
 		u = getuserinformation(token)
 		if u != None:
 			SendId = u.id
-			messageContentTemp = MessageContent(text = text)
-			messageTemp = Message(SendId = SendId, RecId = RecId, messagecontents = messageContentTemp)
-			messageContentTemp.add()		
+			messageTemp = Message(SendId = SendId, RecId = RecId, text = text)
 			messageTemp.add()
 			id = messageTemp.id
 			state = 'successful'
@@ -924,7 +919,7 @@ def getSendUserList():
 				SendId = L[i]
 				mSendi = getMessageTwoid(SendId,id)
 				mSendi.reverse()
-				text = mSendi[0].messagecontents.text
+				text = mSendi[0].text
 				lasttime = mSendi[0].sendtime
 				for j in range(len(mSendi)):
 					if mSendi[j].state == '1':
@@ -963,17 +958,22 @@ def getMessageDetailList():
 		if u != None:
 			id = u.id
 			result = []
+
 			pageitems = getMessageTwoidPage(SendId,id,x)
 			L = pageitems.items
 			for i in range(len(L)):
 				senduser = getuserbyid(L[i].SendId)
-				name = senduser.name
-				gender = senduser.gender
-				school = senduser.school
-
-				text = L[i].messagecontents.text if L[i].messagecontents.text != None else ''
-				image = L[i].messagecontents.image if L[i].messagecontents.image != None else ''
-				vedio = L[i].messagecontents.vedio if L[i].messagecontents.vedio != None else ''
+				name = senduser.name if senduser.name !=None else ''
+				gender = senduser.gender if senduser.gender !=None else ''
+				school = senduser.school if senduser.school !=None else ''
+				text = L[i].text if L[i].text != None else ''
+				Limage=L[i].imagedb.all()
+				image = []
+				for i in range(len(Limage)):
+					number = Limage[i].image_id
+					url = "http://218.244.147.240:80/message/image/" + str(L[i].id) + "-" + str(number)
+					image.append(url)
+				vedio = ''
 				time = L[i].sendtime
 				readstate = L[i].state
 
@@ -982,7 +982,6 @@ def getMessageDetailList():
 
 			state = 'successful'
 			reason = ''
-
 		else:
 			state = 'fail'
 			reason = 'no user'
