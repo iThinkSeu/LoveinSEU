@@ -88,7 +88,7 @@ def login():
 	return response
 
 
-
+@app.route("/messageAppendix",methods=['POST'])
 @app.route("/uploadavatar", methods=['POST'])
 def uploadavatar():
 	try:
@@ -97,8 +97,7 @@ def uploadavatar():
 		token = jsonstring['token']
 		type = jsonstring['type'] 
 		number = jsonstring['number']
-		messageid = jsonstring.get('message','')
-
+		messageid = jsonstring.get('messageid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 
@@ -117,7 +116,17 @@ def uploadavatar():
 			elif type =="4":
 				dst = '/home/www/picture/autumn-3/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type == "-1":
-				dst = '/home/www/background/' + str(id) 
+				dst = '/home/www/background/' + str(id)
+			elif type == "-2":
+				dst = '/home/www/message/image/' + str(messageid) + '-' + str(number)
+				mt = getMessagebyid(messageid).messagecontents
+				mt.image = dst
+				mt.add() 
+			elif type == "-3":
+				dst = '/home/www/message/vedio/' + str(messageid) + '-' + str(number)
+				mt = getMessagebyid(messageid).messagecontents
+				mt.vedio = dst
+				mt.add() 
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
