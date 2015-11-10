@@ -143,8 +143,8 @@ class MessageContent(db.Model):
 	__tablename__ = "MessageContent"
 	id = db.Column(db.Integer,primary_key = True)
 	text = db.Column(db.String(128))
-	image = db.Column(db.String(32))
-	vedio = db.Column(db.String(32))
+	image = db.Column(db.String(128))
+	vedio = db.Column(db.String(128))
 	messages = db.relationship('Message',backref = 'messagecontents')
 
 	def add(self):
@@ -154,17 +154,6 @@ class MessageContent(db.Model):
 		except Exception, e:
 			db.session.rollback()
 			return 2
-
-class ImageURL(db.Model):
-	__tablename__ = "ImageURL"
-	id = db.Column(db.Integer,primary_key = True)
-	image1 = db.Column(db.String(32))
-	image2 = db.Column(db.String(32))
-	image3 = db.Column(db.String(32))
-	image4 = db.Column(db.String(32))
-	image5 = db.Column(db.String(32))
-	image6 = db.Column(db.String(32))
-	image7 = db.Column(db.String(32))
 
 			
 def editschooldb(token,school,degree,department,enrollment):
