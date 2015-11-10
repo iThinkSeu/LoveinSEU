@@ -145,6 +145,7 @@ def uploadavatar():
 			state = 'successful'
 			reason = ''
 		except Exception, e:
+			print e 
 			state = 'fail'
 			reason = '上传图片失败,请重传'
 	except Exception, e:
