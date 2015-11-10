@@ -120,12 +120,12 @@ def uploadavatar():
 			elif type == "-2":
 				dst = '/home/www/message/image/' + str(messageid) + '-' + str(number)
 				mt = getMessagebyid(messageid).messagecontents
-				mt.image = "http://218.244.147.240:80/"+ dst
+				mt.image = "http://218.244.147.240:80/message/image/" + str(messageid) + '-' + str(number)
 				mt.add() 
 			elif type == "-3":
 				dst = '/home/www/message/vedio/' + str(messageid) + '-' + str(number)
 				mt = getMessagebyid(messageid).messagecontents
-				mt.vedio = "http://218.244.147.240:80/" + dst
+				mt.vedio = "http://218.244.147.240:80/message/vedio/" + str(messageid) + '-' + str(number)
 				mt.add() 
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
