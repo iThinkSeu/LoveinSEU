@@ -969,8 +969,8 @@ def getMessageDetailList():
 				text = L[i].text if L[i].text != None else ''
 				Limage=L[i].imagedb.all()
 				image = []
-				for i in range(len(Limage)):
-					number = Limage[i].image_id
+				for j in range(len(Limage)):
+					number = Limage[j].image_id
 					url = "http://218.244.147.240:80/message/image/" + str(L[i].id) + "-" + str(number)
 					image.append(url)
 				vedio = ''
