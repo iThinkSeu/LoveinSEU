@@ -884,7 +884,7 @@ def readmessage():
 		u = getuserinformation(token)
 		m = getMessagebyid(id)
 		if u != None:
-			if m.RecId == u.id:
+			if m.RecId == str(u.id):
 				m.state = 0
 				m.add()			
 			state = 'successful'
