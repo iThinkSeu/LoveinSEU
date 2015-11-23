@@ -19,17 +19,19 @@ from editprofileroute import editprofile_route
 from getprofileroute import getprofile_route
 from friendsroute import friends_route
 from personalmessageroute import personalmessage_route
+from communityroute import community_route
 
 app = Flask(__name__)
 
 ##注册蓝本路由
-app.register_blueprint(check_page)  		#注册与登录
-app.register_blueprint(upload_image)		#上传图片
-app.register_blueprint(activity_route)		#活动相关
-app.register_blueprint(editprofile_route)	#编辑用户个人信息相关
-app.register_blueprint(getprofile_route)	#获取用户个人信息
-app.register_blueprint(friends_route)		#获取好友关系、搜索好友、推荐好友等相关
-app.register_blueprint(personalmessage_route) #私信相关
-
+app.register_blueprint(check_page)  			#注册与登录
+app.register_blueprint(upload_image)			#上传图片
+app.register_blueprint(activity_route)			#活动相关
+app.register_blueprint(editprofile_route)		#编辑用户个人信息相关
+app.register_blueprint(getprofile_route)		#获取用户个人信息
+app.register_blueprint(friends_route)			#获取好友关系、搜索好友、推荐好友等相关
+app.register_blueprint(personalmessage_route)	#私信相关
+app.register_blueprint(community_route)			#社区相关
+												
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)))

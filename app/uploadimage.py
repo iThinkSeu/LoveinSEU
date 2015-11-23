@@ -19,6 +19,7 @@ def uploadavatar():
 		type = jsonstring['type'] 
 		number = jsonstring['number']
 		messageid = jsonstring.get('messageid','')
+		postid = jsonstring.get('postid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 
@@ -39,12 +40,17 @@ def uploadavatar():
 			elif type == "-1":
 				dst = '/home/www/background/' + str(id)
 			elif type == "-2":
-				image_number = getMessageImageURLbyid(number)
+				image_number = getImageURLbyid(number)
 				message_send = getMessagebyid(messageid)
 				message_send.addimage(image_number)
 				dst = '/home/www/message/image/' + str(messageid) + '-' + str(number)
 			elif type == "-3":
 				dst = '/home/www/message/vedio/' + str(messageid) + '-' + str(number)
+			elif type == "-4":
+				images = getImageURLbyid(number)
+				posts = getpostbyid(postid) 
+				posts.addimage(images)
+				dst = '/home/www/community/postattachs/' + str(postid) + '-' + str(number)
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
@@ -56,7 +62,7 @@ def uploadavatar():
 
 			shutil.move(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			if type =="0":
+			if type =="0" or type == "-2" or type == "-4":
 				fp = Image.open(dst)
 				fp.thumbnail((100,100))
 				fp.save(dst + '_thumbnail.jpg')

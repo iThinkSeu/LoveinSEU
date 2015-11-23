@@ -10,9 +10,10 @@ from sqlalchemy import and_
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@101.200.201.22:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
 
@@ -22,6 +23,37 @@ class Follow(db.Model):
 	followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
 	timestamp = db.Column(db.DateTime, default = datetime.now)
 
+#文章点赞关系表
+class likepost(db.Model):
+	__tablename__ = 'likeposts'
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key = True)
+	postid = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+
+#评论点赞关系表
+class likecomment(db.Model):
+	__tablename__ = 'likecomments'
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key = True)
+	commentid = db.Column(db.Integer,db.ForeignKey('comments.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 class User(db.Model):
 	__tablename__='users'
@@ -54,10 +86,17 @@ class User(db.Model):
 	#all users that follow this
 	followers = db.relationship('Follow', foreign_keys = [Follow.followed_id], backref = db.backref('followed', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
+	#该用户发表的帖子
+	posts = db.relationship('post',backref = 'author', lazy = 'dynamic')
+	#该用户的评论
+	comments = db.relationship('comment', backref = 'author',lazy = 'dynamic')
+	#likeposts的外键，该用户喜欢了哪些帖子
+	likeposts = db.relationship('likepost', foreign_keys = [likepost.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#likecomments的外键。该用户喜欢了哪些评论
+	likecomments =  db.relationship('likecomment', foreign_keys = [likecomment.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 	def add(self):
 		try:
-			
 			tempuser = User.query.filter_by(username=self.username).first()
 			if tempuser is None:
 				db.session.add(self)
@@ -67,6 +106,7 @@ class User(db.Model):
 				return 1
 
 		except Exception, e:
+			print e
 			db.session.rollback()
 			return 2
 		
@@ -109,6 +149,69 @@ class User(db.Model):
 		except Exception, e:
 			db.session.rollback()
 			return 2
+	def likepost(self,post):
+		try:
+			lp = self.likeposts.filter_by(postid = post.id).first()
+			if lp is None:
+				lp = likepost(likeuser = self, likewhatpost = post)
+				db.session.add(lp)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+	def likecomment(self,comment):
+		try:
+			lc = self.likecomments.filter_by(commentid = comment.id).first()
+			if lc is None:
+				lc = likecomment(likeuser = self, likewhatcomment = comment)
+				db.session.add(lc)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+	def publishpost(self,post):
+		try:
+			post.author = self
+			db.session.add(post)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+	def commenttopost(self,comment,post):
+		try:
+			comment.post = post
+			comment.author = self
+			comment.commentid = -1
+			db.session.add(comment)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+	def commenttocomment(self,comment,destcomment):
+		try:
+			comment.post = destcomment.post
+			comment.author = self
+			comment.commentid = destcomment.id
+			db.session.add(comment)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2			
+							
 
 
 class Activity(db.Model):
@@ -123,12 +226,12 @@ class Activity(db.Model):
 
 
 class MessageAndimage(db.Model):
-	__tablename__ = 'MessageAndimage'
-	message_id = db.Column(db.Integer,db.ForeignKey('Message.id'),primary_key = True)
-	image_id = db.Column(db.Integer,db.ForeignKey('imageURL.id'),primary_key = True)
+	__tablename__ = 'messageandimages'
+	message_id = db.Column(db.Integer,db.ForeignKey('messages.id'),primary_key = True)
+	image_id = db.Column(db.Integer,db.ForeignKey('imageurls.id'),primary_key = True)
 
 class Message(db.Model):
-	__tablename__ = "Message"
+	__tablename__ = "messages"
 	id = db.Column(db.Integer,primary_key = True)
 	SendId = db.Column(db.String(32))
 	RecId = db.Column(db.String(32))
@@ -142,6 +245,7 @@ class Message(db.Model):
 			db.session.add(self)
 			db.session.commit()
 		except Exception, e:
+			print e
 			db.session.rollback()
 			return 2
 	def addimage(self,image):
@@ -151,21 +255,130 @@ class Message(db.Model):
 			db.session.commit()
 			return 0	
 		except Exception, e:
+			print e
 			db.session.rollback()
 			return 2
 
+class postimageAttach(db.Model):
+	__tablename__ = "postimageattachs"
+	id = db.Column(db.Integer)
+	postid = db.Column(db.Integer,db.ForeignKey("posts.id"),primary_key = True)
+	imageid = db.Column(db.Integer,db.ForeignKey("imageurls.id"),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+
 class imageURL(db.Model):
-	__tablename__ = "imageURL"
+	__tablename__ = "imageurls"
 	id = db.Column(db.Integer, primary_key = True)
-	number = db.Column(db.String(32))
+	number = db.Column(db.String(32),primary_key = True)
+	#私信的图片附件
 	messagedb = db.relationship('MessageAndimage', foreign_keys = [MessageAndimage.image_id],backref = db.backref('content2',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+	#帖子的图片附件
+	posts = db.relationship('postimageAttach', foreign_keys = [postimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	def add(self):
 		try:
 			db.session.add(self)
 			db.session.commit()
 		except Exception, e:
+			print e
 			db.session.rollback()
 			return 2		
+class topic(db.Model):
+	__tablename__ = "topics"
+	id = db.Column(db.Integer,primary_key=True)
+	theme = db.Column(db.String(32))
+	imageurl = db.Column(db.String(256))
+	note = db.Column(db.String(128))
+	number = db.Column(db.Integer)
+	slogen = db.Column(db.String(128))
+	postnumber = db.Column(db.Integer)
+	rank = db.Column(db.Integer)
+	posts = db.relationship('post',backref = 'topic',lazy = 'dynamic')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+
+class post(db.Model):
+	__tablename__ = "posts"
+	id = db.Column(db.Integer,primary_key = True)
+	title = db.Column(db.String(128))
+	body = db.Column(db.Text)
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	topicid = db.Column(db.Integer,db.ForeignKey('topics.id'))
+	likenumber = db.Column(db.Integer,default = 0)
+	commentnumber = db.Column(db.Integer,default = 0)
+	top = db.Column(db.Integer, default = 0)
+	disable = db.Column(db.Boolean,default =False)
+
+	#用户评论comment的外键postid，这篇文章的所有评论
+	comments = db.relationship('comment',backref = 'post',lazy = 'dynamic')
+	#赞了什么文章,喜欢这个文章的所有用户
+	likeusers = db.relationship('likepost', foreign_keys = [likepost.postid], backref = db.backref('likewhatpost', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#帖子的图片，以附件的形式上传
+	images = db.relationship('postimageAttach', foreign_keys = [postimageAttach.postid], backref = db.backref('posts', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+	def addimage(self,image):
+		try:
+			f = postimageAttach(posts=self, images=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+
+class comment(db.Model):
+	__tablename__ = 'comments'
+	id = db.Column(db.Integer,primary_key = True)
+	body = db.Column(db.Text)
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	postid = db.Column(db.Integer,db.ForeignKey('posts.id'))
+	commentid = db.Column(db.Integer,default = -1)
+	likenumber = db.Column(db.Integer,default = 0)
+	commentnumber = db.Column(db.Integer,default = 0)
+	disable = db.Column(db.Boolean,default = True)
+	likeusers = db.relationship('likecomment', foreign_keys = [likecomment.commentid], backref = db.backref('likewhatcomment', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+class topofficial(db.Model):
+	__tablename__ = 'topofficials'
+	id = db.Column(db.Integer,primary_key=True)
+	imageurl = db.Column(db.String(256))
+	postid = db.Column(db.Integer)
+	posttitle = db.Column(db.String(128))
+	rank = db.Column(db.Integer,default = 0)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+
+
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
@@ -329,6 +542,26 @@ def getMessageTwoidPage(SendId, RecId, page):
 	m = Message.query.filter(or_(and_(Message.SendId == SendId, Message.RecId == RecId), and_(Message.SendId == RecId, Message.RecId == SendId))).order_by(Message.sendtime.desc()).paginate(page, per_page=5, error_out=False)
 	return m
 
-def getMessageImageURLbyid(id):
+def getImageURLbyid(id):
 	a = imageURL.query.filter_by(id = id).first()
 	return a 
+def gettopicbyid(id):
+	a = topic.query.filter_by(id = id).first()
+	return a
+def getpostbyid(id):
+	a = post.query.filter_by(id = id).first()
+	return a
+def getcommentbyid(id):
+	a = comment.query.filter_by(id = id).first()	
+	return a
+def gettopofficial():
+	a = topofficial.query.order_by(topofficial.rank.desc()).all()
+	return a
+
+def gettopiclistdb():
+	a = topic.query.order_by(topic.rank).all()
+	return a
+def getpostlistbypage(page):
+	a = post.query.order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
+	return a
+	

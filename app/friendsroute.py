@@ -8,7 +8,6 @@ import datetime
 
 friends_route = Blueprint('friends_route', __name__)
 
-
 @friends_route.route("/follow",methods=['GET','POST'])
 def follow():
 	try:
