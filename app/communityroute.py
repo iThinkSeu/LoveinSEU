@@ -2,6 +2,7 @@
 from flask import Blueprint
 from flask import request,jsonify,json
 from models import *
+import models 
 from hashmd5 import *
 import string
 community_route = Blueprint('community_route', __name__)
@@ -282,13 +283,14 @@ def getpostlist():
 				school = postlist[i].author.school if postlist[i].author.school != None else ''
 				title = postlist[i].title if postlist[i].title !=None else ''
 				body = postlist[i].body if postlist[i].body !=None else ''
+				gender =  postlist[i].author.gender if postlist[i].author.gender != None else ''
 				postimage = postlist[i].images.all()
 				image = []
 				for j in range(len(postimage)):
 					number = postimage[j].imageid
-					url = "http://218.244.147.240:80/community/postattach/" + str(postlist[i].id) + "-" + str(number)
+					url = "http://218.244.147.240:80/community/postattachs/" + str(postlist[i].id) + "-" + str(number)
 					image.append(url)
-				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image}
+				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"gender":gender,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -305,6 +307,87 @@ def getpostlist():
 						'reason':reason})
 	return response
 #页面3
+#返回帖子详细内容
+@community_route.route("/getpostdetail",methods=['POST'])
+def getpostdetail():
+	try:
+		token = request.json['token']
+		postid = request.json['postid']
+		page = "1"
+		x=string.atoi(page)
+		u = getuserinformation(token)
+		if u is not None:	
+			state = 'successful'
+			reason = ''
+			post = getpostbyid(postid)
+			name = post.author.name if post.author.name!=None else ''
+			school = post.author.school if post.author.school != None else ''
+			title = post.title if post.title !=None else ''
+			body = post.body if post.body !=None else ''
+			gender =  post.author.gender if post.author.gender != None else ''
+			postimage = post.images.all()
+			image = []
+			for j in range(len(postimage)):
+				number = postimage[j].imageid
+				url = "http://218.244.147.240:80/community/postattachs/" + str(post.id) + "-" + str(number)
+				image.append(url)
+			likeuserpage = post.likeusers.order_by(models.likepost.timestamp.desc()).paginate(x, per_page=10, error_out=False)
+			likeitems = likeuserpage.items
+			L = [temp.userid for temp in likeitems] 
+			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"likeusers":L}
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	except Exception, e:
+		#raise 
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'result':result,
+						'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
 
-
+#返回post的评论
+@community_route.route("/getpostcomment",methods=['POST'])
+def getpostcomment():
+	try:
+		token = request.json['token']
+		postid = request.json['postid']
+		page = "1"
+		x=string.atoi(page)
+		u = getuserinformation(token)
+		if u is not None:	
+			state = 'successful'
+			reason = ''
+			commentlistpage = getpostcommentbypage(page,postid)
+			commentlistitems = postlistpage.items
+			for items in commentlistitems:
+				commentinlist = []
+				commentinlist.append(items.id)
+				while True:
+					temp = getcommenttocommentbyid(commentinlist)
+					if temp == None:
+						break
+					commentinlist.extend(temp)
+				for ctcid in commentinlist:
+					ctcommenttemp = getcommentbyid(ctcid)
+					ctcoutput = {"name":ctcommenttemp.author.name} 
+				output = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"likeusers":L}
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	except Exception, e:
+		#raise 
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'result':result,
+						'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
 

@@ -153,6 +153,7 @@ def getactivityinformation():
 
 	except Exception, e:
 
+		print e
 		state = 'fail'
 		reason = '异常'
 		title1 = 'e'  
