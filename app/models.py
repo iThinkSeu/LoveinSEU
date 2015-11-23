@@ -565,7 +565,7 @@ def getpostlistbypage(page):
 	a = post.query.order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
 	return a
 def getpostcommentbypage(page,postid):
-	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=5, error_out=False)
+	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
 	return a
 
 def getcommenttocommentbyid(destcommentid):

@@ -356,26 +356,40 @@ def getpostcomment():
 	try:
 		token = request.json['token']
 		postid = request.json['postid']
-		page = "1"
+		page = request.json['page']
 		x=string.atoi(page)
 		u = getuserinformation(token)
 		if u is not None:	
 			state = 'successful'
 			reason = ''
-			commentlistpage = getpostcommentbypage(page,postid)
-			commentlistitems = postlistpage.items
+			commentlistpage = getpostcommentbypage(x,postid)
+			commentlistitems = commentlistpage.items
+			result = []
 			for items in commentlistitems:
 				commentinlist = []
 				commentinlist.append(items.id)
+				tempcontent = commentinlist
 				while True:
-					temp = getcommenttocommentbyid(commentinlist)
-					if temp == None:
+					temp = getcommenttocommentbyid(tempcontent)
+					if len(temp) == 0:
 						break
-					commentinlist.extend(temp)
-				for ctcid in commentinlist:
-					ctcommenttemp = getcommentbyid(ctcid)
-					ctcoutput = {"name":ctcommenttemp.author.name} 
-				output = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"likeusers":L}
+					L = [idtemp.id for idtemp in temp]
+					commentinlist.extend(L)
+					tempcontent = L
+				ctcresult = []
+				for i in range(len(commentinlist)):
+					if i!=0:
+						ctcommenttemp = getcommentbyid(commentinlist[i])
+						commentsource = ctcommenttemp
+						commentdest = getcommentbyid(ctcommenttemp.commentid)
+						ctcoutput = {"id":commentsource.author.id,"name":commentsource.author.name,"destname":commentdest.author.name,"body":commentsource.body}
+						ctcresult.append(ctcoutput)
+				name = items.author.name if items.author.name != None else ''
+				school = items.author.school if items.author.school != None else ''
+				gender = items.author.gender if items.author.gender != None else ''
+				body = items.body if items.body != None else ''
+				output = {"id":items.id,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"reply":ctcresult}
+				result.append(output)
 		else:
 			state = 'fail'
 			reason = 'no user'
