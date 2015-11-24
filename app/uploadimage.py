@@ -21,6 +21,7 @@ def uploadavatar():
 		messageid = jsonstring.get('messageid','')
 		postid = jsonstring.get('postid','')
 		topicid = jsonstring.get('topicid','')
+		topofficialid = jsonstring.get('topofficialid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 
@@ -57,6 +58,11 @@ def uploadavatar():
 				dst = '/home/www/community/topics/' + str(topicid)
 				topictemp.imageurl = "http://218.244.147.240:80/community/topics/" + str(topicid)
 				topictemp.add()
+			elif type == "-6":
+				topofficialtemp = gettopofficialbyid(topofficialid)
+				dst = '/home/www/community/topofficials/' + str(topofficialid)
+				topofficialtemp.imageurl = "http://218.244.147.240:80/community/topofficials/" + str(topofficialid)
+				topofficialtemp.add()
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 

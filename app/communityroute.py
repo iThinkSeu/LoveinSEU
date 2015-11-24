@@ -20,6 +20,7 @@ def pubishpost():
 			post1 = post(title = title,body = body,topic = topic)
 			u.publishpost(post1)
 			id = post1.id
+			topic.postnumber = topic.posts.count()
 			state = 'successful'
 			reason = ''
 		else:
