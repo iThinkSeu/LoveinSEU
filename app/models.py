@@ -289,7 +289,7 @@ class topic(db.Model):
 	imageurl = db.Column(db.String(256))
 	note = db.Column(db.String(128))
 	number = db.Column(db.Integer)
-	slogen = db.Column(db.String(128))
+	slogan = db.Column(db.String(128))
 	postnumber = db.Column(db.Integer)
 	rank = db.Column(db.Integer)
 	posts = db.relationship('post',backref = 'topic',lazy = 'dynamic')
@@ -561,8 +561,8 @@ def gettopofficial():
 def gettopiclistdb():
 	a = topic.query.order_by(topic.rank).all()
 	return a
-def getpostlistbypage(page):
-	a = post.query.order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
+def getpostlistbypage(page,topicid):
+	a = post.query.filter_by(topicid = topicid).order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
 	return a
 def getpostcommentbypage(page,postid):
 	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
@@ -574,4 +574,3 @@ def getcommenttocommentbyid(destcommentid):
 def gettopofficialbyid(id):
 	a = topofficial.query.filter_by(id = id).first()
 	return a 
-	

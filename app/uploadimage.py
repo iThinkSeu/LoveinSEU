@@ -52,7 +52,8 @@ def uploadavatar():
 				images = getImageURLbyid(number)
 				posts = getpostbyid(postid) 
 				posts.addimage(images)
-				dst = '/home/www/community/postattachs/' + str(postid) + '-' + str(number)
+				topicid = posts.topic.id
+				dst = '/home/www/community/postattachs/' + str(topicid) + '-' + str(postid) + '-' + str(number)
 			elif type == "-5":
 				topictemp = gettopicbyid(topicid)
 				dst = '/home/www/community/topics/' + str(topicid)

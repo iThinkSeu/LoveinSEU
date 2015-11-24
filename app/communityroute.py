@@ -237,19 +237,17 @@ def gettopiclist():
 						'reason':reason})
 	return response
 #社区页面2
-@community_route.route("/gettopicslogen",methods=['POST'])
-def gettopicslogen():
+@community_route.route("/gettopicslogan",methods=['POST'])
+def gettopicslogan():
 	try:
 		token = request.json['token']
+		topicid = request.json['topicid']
+		topic = gettopicbyid(topicid)
 		u = getuserinformation(token)
 		if u is not None:	
 			state = 'successful'
 			reason = ''
-			topiclist = gettopiclistdb()
-			result = []
-			for i in range(len(topiclist)):
-				output = {"id":topiclist[i].id,"slogen":topiclist[i].slogen,"imageurl":topiclist[i].imageurl}
-				result.append(output)
+			result = {"id":topic.id,"slogan":topic.slogan,"imageurl":topic.imageurl}
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -271,12 +269,13 @@ def getpostlist():
 	try:
 		token = request.json['token']
 		page = request.json['page']
+		topicid = request.json['topicid']
 		x=string.atoi(page)
 		u = getuserinformation(token)
 		if u is not None:	
 			state = 'successful'
 			reason = ''
-			pageitems = getpostlistbypage(x)
+			pageitems = getpostlistbypage(x,topicid)
 			postlist = pageitems.items
 			result = []
 			for i in range(len(postlist)):
@@ -289,7 +288,7 @@ def getpostlist():
 				image = []
 				for j in range(len(postimage)):
 					number = postimage[j].imageid
-					url = "http://218.244.147.240:80/community/postattachs/" + str(postlist[i].id) + "-" + str(number)
+					url = "http://218.244.147.240:80/community/postattachs/" + str(topicid) + "-" + str(postlist[i].id) + "-" + str(number)
 					image.append(url)
 				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"gender":gender,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image}
 				result.append(output)
