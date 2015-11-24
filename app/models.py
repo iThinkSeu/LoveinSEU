@@ -261,7 +261,7 @@ class Message(db.Model):
 
 class postimageAttach(db.Model):
 	__tablename__ = "postimageattachs"
-	id = db.Column(db.Integer)
+	id = db.Column(db.Integer,primary_key = True)
 	postid = db.Column(db.Integer,db.ForeignKey("posts.id"),primary_key = True)
 	imageid = db.Column(db.Integer,db.ForeignKey("imageurls.id"),primary_key = True)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
