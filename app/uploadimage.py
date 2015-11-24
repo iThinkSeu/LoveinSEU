@@ -20,6 +20,7 @@ def uploadavatar():
 		number = jsonstring['number']
 		messageid = jsonstring.get('messageid','')
 		postid = jsonstring.get('postid','')
+		topicid = jsonstring.get('topicid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 
@@ -51,6 +52,11 @@ def uploadavatar():
 				posts = getpostbyid(postid) 
 				posts.addimage(images)
 				dst = '/home/www/community/postattachs/' + str(postid) + '-' + str(number)
+			elif type == "-5":
+				topictemp = gettopicbyid(topicid)
+				dst = '/home/www/community/topics/' + str(topicid)
+				topictemp.imageurl = "http://218.244.147.240:80/community/topics/" + str(topicid)
+				topictemp.add()
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
