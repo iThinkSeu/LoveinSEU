@@ -571,3 +571,7 @@ def getpostcommentbypage(page,postid):
 def getcommenttocommentbyid(destcommentid):
 	a= comment.query.filter(comment.commentid.in_(destcommentid)).order_by(comment.timestamp.desc()).all()
 	return a
+def gettopofficialbyid(id):
+	a = topofficial.query.filter_by(id = id).first()
+	return a 
+	
