@@ -285,12 +285,19 @@ def getpostlist():
 				body = postlist[i].body if postlist[i].body !=None else ''
 				gender =  postlist[i].author.gender if postlist[i].author.gender != None else ''
 				postimage = postlist[i].images.all()
+				if len(body) > 30:
+					body = body[0:29]
+				else:
+					body = body
 				image = []
+				thumbnail = []
 				for j in range(len(postimage)):
 					number = postimage[j].imageid
 					url = "http://218.244.147.240:80/community/postattachs/" + str(topicid) + "-" + str(postlist[i].id) + "-" + str(number)
+					urlthum = "http://218.244.147.240:80/community/postattachs/" + str(topicid) + "-" + str(postlist[i].id) + "-" + str(number) + "_thumbnail.jpg"
 					image.append(url)
-				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"gender":gender,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image}
+					thumbnail.append(urlthum)
+				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"gender":gender,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image,"thumbnail":thumbnail}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -325,16 +332,20 @@ def getpostdetail():
 			title = post.title if post.title !=None else ''
 			body = post.body if post.body !=None else ''
 			gender =  post.author.gender if post.author.gender != None else ''
+			topicid = post.topic.id
 			postimage = post.images.all()
 			image = []
+			thumbnail = []
 			for j in range(len(postimage)):
 				number = postimage[j].imageid
-				url = "http://218.244.147.240:80/community/postattachs/" + str(post.id) + "-" + str(number)
+				url = "http://218.244.147.240:80/community/postattachs/"+ str(topicid) + "-" + str(post.id) + "-" + str(number)
+				urlthum = "http://218.244.147.240:80/community/postattachs/" + str(topicid) + "-" + str(post.id) + "-" + str(number) + "_thumbnail.jpg"
 				image.append(url)
+				thumbnail.append(urlthum)
 			likeuserpage = post.likeusers.order_by(models.likepost.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			likeitems = likeuserpage.items
 			L = [temp.userid for temp in likeitems] 
-			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"likeusers":L}
+			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":L}
 		else:
 			state = 'fail'
 			reason = 'no user'
