@@ -344,7 +344,7 @@ def getpostdetail():
 				thumbnail.append(urlthum)
 			likeuserpage = post.likeusers.order_by(models.likepost.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			likeitems = likeuserpage.items
-			L = [temp.userid for temp in likeitems] 
+			L = [str(temp.userid) for temp in likeitems] 
 			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":L}
 		else:
 			state = 'fail'
@@ -416,3 +416,40 @@ def getpostcomment():
 						'reason':reason})
 	return response
 
+#根据post得到所有点赞用户
+@community_route.route("/getpostlikeusers",methods=['POST'])
+def getpostlikeusers():
+	try:
+		token = request.json['token']
+		postid = request.json['postid']
+		page = request.json['page']
+		x=string.atoi(page)
+		u = getuserinformation(token)
+		if u is not None:	
+			state = 'successful'
+			reason = ''
+			post = getpostbyid(postid)
+			likeuserpage = post.likeusers.order_by(models.likepost.timestamp.desc()).paginate(x, per_page=10, error_out=False)
+			likeitems = likeuserpage.items
+			result = []
+			for temp in likeitems:
+				userid = temp.userid
+				usertemp = getuserbyid(userid)
+				name = usertemp.name if usertemp.name != None else ''
+				school = usertemp.school if usertemp.school != None else ''
+				gender = usertemp.gender if usertemp.gender != None else ''
+				output = {"id":usertemp.id,"name":name,"school":school,"gender":gender}
+				result.append(output)
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	except Exception, e:
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'result':result,
+						'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
