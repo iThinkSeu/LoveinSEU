@@ -466,3 +466,59 @@ def getpostlikeusers():
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
+#根据commentid得到这个comment的所有评论
+
+@community_route.route("/getcommentbycommentid",methods=['POST'])
+def getcommentbycommentid():
+	try:
+		token = request.json['token']
+		commentid = request.json['commentid']
+		u = getuserinformation(token)
+		if u is not None:	
+			state = 'successful'
+			reason = ''
+
+			items = getcommentbyid(commentid)
+			commentinlist = []
+			commentinlist.append(items.id)
+			tempcontent = commentinlist
+			while True:
+				temp = getcommenttocommentbyid(tempcontent)
+				if len(temp) == 0:
+					break
+				L = [idtemp.id for idtemp in temp]
+				commentinlist.extend(L)
+				tempcontent = L
+			ctcresult = []
+			for i in range(len(commentinlist)):
+				if i!=0:
+					ctcommenttemp = getcommentbyid(commentinlist[i])
+					commentsource = ctcommenttemp
+					commentdest = getcommentbyid(ctcommenttemp.commentid)
+					ctcoutput = {"id":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
+					ctcresult.append(ctcoutput)
+			name = items.author.name if items.author.name != None else ''
+			school = items.author.school if items.author.school != None else ''
+			gender = items.author.gender if items.author.gender != None else ''
+			body = items.body if items.body != None else ''
+			likeuserstemp = items.likeusers.all()
+			L = [(temp2.userid) for temp2 in likeuserstemp]
+			if u.id in L:
+				flag = '1'
+			else:
+				flag = '0'
+			result = {"id":items.id,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	except Exception, e:
+		#raise 
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'result':result,
+						'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
