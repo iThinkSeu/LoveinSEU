@@ -345,7 +345,14 @@ def getpostdetail():
 			likeuserpage = post.likeusers.order_by(models.likepost.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			likeitems = likeuserpage.items
 			L = [str(temp.userid) for temp in likeitems] 
-			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":L}
+			#判断自己是否点赞了这篇
+			likeuserstemp = post.likeusers.all()
+			L = [(temp2.userid) for temp2 in likeuserstemp]
+			if u.id in L:
+				flag = '1'
+			else:
+				flag = '0'
+			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":L,"flag":flag}
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -399,7 +406,13 @@ def getpostcomment():
 				school = items.author.school if items.author.school != None else ''
 				gender = items.author.gender if items.author.gender != None else ''
 				body = items.body if items.body != None else ''
-				output = {"id":items.id,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"reply":ctcresult}
+				likeuserstemp = items.likeusers.all()
+				L = [(temp2.userid) for temp2 in likeuserstemp]
+				if u.id in L:
+					flag = '1'
+				else:
+					flag = '0'
+				output = {"id":items.id,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
 				result.append(output)
 		else:
 			state = 'fail'
