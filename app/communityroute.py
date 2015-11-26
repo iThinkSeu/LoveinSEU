@@ -490,6 +490,16 @@ def getcommentbycommentid():
 			state = 'successful'
 			reason = ''
 			items = getcommentbyid(commentid)
+			#获取这条评论的图片附件链接
+			commentimage = items.images.all()
+			image = []
+			thumbnail = []
+			for commentimagetemp in commentimage:
+				number = commentimagetemp.imageid
+				url = "http://218.244.147.240:80/community/commentattachs/"+ str(items.post.topicid) + "-" + str(items.id) + "-" + str(number)
+				urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.post.topicid) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
+				image.append(url)
+				thumbnail.append(urlthum)		
 			commentinlist = []
 			commentinlist.append(items.id)
 			tempcontent = commentinlist
@@ -518,7 +528,7 @@ def getcommentbycommentid():
 				flag = '1'
 			else:
 				flag = '0'
-			result = {"id":items.id,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
+			result = {"id":items.id,"userid":items.author.id,"image":image,"thumbnail":thumbnail,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
 		else:
 			state = 'fail'
 			reason = 'no user'
