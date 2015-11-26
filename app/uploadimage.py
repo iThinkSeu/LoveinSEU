@@ -25,7 +25,6 @@ def uploadavatar():
 		commentid = jsonstring.get('commentid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
-
 		#print avatar
 		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
 		#print avatar_type

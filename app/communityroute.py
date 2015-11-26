@@ -390,8 +390,8 @@ def getpostcomment():
 				thumbnail = []
 				for commentimagetemp in commentimage:
 					number = commentimagetemp.imageid
-					url = "http://218.244.147.240:80/community/commentattachs/"+ str(items.id) + "-" + str(items.id) + "-" + str(number)
-					urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.id) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
+					url = "http://218.244.147.240:80/community/commentattachs/"+ str(items.post.topicid) + "-" + str(items.id) + "-" + str(number)
+					urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.post.topicid) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
 					image.append(url)
 					thumbnail.append(urlthum)
 				#获取回复这条评论的所有评论
@@ -506,7 +506,7 @@ def getcommentbycommentid():
 					ctcommenttemp = getcommentbyid(commentinlist[i])
 					commentsource = ctcommenttemp
 					commentdest = getcommentbyid(ctcommenttemp.commentid)
-					ctcoutput = {"id":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
+					ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
 					ctcresult.append(ctcoutput)
 			name = items.author.name if items.author.name != None else ''
 			school = items.author.school if items.author.school != None else ''
