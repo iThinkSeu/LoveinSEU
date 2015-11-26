@@ -84,6 +84,9 @@ def commenttocomment():
 			sourcecomment = comment(body = body)
 			u.commenttocomment(sourcecomment,destcomment)
 			id = sourcecomment.id
+			post1 = destcomment.post
+			post1.commentnumber = post1.comments.count()
+			post1.add()
 			state = 'successful'
 			reason = ''
 		else:
@@ -413,6 +416,8 @@ def getpostcomment():
 						commentdest = getcommentbyid(ctcommenttemp.commentid)
 						ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
 						ctcresult.append(ctcoutput)
+
+				ctcresult.reverse()#逆序下
 				#附加这条评论的一些基础信息
 				name = items.author.name if items.author.name != None else ''
 				school = items.author.school if items.author.school != None else ''
@@ -518,6 +523,9 @@ def getcommentbycommentid():
 					commentdest = getcommentbyid(ctcommenttemp.commentid)
 					ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
 					ctcresult.append(ctcoutput)
+			#逆序下
+			ctcresult.reverse()
+			#基本信息
 			name = items.author.name if items.author.name != None else ''
 			school = items.author.school if items.author.school != None else ''
 			gender = items.author.gender if items.author.gender != None else ''
