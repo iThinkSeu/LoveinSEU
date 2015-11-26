@@ -22,6 +22,7 @@ def uploadavatar():
 		postid = jsonstring.get('postid','')
 		topicid = jsonstring.get('topicid','')
 		topofficialid = jsonstring.get('topofficialid','')
+		commentid = jsonstring.get('commentid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 
