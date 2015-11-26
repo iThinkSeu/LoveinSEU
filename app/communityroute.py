@@ -398,26 +398,29 @@ def getpostcomment():
 					image.append(url)
 					thumbnail.append(urlthum)
 				#获取回复这条评论的所有评论
-				commentinlist = []
-				commentinlist.append(items.id)
-				tempcontent = commentinlist
+				tempcontent = []
+				array = []
+				tempcontent.append(items.id)
 				while True:
 					temp = getcommenttocommentbyid(tempcontent)
 					if len(temp) == 0:
 						break
 					L = [idtemp.id for idtemp in temp]
-					commentinlist.extend(L)
-					tempcontent = L
-				ctcresult = []
-				for i in range(len(commentinlist)):
-					if i!=0:
-						ctcommenttemp = getcommentbyid(commentinlist[i])
-						commentsource = ctcommenttemp
-						commentdest = getcommentbyid(ctcommenttemp.commentid)
-						ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
-						ctcresult.append(ctcoutput)
+					for idtemp in temp:
+						L1 = [idtemp.timestamp,idtemp.id]
+						array.append(L1) 
 
-				ctcresult.reverse()#逆序下
+					#commentinlist.extend(L)
+					tempcontent = L
+				array.sort()
+				Lsort = [xx[1] for xx in array]
+				ctcresult = []
+				for i in range(len(Lsort)):
+					ctcommenttemp = getcommentbyid(Lsort[i])
+					commentsource = ctcommenttemp
+					commentdest = getcommentbyid(ctcommenttemp.commentid)
+					ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"timestamp":commentsource.timestamp,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
+					ctcresult.append(ctcoutput)
 				#附加这条评论的一些基础信息
 				name = items.author.name if items.author.name != None else ''
 				school = items.author.school if items.author.school != None else ''
@@ -505,26 +508,29 @@ def getcommentbycommentid():
 				urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.post.topicid) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
 				image.append(url)
 				thumbnail.append(urlthum)		
-			commentinlist = []
-			commentinlist.append(items.id)
-			tempcontent = commentinlist
+			#获取回复这条评论的所有评论
+			tempcontent = []
+			array = []
+			tempcontent.append(items.id)
 			while True:
 				temp = getcommenttocommentbyid(tempcontent)
 				if len(temp) == 0:
 					break
 				L = [idtemp.id for idtemp in temp]
-				commentinlist.extend(L)
+				for idtemp in temp:
+					L1 = [idtemp.timestamp,idtemp.id]
+					array.append(L1) 
 				tempcontent = L
+			array.sort()
+			Lsort = [xx[1] for xx in array]
 			ctcresult = []
-			for i in range(len(commentinlist)):
-				if i!=0:
-					ctcommenttemp = getcommentbyid(commentinlist[i])
-					commentsource = ctcommenttemp
-					commentdest = getcommentbyid(ctcommenttemp.commentid)
-					ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
-					ctcresult.append(ctcoutput)
-			#逆序下
-			ctcresult.reverse()
+			for i in range(len(Lsort)):
+				ctcommenttemp = getcommentbyid(Lsort[i])
+				commentsource = ctcommenttemp
+				commentdest = getcommentbyid(ctcommenttemp.commentid)
+				ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"timestamp":commentsource.timestamp,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
+				ctcresult.append(ctcoutput)
+
 			#基本信息
 			name = items.author.name if items.author.name != None else ''
 			school = items.author.school if items.author.school != None else ''
