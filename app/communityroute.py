@@ -384,6 +384,17 @@ def getpostcomment():
 			commentlistitems = commentlistpage.items
 			result = []
 			for items in commentlistitems:
+				#获取这条评论的图片附件链接
+				commentimage = items.images.all()
+				image = []
+				thumbnail = []
+				for commentimagetemp in commentimage:
+					number = commentimagetemp.imageid
+					url = "http://218.244.147.240:80/community/commentattachs/"+ str(items.id) + "-" + str(items.id) + "-" + str(number)
+					urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.id) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
+					image.append(url)
+					thumbnail.append(urlthum)
+				#获取回复这条评论的所有评论
 				commentinlist = []
 				commentinlist.append(items.id)
 				tempcontent = commentinlist
@@ -402,6 +413,7 @@ def getpostcomment():
 						commentdest = getcommentbyid(ctcommenttemp.commentid)
 						ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
 						ctcresult.append(ctcoutput)
+				#附加这条评论的一些基础信息
 				name = items.author.name if items.author.name != None else ''
 				school = items.author.school if items.author.school != None else ''
 				gender = items.author.gender if items.author.gender != None else ''
@@ -412,7 +424,7 @@ def getpostcomment():
 					flag = '1'
 				else:
 					flag = '0'
-				output = {"id":items.id,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
+				output = {"id":items.id,"image":image,"thumbnail":thumbnail,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -477,7 +489,6 @@ def getcommentbycommentid():
 		if u is not None:	
 			state = 'successful'
 			reason = ''
-
 			items = getcommentbyid(commentid)
 			commentinlist = []
 			commentinlist.append(items.id)

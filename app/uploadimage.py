@@ -49,21 +49,31 @@ def uploadavatar():
 			elif type == "-3":
 				dst = '/home/www/message/vedio/' + str(messageid) + '-' + str(number)
 			elif type == "-4":
+				#type = -4 表示上传post的图片附件
 				images = getImageURLbyid(number)
 				posts = getpostbyid(postid) 
 				posts.addimage(images)
 				topicid = posts.topic.id
 				dst = '/home/www/community/postattachs/' + str(topicid) + '-' + str(postid) + '-' + str(number)
 			elif type == "-5":
+				#type = -5 表示上传topic的附图
 				topictemp = gettopicbyid(topicid)
 				dst = '/home/www/community/topics/' + str(topicid)
 				topictemp.imageurl = "http://218.244.147.240:80/community/topics/" + str(topicid)
 				topictemp.add()
 			elif type == "-6":
+				#type = -6 表示上传topofficial的图片
 				topofficialtemp = gettopofficialbyid(topofficialid)
 				dst = '/home/www/community/topofficials/' + str(topofficialid)
 				topofficialtemp.imageurl = "http://218.244.147.240:80/community/topofficials/" + str(topofficialid)
 				topofficialtemp.add()
+			elif type == "-7":
+				#type = -7表示上传comment的图片附件
+				images = getImageURLbyid(number)
+				comments = getcommentbyid(commentid) 
+				comments.addimage(images)
+				topicid = comments.post.topicid
+				dst = '/home/www/community/commentattachs/' + str(topicid) + '-' + str(commentid) + '-' + str(number)
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
@@ -75,7 +85,7 @@ def uploadavatar():
 
 			shutil.move(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			if type =="0" or type == "-2" or type == "-4":
+			if type =="0" or type == "-2" or type == "-4" or type == "-7":
 				fp = Image.open(dst)
 				fp.thumbnail((100,100))
 				fp.save(dst + '_thumbnail.jpg')

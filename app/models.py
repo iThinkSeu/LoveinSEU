@@ -259,6 +259,13 @@ class Message(db.Model):
 			db.session.rollback()
 			return 2
 
+class commentimageAttach(db.Model):
+	__tablename__ = "commentimageattachs"
+	id = db.Column(db.Integer,primary_key = True)
+	commentid = db.Column(db.Integer,db.ForeignKey('comments.id'),primary_key = True)
+	imageid = db.Column(db.Integer,db.ForeignKey('imageurls.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+
 class postimageAttach(db.Model):
 	__tablename__ = "postimageattachs"
 	id = db.Column(db.Integer,primary_key = True)
@@ -274,6 +281,8 @@ class imageURL(db.Model):
 	messagedb = db.relationship('MessageAndimage', foreign_keys = [MessageAndimage.image_id],backref = db.backref('content2',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	#帖子的图片附件
 	posts = db.relationship('postimageAttach', foreign_keys = [postimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+	#评论的图片附件
+	comments = db.relationship('commentimageAttach', foreign_keys = [commentimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	def add(self):
 		try:
 			db.session.add(self)
@@ -353,6 +362,8 @@ class comment(db.Model):
 	commentnumber = db.Column(db.Integer,default = 0)
 	disable = db.Column(db.Boolean,default = True)
 	likeusers = db.relationship('likecomment', foreign_keys = [likecomment.commentid], backref = db.backref('likewhatcomment', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#评论的图片，以附件的形式上传
+	images = db.relationship('commentimageAttach', foreign_keys = [commentimageAttach.commentid], backref = db.backref('comments', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	def add(self):
 		try:
 			db.session.add(self)
@@ -361,6 +372,17 @@ class comment(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+	def addimage(self,image):
+		try:
+			f = commentimageAttach(comments=self, images=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+
 class topofficial(db.Model):
 	__tablename__ = 'topofficials'
 	id = db.Column(db.Integer,primary_key=True)
@@ -565,7 +587,7 @@ def getpostlistbypage(page,topicid):
 	a = post.query.filter_by(topicid = topicid).order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
 	return a
 def getpostcommentbypage(page,postid):
-	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).paginate(page, per_page=8, error_out=False)
+	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
 	return a
 
 def getcommenttocommentbyid(destcommentid):
