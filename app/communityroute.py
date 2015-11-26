@@ -400,7 +400,7 @@ def getpostcomment():
 						ctcommenttemp = getcommentbyid(commentinlist[i])
 						commentsource = ctcommenttemp
 						commentdest = getcommentbyid(ctcommenttemp.commentid)
-						ctcoutput = {"id":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
+						ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
 						ctcresult.append(ctcoutput)
 				name = items.author.name if items.author.name != None else ''
 				school = items.author.school if items.author.school != None else ''
