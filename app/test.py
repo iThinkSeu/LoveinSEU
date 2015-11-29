@@ -8,3 +8,5 @@ topic1 = topic.query.filter_by(id=1).first()
 
 
 u1.publishpost(post1)
+u = User.query.filter_by(id = 74).first()
+act = Activity.query.filter_by(id = 3).first()

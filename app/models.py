@@ -54,6 +54,14 @@ class likecomment(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+#参加活动表
+class attentactivity(db.Model):
+	__tablename__ = 'attentactivitys'
+	id = db.Column(db.Integer,primary_key = True)
+	userid = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key = True)
+	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+
 
 class User(db.Model):
 	__tablename__='users'
@@ -94,6 +102,8 @@ class User(db.Model):
 	likeposts = db.relationship('likepost', foreign_keys = [likepost.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#likecomments的外键。该用户喜欢了哪些评论
 	likecomments =  db.relationship('likecomment', foreign_keys = [likecomment.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#参加的活动activity
+	activitys = db.relationship('attentactivity', foreign_keys = [attentactivity.userid], backref = db.backref('attentuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 	def add(self):
 		try:
@@ -116,6 +126,31 @@ class User(db.Model):
 			return 0
 		else:
 			return 1
+	def attent(self,activity):
+		try:
+			flag = self.activitys.filter_by(activityid = activity.id).first()
+			if flag is None:
+				f = attentactivity(attentuser = self,attentwhatactivity = activity)
+				db.session.add(f)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			db.session.rollback()
+			return 2		
+	def isattent(self,activityid):
+		try:
+			f = self.activitys.all()
+			L = [x.activityid for x in f]
+			flag = activityid in L
+			if flag:
+				return 1
+			else:
+				return 0
+		except Exception, e:
+			return 2
+			
 
 	def is_following(self, user):
 		u=self.followeds.filter_by(followed_id=user.id).first()
@@ -223,6 +258,8 @@ class Activity(db.Model):
 	location=db.Column(db.String(32))
 	number=db.Column(db.String(32))
 	state = db.Column(db.String(32))
+	disable = db.Column(db.Boolean,default =False)
+	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 
 class MessageAndimage(db.Model):
@@ -401,7 +438,6 @@ class topofficial(db.Model):
 			return 2
 
 
-
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
 	if u!=None:
@@ -526,6 +562,9 @@ def getuserbyname(name):
 def getActivityInformation(id):
 	a = Activity.query.filter_by(id = id).first()
 	return a 
+def getactivityall():
+	a = Activity.query.filter_by(disable = False).order_by(Activity.rank).all()
+	return a
 
 def getranduser(token):
 	u = getuserinformation(token)
@@ -577,7 +616,7 @@ def getcommentbyid(id):
 	a = comment.query.filter_by(id = id).first()	
 	return a
 def gettopofficial():
-	a = topofficial.query.order_by(topofficial.rank.desc()).all()
+	a = topofficial.query.order_by(topofficial.rank).all()
 	return a
 
 def gettopiclistdb():
