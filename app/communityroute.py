@@ -250,7 +250,7 @@ def gettopicslogan():
 		if u is not None:	
 			state = 'successful'
 			reason = ''
-			result = {"id":topic.id,"theme":topic.theme,"slogan":topic.slogan,"imageurl":topic.imageurl}
+			result = {"id":topic.id,"theme":topic.theme,"slogan":topic.slogan,"imageurl":topic.imageurl,"note":topic.note,"number":topic.number}
 		else:
 			state = 'fail'
 			reason = 'no user'
