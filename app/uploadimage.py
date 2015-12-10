@@ -85,9 +85,13 @@ def uploadavatar():
 
 			shutil.move(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			if type =="0" or type == "-2" or type == "-4" or type == "-7":
+			if type =="0" or type == "-2":
 				fp = Image.open(dst)
 				fp.thumbnail((100,100))
+				fp.save(dst + '_thumbnail.jpg')
+			if type == "-4" or type == "-7":
+				fp = Image.open(dst)
+				fp.thumbnail((300,300))
 				fp.save(dst + '_thumbnail.jpg')
 			state = 'successful'
 			reason = ''
