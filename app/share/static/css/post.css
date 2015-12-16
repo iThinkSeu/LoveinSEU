@@ -1,0 +1,21 @@
+
+.slider-size {
+	height: 400px;
+}
+.carousel {
+	width:100%;
+	margin:0 auto;
+}
+.center {
+	float: none !important;
+	margin: 0 auto !important;
+}
+
+td {
+	padding: 0 40px 0 0 ;
+}
+
+.info {
+	box-shadow: 5px 5px 3px 2px #888888;
+}
+

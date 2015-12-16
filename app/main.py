@@ -7,7 +7,8 @@ from models import *
 from wtforms import Form,TextField,PasswordField,validators
 from hashmd5 import *
 import os, stat
-from PIL import Image
+#from PIL import Image
+import Image
 import shutil
 import string;
 import datetime
@@ -21,6 +22,8 @@ from friendsroute import friends_route
 from personalmessageroute import personalmessage_route
 from communityroute import community_route
 
+from share.share import share
+
 app = Flask(__name__)
 
 ##注册蓝本路由
@@ -32,6 +35,11 @@ app.register_blueprint(getprofile_route)		#获取用户个人信息
 app.register_blueprint(friends_route)			#获取好友关系、搜索好友、推荐好友等相关
 app.register_blueprint(personalmessage_route)	#私信相关
 app.register_blueprint(community_route)			#社区相关
-												
+
+
+app.register_blueprint(share)		#分享
+
+
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)))
+
