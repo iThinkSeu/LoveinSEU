@@ -11,7 +11,9 @@
 	margin: 0 auto !important;
 }
 
-
+.carousel-control.left, .carousel-control.right {
+	background-image: none;
+}
 
 .info {
 	box-shadow: 5px 5px 3px 2px #888888;
