@@ -12,11 +12,12 @@ def show(postid):
     	post = getpostbyid(postid)
     	userid = post.author.id
     	avatar = "http://218.244.147.240:80/avatar/" + str(userid)
-    	name = post.author.name if post.author.name!=None else ''
-    	school = post.author.school if post.author.school != None else ''
-    	title = post.title if post.title !=None else ''
-    	body = post.body if post.body !=None else ''
-    	gender =  post.author.gender if post.author.gender != None else ''
+    	name = post.author.name or ''
+    	school = post.author.school or  ''
+    	department=post.author.department or ''
+    	title = post.title or ''
+    	body = post.body or ''
+    	gender =  post.author.gender or ''
     	topicid = post.topic.id
     	postimage = post.images.all()
     	image = []
@@ -28,7 +29,7 @@ def show(postid):
 			image.append(url)
 			thumbnail.append(urlthum)
 
-        return render_template('post.html', title=title, body=body, images=image, avatar = avatar, name=name, school = school)
+        return render_template('post.html', title=title, body=body, images=image, avatar = avatar, name=name, school = school, department=department)
     except TemplateNotFound:
         abort(404)
     except Exception,e:
