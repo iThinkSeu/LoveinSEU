@@ -370,6 +370,35 @@ def getpostdetail():
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
+#得到用户timeline的中的post
+@community_route.route("/getusertimeline", methods=['POST'])
+def getusertimeline():
+	def postimg_url(p, imgid):
+		return "http://218.244.147.240:80/community/postattachs/" + str(p.topicid) + "-" + str(p.id) + "-" + str(imgid) + "_thumbnail.jpg"
+	try:
+		token = request.json['token']
+		page = request.json['page']
+		userid = request.json['userid']
+		page_num = string.atoi(str(page))
+		u = getuserinformation(token)
+		if u is not None:
+			user = getuserbyid(userid)
+			posts = user.posts.order_by(models.post.timestamp.desc()).paginate(page_num, per_page=10, error_out=False)
+			result = [{'title':p.title, 'body':p.body, 'time':p.timestamp, 'topic':p.topic.theme, 'image':postimg_url(p, p.images.first().imageid) if p.images.first() else ''} for p in posts.items]
+			state = 'successful'
+			reason = ''
+		else:
+			state = 'fail'
+			reason = 'user invalid'
+			result = ''
+	except Exception, e:
+		print e 
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'result':result, 'state':state, 'reason':reason})
+	print response
+	return response
 
 #返回post的评论
 @community_route.route("/getpostcomment",methods=['POST'])

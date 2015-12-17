@@ -7,7 +7,7 @@ from models import *
 from wtforms import Form,TextField,PasswordField,validators
 from hashmd5 import *
 import os, stat
-from PIL import Image
+#from PIL import Image
 #import Image
 import shutil
 import string;
