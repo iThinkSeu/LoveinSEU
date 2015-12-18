@@ -370,9 +370,11 @@ def getpostdetail():
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
-#得到用户timeline的中的post
+
+
 @community_route.route("/getusertimeline", methods=['POST'])
 def getusertimeline():
+	"""get user posts"""
 	def postimg_url(p, imgid):
 		return "http://218.244.147.240:80/community/postattachs/" + str(p.topicid) + "-" + str(p.id) + "-" + str(imgid) + "_thumbnail.jpg"
 	try:
@@ -389,7 +391,7 @@ def getusertimeline():
 			reason = ''
 		else:
 			state = 'fail'
-			reason = 'user invalid'
+			reason = 'invalid access'
 			result = ''
 	except Exception, e:
 		print e 
@@ -397,8 +399,39 @@ def getusertimeline():
 		state = 'fail'
 		reason = 'exception'
 	response = jsonify({'result':result, 'state':state, 'reason':reason})
-	print response
 	return response
+
+@community_route.route("/getuserimages", methods=['POST'])
+def getuserimages():
+	"""get user posted images"""
+	def postimg_url(p, imgid):
+		return "http://218.244.147.240:80/community/postattachs/" + str(p.topicid) + "-" + str(p.id) + "-" + str(imgid)
+	def postimg_url_thumbnail(p, imgid):
+		return "http://218.244.147.240:80/community/postattachs/" + str(p.topicid) + "-" + str(p.id) + "-" + str(imgid) + "_thumbnail.jpg"
+
+	try:
+		token = request.json['token']
+		page = string.atoi(str(request.json['page']))
+		userid = request.json['userid']
+		u = getuserinformation(token)
+		if u is not None:
+			user = getuserbyid(userid)
+			posts = posts = user.posts.order_by(models.post.timestamp.desc()).paginate(page, per_page=4, error_out=False)
+			result = [ {'image':postimg_url(p, img.imageid), 'thumbnail':postimg_url_thumbnail(p, img.imageid), 'postid':str(p.id)}  for p in posts.items for img in p.images.all()]
+			state = 'successful'
+			reason = ''
+		else:
+			state = 'fail'
+			reason = 'invalid access'
+			result = ''
+	except Exception,e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+	response = jsonify({'result':result, 'state':state, 'reason':reason})
+	return response
+
 
 #返回post的评论
 @community_route.route("/getpostcomment",methods=['POST'])
