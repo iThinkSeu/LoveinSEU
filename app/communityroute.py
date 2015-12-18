@@ -417,7 +417,7 @@ def getuserimages():
 		if u is not None:
 			user = getuserbyid(userid)
 			posts = posts = user.posts.order_by(models.post.timestamp.desc()).paginate(page, per_page=4, error_out=False)
-			result = [ {'image':postimg_url(p, img.imageid), 'thumbnail':postimg_url_thumbnail(p, img.imageid), 'postid':str(p.id)}  for p in posts.items for img in p.images.all()]
+			result = [ {'title':p.title, 'body':p.body, 'time':p.timestamp, 'topic':p.topic.theme,'image':postimg_url(p, img.imageid), 'thumbnail':postimg_url_thumbnail(p, img.imageid), 'postid':str(p.id)}  for p in posts.items for img in p.images.all()]
 			state = 'successful'
 			reason = ''
 		else:
