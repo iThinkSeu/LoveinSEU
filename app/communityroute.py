@@ -384,7 +384,7 @@ def getusertimeline():
 		if u is not None:
 			user = getuserbyid(userid)
 			posts = user.posts.order_by(models.post.timestamp.desc()).paginate(page_num, per_page=10, error_out=False)
-			result = [{'title':p.title, 'body':p.body, 'time':p.timestamp, 'topic':p.topic.theme, 'image':postimg_url(p, p.images.first().imageid) if p.images.first() else ''} for p in posts.items]
+			result = [{'postid':str(p.id), 'title':p.title, 'body':p.body, 'time':p.timestamp, 'topic':p.topic.theme, 'image':postimg_url(p, p.images.first().imageid) if p.images.first() else ''} for p in posts.items]
 			state = 'successful'
 			reason = ''
 		else:
