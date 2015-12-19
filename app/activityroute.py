@@ -46,11 +46,14 @@ def getactivityinformation():
 				time = act.time if act.time!=None else ''
 				location=act.location if act.location!=None else ''
 				number=act.number if act.number!=None else ''
+				remark = act.remark if act.remark != None else ''
+				signnumber = act.users.count()
 				if u.isattent(act.id) == 0:
 					state = 'no'
 				else:
 					state = 'yes'
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'state':state}
+				signnumber = str(signnumber)
+				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state}
 				result.append(output)
 				state = 'successful'
 				reason = ''

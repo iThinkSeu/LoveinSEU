@@ -29,10 +29,10 @@ def getprofile():
 			qq = u.qq if u.qq != None else ''
 			hometown = u.hometown if u.hometown != None else ''
 			id = u.id if u.id!=None else ''
-			qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
-			autumn1 = u.autumn1 if u.autumn1!=None else ''
-			autumn2 = u.autumn2 if u.autumn2!=None else ''
-			autumn3 = u.autumn3 if u.autumn3!=None else ''
+			lookcount = u.lookcount if u.lookcount !=None else 0
+
+			lookcount = str(lookcount)#所有的返回都转化成string
+
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -53,9 +53,8 @@ def getprofile():
 			hometown = ''
 			id = ''
 			qianshoudongda =''
-			autumn1 = ''
-			autumn2=''
-			autumn3 = ''
+			lookcount = ''
+
 
 
 	except Exception, e:
@@ -77,11 +76,7 @@ def getprofile():
 		qq = ''
 		hometown = ''
 		id = ''
-		qianshoudongda=''
-		autumn1 = ''
-		autumn2 = ''
-		autumn3 = ''
-
+		lookcount = ''
 		
 
 	response = jsonify({'username':username,
@@ -101,6 +96,7 @@ def getprofile():
 	 	                'wechat':wechat,
 	 	                'qq':qq,
 	 	                'hometown':hometown,
+	 	                'lookcount':lookcount,
 	 	                'id':id})
 	return response
 
@@ -112,6 +108,13 @@ def getprofilebyid():
  		if u!=None:
 			state = 'successful'
 			reason = ''
+
+			#更新好友查看次数计数器
+			lookcount = u.lookcount if u.lookcount !=None else 0
+			u.lookcount = lookcount + 1
+			u.add()
+
+			lookcount = str(lookcount)
 			username = u.username if u.username!=None else ''
 			token = u.token if u.token!=None else ''    
 			school = u.school if u.school!=None else '' 				
@@ -128,10 +131,7 @@ def getprofilebyid():
 			qq = u.qq if u.qq !=None else ''
 			hometown = u.hometown if u.hometown != None else ''
 			id = u.id if u.id!=None else ''
-			qianshoudongda = u.qianshoudongda if u.qianshoudongda!=None else ''
-			autumn1 = u.autumn1 if u.autumn1!=None else ''
-			autumn2 = u.autumn2 if u.autumn2!=None else ''
-			autumn3 = u.autumn3 if u.autumn3!=None else ''
+
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -151,13 +151,11 @@ def getprofilebyid():
 			qq = ''
 			hometown = ''
 			id = ''
-			qianshoudongda =''
-			autumn1 = ''
-			autumn2=''
-			autumn3 = ''
+			lookcount = ''
 
 
 	except Exception, e:
+		print e
 		state = 'fail'
 		reason = '异常'	
 		username='e'
@@ -176,10 +174,9 @@ def getprofilebyid():
 		qq = ''
 		hometown = ''
 		id = ''
-		qianshoudongda=''
-		autumn1 = ''
-		autumn2 = ''
-		autumn3 = ''
+		lookcount = ''
+
+
 
 	response = jsonify({'username':username,
 						'token':token,
@@ -198,5 +195,6 @@ def getprofilebyid():
 	 	                'wechat':wechat,
 	 	                'qq':qq,
 	 	                'hometown':hometown,
+	 	                'lookcount':lookcount,
 	 	                'id':id})
 	return response

@@ -84,10 +84,11 @@ class User(db.Model):
 	hobby = db.Column(db.String(128))
 	preference = db.Column(db.String(128))
 	qianshoudongda = db.Column(db.String(32))
-	autumn1=db.Column(db.String(32))
-	autumn2=db.Column(db.String(32))
-	autumn3=db.Column(db.String(32))
-	yaoda = db.Column(db.String(32))
+	#autumn1=db.Column(db.String(32))
+	#autumn2=db.Column(db.String(32))
+	#autumn3=db.Column(db.String(32))
+	#yaoda = db.Column(db.String(32))
+	lookcount = db.Column(db.Integer,default = 0)
 
 	#relation
 	#all users followed by this
@@ -258,8 +259,11 @@ class Activity(db.Model):
 	time=db.Column(db.String(32))
 	location=db.Column(db.String(32))
 	number=db.Column(db.String(32))
+	signnumber = db.Column(db.Integer)
 	state = db.Column(db.String(32))
 	disable = db.Column(db.Boolean,default =False)
+	remark = db.Column(db.String(32))
+
 	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 

@@ -159,3 +159,34 @@ def getMessageDetailList():
 						'reason':reason,
 						'result':result})
 	return response
+
+@personalmessage_route.route("/getmessageunreadnumber",methods = ['POST'])
+def getmessageunreadnumber():
+	try:
+		token = request.json['token']
+		u = getuserinformation(token)
+		if u != None:
+			id = u.id
+			m = getMessageList(id)
+			unReadnum = 0
+			for j in range(len(m)):
+				if m[j].state == '1':
+					unReadnum=unReadnum+1
+			state = 'successful'
+			reason = ''
+		else:
+			state = 'fail'
+			reason = 'no user'
+			number = ''
+	
+		
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		number = ''
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'number':str(unReadnum)})
+	return response
