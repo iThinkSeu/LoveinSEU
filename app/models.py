@@ -407,6 +407,7 @@ class comment(db.Model):
 	def add(self):
 		try:
 			db.session.add(self)
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 		except Exception, e:
 			print e
