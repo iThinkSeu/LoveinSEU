@@ -371,6 +371,8 @@ class post(db.Model):
 	def add(self):
 		try:
 			db.session.add(self)
+			db.session.execute('set names utf8mb4');
+			print "mb4"
 			db.session.commit()
 			return 0
 		except Exception, e:
