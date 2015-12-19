@@ -288,8 +288,8 @@ def getpostlist():
 				body = postlist[i].body if postlist[i].body !=None else ''
 				gender =  postlist[i].author.gender if postlist[i].author.gender != None else ''
 				postimage = postlist[i].images.all()
-				if len(body) > 30:
-					body = body[0:29]
+				if len(body) > 150:
+					body = body[0:149]
 				else:
 					body = body
 				image = []
