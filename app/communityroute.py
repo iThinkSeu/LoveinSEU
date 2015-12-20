@@ -17,6 +17,7 @@ def pubishpost():
 		u = getuserinformation(token)
 		if u is not None:
 			topic = gettopicbyid(topicid)
+			body = body.encode('UTF-8')
 			post1 = post(title = title,body = body,topic = topic)
 			u.publishpost(post1)
 			id = post1.id
@@ -47,6 +48,7 @@ def commenttopost():
 		u = getuserinformation(token)
 		if u is not None:
 			post1 = getpostbyid(postid)
+			body = body.encode('UTF-8')
 			comment1 = comment(body = body)
 			u.commenttopost(comment1,post1)
 			id = comment1.id

@@ -618,9 +618,11 @@ def gettopicbyid(id):
 	a = topic.query.filter_by(id = id).first()
 	return a
 def getpostbyid(id):
+	db.session.execute('set names utf8mb4');
 	a = post.query.filter_by(id = id).first()
 	return a
 def getcommentbyid(id):
+	db.session.execute('set names utf8mb4');
 	a = comment.query.filter_by(id = id).first()	
 	return a
 def gettopofficial():
@@ -631,13 +633,16 @@ def gettopiclistdb():
 	a = topic.query.order_by(topic.rank).all()
 	return a
 def getpostlistbypage(page,topicid):
+	db.session.execute('set names utf8mb4');
 	a = post.query.filter_by(topicid = topicid).order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
 	return a
 def getpostcommentbypage(page,postid):
+	db.session.execute('set names utf8mb4');
 	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
 	return a
 
 def getcommenttocommentbyid(destcommentid):
+	db.session.execute('set names utf8mb4');
 	a= comment.query.filter(comment.commentid.in_(destcommentid)).order_by(comment.timestamp.desc()).all()
 	return a
 def gettopofficialbyid(id):
