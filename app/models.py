@@ -602,6 +602,10 @@ def getMessageList(RecId):
 	a = Message.query.filter_by(RecId = RecId).all()
 	return a
 
+def getMessageListByID(Id):
+	a = Message.query.filter(or_(Message.RecId == Id, Message.SendId == Id)).all()
+	return a
+
 def getMessageTwoid(SendId, RecId):
 	a = Message.query.filter_by(SendId = SendId, RecId = RecId).all()
 	return a

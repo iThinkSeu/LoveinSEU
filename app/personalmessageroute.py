@@ -74,23 +74,26 @@ def getSendUserList():
 		u = getuserinformation(token)
 		if u != None:
 			id = u.id
-			m = getMessageList(id)
-			L = [x.SendId for x in m]
+			#m = getMessageList(id)
+			m = getMessageListByID(id)
+			L = [x.SendId if x.RecId == id else x.RecId for x in m]
 			L = list(set(L))
+			print L
 			result = []
 			for i in range(len(L)):
 				unReadnum = 0
-				SendId = L[i]
-				mSendi = getMessageTwoid(SendId,id)
+				Id = L[i]
+				mSendi = getMessageTwoid(Id,id) or getMessageTwoid(id, Id)
 				mSendi.reverse()
 				text = mSendi[0].text
 				lasttime = mSendi[0].sendtime
 				for j in range(len(mSendi)):
-					if mSendi[j].state == '1':
+					if mSendi[j].RecId == id and mSendi[j].state == '1':
 						unReadnum=unReadnum+1
-				senduser = getuserbyid(SendId)
-				output = {"SendId":SendId,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
-				result.append(output)
+				senduser = getuserbyid(Id)
+				if senduser != None:
+					output = {"SendId":Id ,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
+					result.append(output)
 			state = 'successful'
 			reason = ''
 		else:
