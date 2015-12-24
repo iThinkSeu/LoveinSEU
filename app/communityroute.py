@@ -8,7 +8,7 @@ import string
 community_route = Blueprint('community_route', __name__)
 
 @community_route.route("/publishpost",methods=['POST'])
-def pubishpost():
+def publishpost():
 	try:
 		token = request.json['token']
 		title = request.json.get('title','')
