@@ -75,6 +75,12 @@ def uploadavatar():
 				comments.addimage(images)
 				topicid = comments.post.topicid
 				dst = '/home/www/community/commentattachs/' + str(topicid) + '-' + str(commentid) + '-' + str(number)
+			elif type == "-8":
+				#type = -8 表示上传activitytopofficial的图片
+				topofficialtemp = getactivitytopofficialbyid(topofficialid)
+				dst = '/home/www/activity/activitytopofficials/' + str(topofficialid)
+				topofficialtemp.imageurl = "http://218.244.147.240:80/activity/activitytopofficials/" + str(topofficialid)
+				topofficialtemp.add()
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
