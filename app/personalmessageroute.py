@@ -76,24 +76,25 @@ def getSendUserList():
 			id = u.id
 			#m = getMessageList(id)
 			m = getMessageListByID(id)
-			L = [x.SendId if x.RecId == id else x.RecId for x in m]
+			L = [ x.SendId if x.RecId == id else x.RecId for x in m]
 			L = list(set(L))
-			print L
+			#print L
 			result = []
 			for i in range(len(L)):
 				unReadnum = 0
 				Id = L[i]
 				mSendi = getMessageTwoid(Id,id) or getMessageTwoid(id, Id)
 				mSendi.reverse()
-				text = mSendi[0].text
-				lasttime = mSendi[0].sendtime
-				for j in range(len(mSendi)):
-					if mSendi[j].RecId == id and mSendi[j].state == '1':
-						unReadnum=unReadnum+1
-				senduser = getuserbyid(Id)
-				if senduser != None:
-					output = {"SendId":Id ,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
-					result.append(output)
+				if len(mSendi) > 0:
+					text = mSendi[0].text
+					lasttime = mSendi[0].sendtime
+					for j in range(len(mSendi)):
+						if mSendi[j].RecId == id and mSendi[j].state == '1':
+							unReadnum=unReadnum+1
+					senduser = getuserbyid(Id)
+					if senduser != None:
+						output = {"SendId":Id ,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
+						result.append(output)
 			state = 'successful'
 			reason = ''
 		else:
