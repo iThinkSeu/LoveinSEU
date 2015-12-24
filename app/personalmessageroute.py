@@ -76,9 +76,9 @@ def getSendUserList():
 			id = u.id
 			#m = getMessageList(id)
 			m = getMessageListByID(id)
-			L = [ x.SendId if x.RecId == id else x.RecId for x in m]
+			L = [ x.SendId if x.RecId == str(id) else x.RecId for x in m]
 			L = list(set(L))
-			#print L
+			print L
 			result = []
 			for i in range(len(L)):
 				unReadnum = 0
@@ -89,10 +89,11 @@ def getSendUserList():
 					text = mSendi[0].text
 					lasttime = mSendi[0].sendtime
 					for j in range(len(mSendi)):
-						if mSendi[j].RecId == id and mSendi[j].state == '1':
+						if mSendi[j].RecId == str(id) and mSendi[j].state == '1':
 							unReadnum=unReadnum+1
 					senduser = getuserbyid(Id)
 					if senduser != None:
+						print Id, unReadnum
 						output = {"SendId":Id ,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
 						result.append(output)
 			state = 'successful'
