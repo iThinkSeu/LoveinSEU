@@ -10,7 +10,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 
 #from flask.ext.sqlalchemy import SQLALchemy
-
+#save before pull
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
