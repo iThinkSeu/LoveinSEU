@@ -5,18 +5,24 @@ from datetime import *
 import random
 from sqlalchemy import or_
 from sqlalchemy import and_
+from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
+
 
 #from flask.ext.sqlalchemy import SQLALchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://liewli:liewli@localhost:3306/weme?charset=utf8"
-#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@101.200.201.22:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
-#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
+migrage = Migrate(app,db)
+
+manager = Manager(app)
+manager.add_command('db',MigrateCommand)
 
 class Follow(db.Model):
 	__tablename__='follows'
@@ -89,7 +95,7 @@ class User(db.Model):
 	#autumn3=db.Column(db.String(32))
 	#yaoda = db.Column(db.String(32))
 	lookcount = db.Column(db.Integer,default = 0)
-
+	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#relation
 	#all users followed by this
 	followeds = db.relationship('Follow', foreign_keys = [Follow.follower_id], backref = db.backref('follower', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
@@ -355,13 +361,13 @@ class Activity(db.Model):
 	state = db.Column(db.String(32))
 	disable = db.Column(db.Boolean,default =False)
 	remark = db.Column(db.String(32))
-
 	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
 	whetherimage = db.Column(db.Boolean,default =False)
 	advertise = db.Column(db.String(32))
 	detail = db.Column(db.Text)
 	label = db.Column(db.String(32))
 	passflag = db.Column(db.Boolean,default =False)
+	likenumber = db.Column(db.Integer,default = 0)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#参加活动的人
 	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
@@ -711,3 +717,9 @@ def gettopofficialbyid(id):
 def getactivitytopofficialbyid(id):
 	a = activitytopofficial.query.filter_by(id = id).first()
 	return a 
+
+
+if __name__ == '__main__':
+	manager.run()
+
+
