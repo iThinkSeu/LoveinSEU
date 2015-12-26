@@ -739,13 +739,12 @@ def getcommenttocommentbyid(destcommentid):
 def gettopofficialbyid(id):
 	a = topofficial.query.filter_by(id = id).first()
 	return a 
-<<<<<<< HEAD
+
 
 if __name__ == '__main__':
 	manager.run()
 
-=======
+
 def getactivitytopofficialbyid(id):
 	a = activitytopofficial.query.filter_by(id = id).first()
 	return a 
->>>>>>> 48091642138f6c7dd9abe31f80af58d60b44c2f5
