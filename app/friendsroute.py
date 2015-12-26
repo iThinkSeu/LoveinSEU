@@ -5,8 +5,53 @@ from models import *
 from hashmd5 import *
 import string;
 import datetime
+from sqlalchemy import Date, cast
+from datetime import date
 
 friends_route = Blueprint('friends_route', __name__)
+
+@friends_route.route("/visit", methods=['POST'])
+def visit():
+	try:
+		token = request.json['token']
+		id = request.json['userid']
+		u = getuserinformation(token)
+		u1 = getuserbyid(id)
+		if (u is not None) and (u1 is not None) and (u.id != u1.id):
+			res = u.visit(u1)
+			if res == 0:
+				state = 'successful'
+				reason = ''
+			else:
+				state = 'fail'
+				reason = 'exception'
+		else:
+			state = 'fail'
+			reason = 'exception'
+	except Exception, e:
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'state':state, 'reason':reason})
+	return response
+
+@friends_route.route('/visitinfo', methods=['POST'])
+def visitinfo():
+	try:
+		token = request.json['token']
+		id = request.json['userid']
+		u = getuserinformation(token)
+		u1 = getuserbyid(id)
+		if (u is not None) and (u1 is not None):
+			state = 'successful'
+			reason = ''
+			result = {'total':u1.visitors.count(), 'today':u1.visitors.filter(cast(Visit.timestamp, Date) == date.today()).count()}
+
+	except Exception, e:
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+
+	return jsonify({'state':state, 'reason':reason, 'result':result})
 
 @friends_route.route("/follow",methods=['GET','POST'])
 def follow():
