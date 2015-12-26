@@ -125,6 +125,8 @@ class User(db.Model):
 	likecomments =  db.relationship('likecomment', foreign_keys = [likecomment.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#参加的活动activity
 	activitys = db.relationship('attentactivity', foreign_keys = [attentactivity.userid], backref = db.backref('attentuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#发起的活动
+	publishactivitys = db.relationship('Activity',backref = 'author', lazy = 'dynamic')
 
 	def add(self):
 		try:
@@ -249,6 +251,18 @@ class User(db.Model):
 		try:
 			post.author = self
 			db.session.add(post)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+	def publishactivity(self,activity):
+		try:
+			activity.author = self
+			db.session.add(activity)
+			#db.session.execute('set names utf8mb4')
 			db.session.commit()
 			return 0
 		except Exception, e:
@@ -261,6 +275,7 @@ class User(db.Model):
 			comment.author = self
 			comment.commentid = -1
 			db.session.add(comment)
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 			return 0
 		except Exception, e:
@@ -273,6 +288,7 @@ class User(db.Model):
 			comment.author = self
 			comment.commentid = destcomment.id
 			db.session.add(comment)
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 			return 0
 		except Exception, e:
@@ -280,23 +296,6 @@ class User(db.Model):
 			db.session.rollback()
 			return 2			
 							
-
-
-class Activity(db.Model):
-	__tablename__="activitys"
-	id = db.Column(db.Integer,primary_key=True)
-	rank = db.Column(db.String(32),unique = True)
-	title=db.Column(db.String(32),primary_key=True)
-	time=db.Column(db.String(32))
-	location=db.Column(db.String(32))
-	number=db.Column(db.String(32))
-	signnumber = db.Column(db.Integer)
-	state = db.Column(db.String(32))
-	disable = db.Column(db.Boolean,default =False)
-	remark = db.Column(db.String(32))
-
-	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
-
 
 class MessageAndimage(db.Model):
 	__tablename__ = 'messageandimages'
@@ -346,6 +345,13 @@ class postimageAttach(db.Model):
 	imageid = db.Column(db.Integer,db.ForeignKey("imageurls.id"),primary_key = True)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 
+class activityimageAttach(db.Model):
+	__tablename__ = "activityimageattachs"
+	id = db.Column(db.Integer,primary_key = True)
+	activityid = db.Column(db.Integer,db.ForeignKey("activitys.id"),primary_key = True)
+	imageid = db.Column(db.Integer,db.ForeignKey("imageurls.id"),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+
 class imageURL(db.Model):
 	__tablename__ = "imageurls"
 	id = db.Column(db.Integer, primary_key = True)
@@ -356,6 +362,9 @@ class imageURL(db.Model):
 	posts = db.relationship('postimageAttach', foreign_keys = [postimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	#评论的图片附件
 	comments = db.relationship('commentimageAttach', foreign_keys = [commentimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+	#活动的图片附件
+	activitys = db.relationship('activityimageAttach', foreign_keys = [activityimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+
 	def add(self):
 		try:
 			db.session.add(self)
@@ -364,6 +373,34 @@ class imageURL(db.Model):
 			print e
 			db.session.rollback()
 			return 2		
+
+class Activity(db.Model):
+	__tablename__="activitys"
+	id = db.Column(db.Integer,primary_key=True)
+	rank = db.Column(db.String(32),unique = True)
+	title=db.Column(db.String(32),primary_key=True)
+	time=db.Column(db.String(32))
+	location=db.Column(db.String(32))
+	number=db.Column(db.String(32))
+	signnumber = db.Column(db.Integer)
+	state = db.Column(db.String(32))
+	disable = db.Column(db.Boolean,default =False)
+	remark = db.Column(db.String(32))
+
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	whetherimage = db.Column(db.Boolean,default =False)
+	advertise = db.Column(db.String(32))
+	detail = db.Column(db.Text)
+	label = db.Column(db.String(32))
+	passflag = db.Column(db.Boolean,default =False)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	#参加活动的人
+	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#活动的图片附件
+	images = db.relationship('activityimageAttach', foreign_keys = [activityimageAttach.activityid], backref = db.backref('activitys', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+
+
+
 class topic(db.Model):
 	__tablename__ = "topics"
 	id = db.Column(db.Integer,primary_key=True)
@@ -465,6 +502,23 @@ class topofficial(db.Model):
 	imageurl = db.Column(db.String(256))
 	postid = db.Column(db.Integer)
 	posttitle = db.Column(db.String(128))
+	rank = db.Column(db.Integer,default = 0)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+
+class activitytopofficial(db.Model):
+	__tablename__ = 'activitytopofficials'
+	id = db.Column(db.Integer,primary_key=True)
+	imageurl = db.Column(db.String(256))
+	activityid = db.Column(db.Integer)
+	activitytitle = db.Column(db.String(128))
 	rank = db.Column(db.Integer,default = 0)
 	def add(self):
 		try:
@@ -663,27 +717,35 @@ def getcommentbyid(id):
 def gettopofficial():
 	a = topofficial.query.order_by(topofficial.rank).all()
 	return a
-
+def getactivitytopofficial():
+	a = activitytopofficial.query.order_by(activitytopofficial.rank).all()
+	return a
 def gettopiclistdb():
 	a = topic.query.order_by(topic.rank).all()
 	return a
 def getpostlistbypage(page,topicid):
-	db.session.execute('set names utf8mb4');
+	db.session.execute('set names utf8mb4')
 	a = post.query.filter_by(topicid = topicid).order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
 	return a
 def getpostcommentbypage(page,postid):
-	db.session.execute('set names utf8mb4');
+	db.session.execute('set names utf8mb4')
 	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
 	return a
 
 def getcommenttocommentbyid(destcommentid):
-	db.session.execute('set names utf8mb4');
+	db.session.execute('set names utf8mb4')
 	a= comment.query.filter(comment.commentid.in_(destcommentid)).order_by(comment.timestamp.desc()).all()
 	return a
 def gettopofficialbyid(id):
 	a = topofficial.query.filter_by(id = id).first()
 	return a 
+<<<<<<< HEAD
 
 if __name__ == '__main__':
 	manager.run()
 
+=======
+def getactivitytopofficialbyid(id):
+	a = activitytopofficial.query.filter_by(id = id).first()
+	return a 
+>>>>>>> 48091642138f6c7dd9abe31f80af58d60b44c2f5
