@@ -124,13 +124,9 @@ def searchuser():
 				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in L]
 			else:
 				tempname = getuserbyname(text)
-				L = []
-				L.append(tempname)
-				if tempname != None:
-					state = "successful"
-					reason = ''
-					result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in L]
-
+				state = "successful"
+				reason = ''
+				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in tempname]
 		else:
 			state = 'fail'
 			reason = 'no user'

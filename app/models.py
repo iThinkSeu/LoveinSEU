@@ -13,16 +13,17 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://liewli:liewli@localhost:3306/weme?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
 migrage = Migrate(app,db)
 
 manager = Manager(app)
 manager.add_command('db',MigrateCommand)
+
 
 class Follow(db.Model):
 	__tablename__='follows'
@@ -45,7 +46,6 @@ class likepost(db.Model):
 			print e
 			db.session.rollback()
 			return 2
-
 #评论点赞关系表
 class likecomment(db.Model):
 	__tablename__ = 'likecomments'
@@ -61,12 +61,21 @@ class likecomment(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+#喜欢的活动
+class likeactivity(db.Model):
+	__tablename__ = 'likeactivitys'
+	id = db.Column(db.Integer,primary_key = True)
+	userid = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key = True)
+	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+
 #参加活动表
 class attentactivity(db.Model):
 	__tablename__ = 'attentactivitys'
 	id = db.Column(db.Integer,primary_key = True)
 	userid = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key = True)
 	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'),primary_key = True)
+	state = db.Column(db.String(32),default = '0')
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 
 
@@ -113,7 +122,10 @@ class User(db.Model):
 	#参加的活动activity
 	activitys = db.relationship('attentactivity', foreign_keys = [attentactivity.userid], backref = db.backref('attentuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#发起的活动
-	publishactivitys = db.relationship('Activity',backref = 'author', lazy = 'dynamic')
+	publishactivitys = db.relationship('Activity',backref = 'author', lazy = 'dynamic')       
+	#喜欢的活动
+	likeactivitys = db.relationship('likeactivity', foreign_keys = [likeactivity.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+
 
 	def add(self):
 		try:
@@ -192,6 +204,20 @@ class User(db.Model):
 			else:
 				return 1
 		except Exception, e:
+			db.session.rollback()
+			return 2
+	def likeactivity(self,activity):
+		try:
+			lp = self.likeactivitys.filter_by(activityid = activity.id).first()
+			if lp is None:
+				lp = likeactivity(likeuser = self, likewhatactivity = activity)
+				db.session.add(lp)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
 			db.session.rollback()
 			return 2
 	def likepost(self,post):
@@ -352,28 +378,37 @@ class imageURL(db.Model):
 class Activity(db.Model):
 	__tablename__="activitys"
 	id = db.Column(db.Integer,primary_key=True)
-	rank = db.Column(db.String(32),unique = True)
+	top = db.Column(db.String(32),default = '0')
 	title=db.Column(db.String(32),primary_key=True)
 	time=db.Column(db.String(32))
 	location=db.Column(db.String(32))
 	number=db.Column(db.String(32))
 	signnumber = db.Column(db.Integer)
 	state = db.Column(db.String(32))
-	disable = db.Column(db.Boolean,default =False)
+	#disable = db.Column(db.Boolean,default =False)
 	remark = db.Column(db.String(32))
 	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
 	whetherimage = db.Column(db.Boolean,default =False)
 	advertise = db.Column(db.String(32))
 	detail = db.Column(db.Text)
 	label = db.Column(db.String(32))
-	passflag = db.Column(db.Boolean,default =False)
+	passflag = db.Column(db.String(8),default = '0')
 	likenumber = db.Column(db.Integer,default = 0)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#参加活动的人
 	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#活动的图片附件
 	images = db.relationship('activityimageAttach', foreign_keys = [activityimageAttach.activityid], backref = db.backref('activitys', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
-
+	#喜欢该活动的人
+	likeusers = db.relationship('likeactivity', foreign_keys = [likeactivity.activityid], backref = db.backref('likewhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
 
 
 class topic(db.Model):
@@ -506,6 +541,8 @@ class activitytopofficial(db.Model):
 			return 2
 
 
+
+
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
 	if u!=None:
@@ -623,8 +660,9 @@ def getuserbyid(id):
 	return u 
 
 def getuserbyname(name):
-	u=User.query.filter_by(name=name).first()
-	return u 			
+	tname = '%'+name+'%'
+	ulist=User.query.filter(User.name.like(tname))
+	return ulist 			
 
 	
 def getActivityInformation(id):
@@ -717,6 +755,9 @@ def gettopofficialbyid(id):
 def getactivitytopofficialbyid(id):
 	a = activitytopofficial.query.filter_by(id = id).first()
 	return a 
+def getactivitybyid(id):
+	a = Activity.query.filter_by(id = id).first()
+	return a
 
 
 if __name__ == '__main__':
