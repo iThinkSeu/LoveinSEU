@@ -135,7 +135,7 @@ def activitytopofficial():
 			toplist = getactivitytopofficial()
 			result = []
 			for i in range(len(toplist)):
-				output = {"postid":toplist[i].activityid,"imageurl":toplist[i].imageurl}
+				output = {"activityid":toplist[i].activityid,"imageurl":toplist[i].imageurl}
 				result.append(output)
 		else:
 			state = 'fail'
