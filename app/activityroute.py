@@ -58,11 +58,11 @@ def getactivityinformation():
 				advertise = act.advertise if act.advertise != None else ''
 				signnumber = act.users.count()
 				if u.isattent(act.id) == 0:
-					state = 'no'
+					signstate = 'no'
 				else:
-					state = 'yes'
+					signstate = 'yes'
 				signnumber = str(signnumber)
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'advertise':advertise}
+				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -171,16 +171,16 @@ def getactivitydetail():
 			whetherimage = act.whetherimage if act.whetherimage != None else ''
 			signnumber = act.users.count()
 			if u.isattent(act.id) == 0:
-				state = 'no'
+				signstate = 'no'
 			else:
-				state = 'yes'
+				signstate = 'yes'
 			signnumber = str(signnumber)
 			templike = act.likeusers.filter_by(userid = u.id).first()
 			if templike is None:
 				flag = '0'
 			else:
 				flag = '1'
-			output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag}
+			output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag}
 			result.append(output)
 			state = 'successful'
 			reason = ''
