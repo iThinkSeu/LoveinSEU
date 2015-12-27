@@ -19,6 +19,7 @@ app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
+
 migrage = Migrate(app,db)
 
 manager = Manager(app)
@@ -79,6 +80,15 @@ class attentactivity(db.Model):
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 
 
+class Visit(db.Model):
+	__tablename__ = 'visit'
+	id = db.Column(db.Integer, primary_key = True)
+	guestid = db.Column(db.Integer, db.ForeignKey('users.id'))
+	hostid = db.Column(db.Integer, db.ForeignKey('users.id'))
+	timestamp = db.Column(db.DateTime, default = datetime.now)
+
+
+
 class User(db.Model):
 	__tablename__='users'
 	id = db.Column(db.Integer,primary_key=True)
@@ -110,6 +120,11 @@ class User(db.Model):
 	followeds = db.relationship('Follow', foreign_keys = [Follow.follower_id], backref = db.backref('follower', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#all users that follow this
 	followers = db.relationship('Follow', foreign_keys = [Follow.followed_id], backref = db.backref('followed', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+
+	visitors = db.relationship('Visit', foreign_keys = [Visit.hostid], backref = db.backref('host', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#all users that follow this
+	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+
 
 	#该用户发表的帖子
 	posts = db.relationship('post',backref = 'author', lazy = 'dynamic')
@@ -194,6 +209,7 @@ class User(db.Model):
 			db.session.rollback()
 			return 2
 
+
 	def unfollow(self, user):
 		try:
 			f = self.followeds.filter_by(followed_id=user.id).first()
@@ -218,6 +234,15 @@ class User(db.Model):
 				return 1
 		except Exception, e:
 			print e
+			db.session.rollback()
+			return 2
+	def visit(self, user):
+		try:
+			v = Visit(guest = self, host = user)
+			db.session.add(v)
+			db.session.commit()
+			return 0
+		except Exception, e:
 			db.session.rollback()
 			return 2
 	def likepost(self,post):
@@ -752,6 +777,12 @@ def getcommenttocommentbyid(destcommentid):
 def gettopofficialbyid(id):
 	a = topofficial.query.filter_by(id = id).first()
 	return a 
+
+
+if __name__ == '__main__':
+	manager.run()
+
+
 def getactivitytopofficialbyid(id):
 	a = activitytopofficial.query.filter_by(id = id).first()
 	return a 
