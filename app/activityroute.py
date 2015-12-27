@@ -58,11 +58,11 @@ def getactivityinformation():
 				advertise = act.advertise if act.advertise != None else ''
 				signnumber = act.users.count()
 				if u.isattent(act.id) == 0:
-					state = 'no'
+					s = 'no'
 				else:
-					state = 'yes'
+					s = 'yes'
 				signnumber = str(signnumber)
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'advertise':advertise}
+				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':s,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
