@@ -356,8 +356,13 @@ def getpublishactivity():
 				number = temp.number if temp.number != None else ''
 				location = temp.location if temp.location != None else ''
 				time = temp.time if temp.time != None else ''
-				passflag = '1' if temp.passflag == True else '0'
-				output = {"id":activityid,"title":title,"number":number,"location":location,"time":time,"passflag":passflag}
+				if temp.passflag == '1':
+					state = 'pass'
+				elif temp.passflag == '2':
+					state = 'nopass'
+				else:
+					state = 'verify'
+				output = {"id":activityid,"title":title,"number":number,"location":location,"time":time,"state":state}
 				result.append(output)
 		else:
 			state = 'fail'
