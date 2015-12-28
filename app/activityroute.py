@@ -159,7 +159,7 @@ def getactivitydetail():
 		activityid = request.json['activityid']
 		u=getuserinformation(token)
 		if u!=None:
-			result = []
+			#result = []
 			act = getactivitybyid(activityid)
 			title = act.title if act.title!=None else ''  
 			time = act.time if act.time!=None else ''
@@ -180,19 +180,19 @@ def getactivitydetail():
 				flag = '0'
 			else:
 				flag = '1'
-			output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag}
-			result.append(output)
+			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag}
+			#result.append(output)
 			state = 'successful'
 			reason = ''
 		else:
 			state = 'fail'
 			reason = '用户不存在'
-			result = []
+			result = ''
 	except Exception, e:
 		print e
 		state = 'fail'
 		reason = '异常'
-		result = []
+		result = ''
 
 
 	response = jsonify({'result':result,
@@ -386,7 +386,7 @@ def getpublishactivitydetail():
 		u=getuserinformation(token)
 		act = getactivitybyid(activityid)
 		if u!=None and act.author.id==u.id:
-			result = []
+			#result = []
 			title = act.title if act.title!=None else ''  
 			time = act.time if act.time!=None else ''
 			location=act.location if act.location!=None else ''
@@ -403,19 +403,19 @@ def getpublishactivitydetail():
 				state = 'nopass'
 			else:
 				state = 'verify'
-			output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage}
-			result.append(output)
+			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage}
+			#result.append(output)
 			state = 'successful'
 			reason = ''
 		else:
 			state = 'fail'
 			reason = '非法用户'
-			result = []
+			result = ''
 	except Exception, e:
 		print e
 		state = 'fail'
 		reason = '异常'
-		result = []
+		result = ''
 
 	response = jsonify({'result':result,
 						'state':state,
