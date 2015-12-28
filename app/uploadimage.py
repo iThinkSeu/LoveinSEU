@@ -24,6 +24,7 @@ def uploadavatar():
 		topicid = jsonstring.get('topicid','')
 		topofficialid = jsonstring.get('topofficialid','')
 		commentid = jsonstring.get('commentid','')
+		activityid = jsonstring.get('activityid','')
 		id = getuserinformation(token).id
 		src = request.form.get('avatar_path')
 		#print avatar
@@ -81,6 +82,14 @@ def uploadavatar():
 				dst = '/home/www/activity/activitytopofficials/' + str(topofficialid)
 				topofficialtemp.imageurl = "http://218.244.147.240:80/activity/activitytopofficials/" + str(topofficialid)
 				topofficialtemp.add()
+			elif type == "-9":
+				#type = -9 表示上传活动activity的生活照
+				dst = '/home/www/picture/activitylifeimages/' + str(activityid)+'-'+str(id)+'-'+str(number)
+			elif type == "-10":
+				dst = '/home/www/activity/activityimages/' + str(activityid) + '-' +str(number)
+				images = getImageURLbyid(number)
+				activity = getactivitybyid(activityid)
+				activity.addimage(images)
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
@@ -96,7 +105,7 @@ def uploadavatar():
 				fp = Image.open(dst)
 				fp.thumbnail((100,100))
 				fp.save(dst + '_thumbnail.jpg')
-			if type == "-4" or type == "-7":
+			if type == "-4" or type == "-7" or type == "-10":
 				fp = Image.open(dst)
 				fp.thumbnail((300,300))
 				fp.save(dst + '_thumbnail.jpg')

@@ -434,6 +434,17 @@ class Activity(db.Model):
 			print e
 			db.session.rollback()
 			return 2	
+	def addimage(self,image):
+		try:
+			f = activityimageAttach(activitys=self, images=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+
 
 
 class topic(db.Model):

@@ -180,7 +180,17 @@ def getactivitydetail():
 				flag = '0'
 			else:
 				flag = '1'
-			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag}
+			#获取活动的图片list
+			imagelist = act.images.all()
+			image = []
+			thumbnail = []
+			for actimage in imagelist:
+				number = actimage.imageid
+				url = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+str(number)
+				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
+				image.append(url)
+				thumbnail.append(urlthum)
+			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image,"thumbnail":thumbnail}
 			#result.append(output)
 			state = 'successful'
 			reason = ''
@@ -214,7 +224,6 @@ def likeactivity():
 				state = 'successful'
 				reason = ''
 				likenumber = activity1.likenumber
-				likenumber = ''
 			elif temp == 1:
 				state = 'fail'
 				reason = 'already like'
@@ -403,7 +412,17 @@ def getpublishactivitydetail():
 				state = 'nopass'
 			else:
 				state = 'verify'
-			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage}
+
+			imagelist = act.images.all()
+			image = []
+			thumbnail = []
+			for actimage in imagelist:
+				number = actimage.imageid
+				url = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+str(number)
+				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
+				image.append(url)
+				thumbnail.append(urlthum)
+			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,"thumbnail":thumbnail}
 			#result.append(output)
 			state = 'successful'
 			reason = ''

@@ -104,19 +104,19 @@ def getprofile():
 def getprofilebyid():
 	try:
 		id = request.json['id']
+		token = request.json['token']
+		u2=getuserinformation(token)
 		u=getuserbyid(id)
- 		if u!=None:
+ 		if u!=None and u2!=None:
 			state = 'successful'
 			reason = ''
-
 			#更新好友查看次数计数器
 			lookcount = u.lookcount if u.lookcount !=None else 0
 			u.lookcount = lookcount + 1
 			u.add()
 
 			lookcount = str(lookcount)
-			username = u.username if u.username!=None else ''
-			token = u.token if u.token!=None else ''    
+			username = u.username if u.username!=None else '' 
 			school = u.school if u.school!=None else '' 				
 			degree = u.degree if u.degree!=None else ''
 			department = u.department if u.department!=None else ''
@@ -136,7 +136,6 @@ def getprofilebyid():
 			state = 'fail'
 			reason = '用户不存在'
 			username = 'Nouser'
-			token=''
 			school=''
 			degree=''
 			department = ''
@@ -159,7 +158,6 @@ def getprofilebyid():
 		state = 'fail'
 		reason = '异常'	
 		username='e'
-		token=''
 		school=''
 		degree=''
 		department = ''
@@ -179,7 +177,6 @@ def getprofilebyid():
 
 
 	response = jsonify({'username':username,
-						'token':token,
 						'state':state,
 						'reason':reason,
 	 	                'school':school,
