@@ -56,7 +56,7 @@ def getactivityinformation():
 				number=act.number if act.number!=None else ''
 				remark = act.remark if act.remark != None else ''
 				advertise = act.advertise if act.advertise != None else ''
-
+				#作者信息
 				author = act.author.name if act.authorid != None else ''
 				authorid = act.authorid if act.authorid != None else ''
 				school = act.author.school if act.authorid != None else ''
@@ -185,18 +185,13 @@ def getactivitydetail():
 			#是否喜欢
 			templike = act.likeusers.filter_by(userid = u.id).first()
 			flag = '0' if templike is None else '1'
-			#获取活动的图片list
-			imagelist = act.images.all()
-			image = []
-			thumbnail = []
-			for actimage in imagelist:
-				number = actimage.imageid
-				url = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+str(number)
-				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
-				image.append(url)
-				thumbnail.append(urlthum)
-			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image,"thumbnail":thumbnail}
-			#result.append(output)
+			#获取活动的海报
+			poster = activityimageAttach.query.filter_by(activityid = activityid,imageid = 0).first()
+			if poster != None:
+				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+'0'
+			else:
+				image = ""
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image}
 			state = 'successful'
 			reason = ''
 		else:
@@ -262,7 +257,27 @@ def searchactivity():
 			alist=Activity.query.filter(Activity.title.like(title))
 			state = "successful"
 			reason = ''
-			result = [{"id":search.id,"title":search.title,"number":search.number,"location":search.location,"time":search.time} for search in alist]
+			result = []
+			for act in alist:
+				title = act.title if act.title!=None else ''  
+				time = act.time if act.time!=None else ''
+				location=act.location if act.location!=None else ''
+				number=act.number if act.number!=None else ''
+				remark = act.remark if act.remark != None else ''
+				advertise = act.advertise if act.advertise != None else ''
+				#作者信息
+				author = act.author.name if act.authorid != None else ''
+				authorid = act.authorid if act.authorid != None else ''
+				school = act.author.school if act.authorid != None else ''
+				gender = act.author.gender if act.authorid != None else ''
+				signnumber = act.users.count()
+				if u.isattent(act.id) == 0:
+					signstate = 'no'
+				else:
+					signstate = 'yes'
+				signnumber = str(signnumber)
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+				result.append(output)
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -304,7 +319,7 @@ def getlikeactivity():
 				signnumber = act.users.count()
 				signnumber = str(signnumber)
 				signstate = 'no' if u.isattent(act.id) == 0 else 'yes'
-
+				#作者信息
 				author = act.author.name if act.authorid != None else ''
 				authorid = act.authorid if act.authorid != None else ''
 				school = act.author.school if act.authorid != None else ''
@@ -425,7 +440,6 @@ def getpublishactivitydetail():
 		u=getuserinformation(token)
 		act = getactivitybyid(activityid)
 		if u!=None and act.author.id==u.id:
-			#result = []
 			title = act.title if act.title != None else ''  
 			time = act.time if act.time != None else ''
 			location=act.location if act.location!= None else ''
@@ -436,24 +450,19 @@ def getpublishactivitydetail():
 			whetherimage = act.whetherimage if act.whetherimage != None else ''
 			signnumber = act.users.count()
 			signnumber = str(signnumber)
-
 			if act.passflag == '1':
 				state = 'pass'
 			elif act.passflag == '2':
 				state = 'nopass'
 			else:
 				state = 'verify'
-			imagelist = act.images.all()
-			image = []
-			thumbnail = []
-			for actimage in imagelist:
-				number = actimage.imageid
-				url = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+str(number)
-				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
-				image.append(url)
-				thumbnail.append(urlthum)
-			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,"thumbnail":thumbnail}
-			#result.append(output)
+			#获取活动的海报
+			poster = activityimageAttach.query.filter_by(activityid = activityid,imageid = 0).first()
+			if poster != None:
+				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+ '0'
+			else:
+				image = ""
+			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
 			state = 'successful'
 			reason = ''
 		else:

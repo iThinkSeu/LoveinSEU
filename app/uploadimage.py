@@ -86,6 +86,7 @@ def uploadavatar():
 				#type = -9 表示上传活动activity的生活照
 				dst = '/home/www/picture/activitylifeimages/' + str(activityid)+'-'+str(id)+'-'+str(number)
 			elif type == "-10":
+				#type = -10 表示上传活动海报照片
 				dst = '/home/www/activity/activityimages/' + str(activityid) + '-' +str(number)
 				images = getImageURLbyid(number)
 				activity = getactivitybyid(activityid)
