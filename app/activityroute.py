@@ -299,11 +299,18 @@ def getlikeactivity():
 				number = act.number if act.number != None else ''
 				location = act.location if act.location != None else ''
 				time = act.time if act.time != None else ''
-				signnumber = act.signnumber if act.signnumber != None else ''
 				remark = act.remark if act.remark != None else ''
 				advertise = act.advertise if  act.advertise != None else ''
+				signnumber = act.users.count()
+				signnumber = str(signnumber)
 				signstate = 'no' if u.isattent(act.id) == 0 else 'yes'
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+
+				author = act.author.name if act.authorid != None else ''
+				authorid = act.authorid if act.authorid != None else ''
+				school = act.author.school if act.authorid != None else ''
+				gender = act.author.gender if act.authorid != None else ''
+
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -339,11 +346,18 @@ def getattentactivity():
 				number = act.number if act.number != None else ''
 				location = act.location if act.location != None else ''
 				time = act.time if act.time != None else ''
-				signnumber = act.signnumber if act.signnumber != None else ''
 				remark = act.remark if act.remark != None else ''
 				advertise = act.advertise if  act.advertise != None else ''
 				signstate = 'no' if u.isattent(act.id) == 0 else 'yes'
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+				signnumber = act.users.count()
+				signnumber = str(signnumber)
+				#作者信息
+				author = act.author.name if act.authorid != None else ''
+				authorid = act.authorid if act.authorid != None else ''
+				school = act.author.school if act.authorid != None else ''
+				gender = act.author.gender if act.authorid != None else ''
+
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -377,9 +391,10 @@ def getpublishactivity():
 				number = act.number if act.number != None else ''
 				location = act.location if act.location != None else ''
 				time = act.time if act.time != None else ''
-				signnumber = act.signnumber if act.signnumber != None else ''
 				remark = act.remark if act.remark != None else ''
 				advertise = act.advertise if  act.advertise != None else ''
+				signnumber = act.users.count()
+				signnumber = str(signnumber)
 				if act.passflag == '1':
 					vstate = 'pass'
 				elif act.passflag == '2':
@@ -421,10 +436,7 @@ def getpublishactivitydetail():
 			whetherimage = act.whetherimage if act.whetherimage != None else ''
 			signnumber = act.users.count()
 			signnumber = str(signnumber)
-			author = act.author.name if act.authorid != None else ''
-			authorid = act.authorid if act.authorid != None else ''
-			school = act.author.school if act.authorid != None else ''
-			gender = act.author.gender if act.authorid != None else ''
+
 			if act.passflag == '1':
 				state = 'pass'
 			elif act.passflag == '2':
@@ -440,7 +452,7 @@ def getpublishactivitydetail():
 				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
 				image.append(url)
 				thumbnail.append(urlthum)
-			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,"thumbnail":thumbnail}
+			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,"thumbnail":thumbnail}
 			#result.append(output)
 			state = 'successful'
 			reason = ''
