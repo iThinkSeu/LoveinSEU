@@ -56,13 +56,18 @@ def getactivityinformation():
 				number=act.number if act.number!=None else ''
 				remark = act.remark if act.remark != None else ''
 				advertise = act.advertise if act.advertise != None else ''
+
+				author = act.author.name if act.authorid != None else ''
+				authorid = act.authorid if act.authorid != None else ''
+				school = act.author.school if act.authorid != None else ''
+				gender = act.author.gender if act.authorid != None else ''
 				signnumber = act.users.count()
 				if u.isattent(act.id) == 0:
 					signstate = 'no'
 				else:
 					signstate = 'yes'
 				signnumber = str(signnumber)
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -92,7 +97,7 @@ def publishactivity():
 		advertise = request.json.get('advertise','')
 		detail = request.json.get('detail','')
 		label = request.json.get('label','')
-		print whetherimage
+		#print whetherimage
 		#x=string.atoi(whetherimage)
 		#print x
 		u = getuserinformation(token)
