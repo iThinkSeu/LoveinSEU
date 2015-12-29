@@ -183,8 +183,6 @@ def getmessageunreadnumber():
 			state = 'fail'
 			reason = 'no user'
 			number = ''
-	
-		
 	except Exception, e:
 		print e
 		state = 'fail'
