@@ -170,16 +170,16 @@ def getactivitydetail():
 			detail = act.detail if act.detail != None else ''
 			whetherimage = act.whetherimage if act.whetherimage != None else ''
 			signnumber = act.users.count()
-			if u.isattent(act.id) == 0:
-				signstate = 'no'
-			else:
-				signstate = 'yes'
 			signnumber = str(signnumber)
+			author = act.author.name if act.authorid != None else ''
+			authorid = act.authorid if act.authorid != None else ''
+			school = act.author.school if act.authorid != None else ''
+			gender = act.author.gender if act.authorid != None else ''
+			#是否报名
+			signstate = 'no' if u.isattent(act.id) == 0 else 'yes'
+			#是否喜欢
 			templike = act.likeusers.filter_by(userid = u.id).first()
-			if templike is None:
-				flag = '0'
-			else:
-				flag = '1'
+			flag = '0' if templike is None else '1'
 			#获取活动的图片list
 			imagelist = act.images.all()
 			image = []
@@ -190,7 +190,7 @@ def getactivitydetail():
 				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
 				image.append(url)
 				thumbnail.append(urlthum)
-			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image,"thumbnail":thumbnail}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image,"thumbnail":thumbnail}
 			#result.append(output)
 			state = 'successful'
 			reason = ''
@@ -289,12 +289,16 @@ def getlikeactivity():
 			result = []
 			for temp in likeitems:
 				activityid = temp.activityid
-				activitytemp = getActivityInformation(activityid)
-				title = activitytemp.title if activitytemp.title != None else ''
-				number = activitytemp.number if activitytemp.number != None else ''
-				location = activitytemp.location if activitytemp.location != None else ''
-				time = activitytemp.time if activitytemp.time != None else ''
-				output = {"id":activityid,"title":title,"number":number,"location":location,"time":time}
+				act = getActivityInformation(activityid)
+				title = act.title if act.title != None else ''
+				number = act.number if act.number != None else ''
+				location = act.location if act.location != None else ''
+				time = act.time if act.time != None else ''
+				signnumber = act.signnumber if act.signnumber != None else ''
+				remark = act.remark if act.remark != None else ''
+				advertise = act.advertise if  act.advertise != None else ''
+				signstate = 'no' if u.isattent(act.id) == 0 else 'yes'
+				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -325,12 +329,16 @@ def getattentactivity():
 			result = []
 			for temp in items:
 				activityid = temp.activityid
-				activitytemp = getActivityInformation(activityid)
-				title = activitytemp.title if activitytemp.title != None else ''
-				number = activitytemp.number if activitytemp.number != None else ''
-				location = activitytemp.location if activitytemp.location != None else ''
-				time = activitytemp.time if activitytemp.time != None else ''
-				output = {"id":activityid,"title":title,"number":number,"location":location,"time":time}
+				act = getActivityInformation(activityid)
+				title = act.title if act.title != None else ''
+				number = act.number if act.number != None else ''
+				location = act.location if act.location != None else ''
+				time = act.time if act.time != None else ''
+				signnumber = act.signnumber if act.signnumber != None else ''
+				remark = act.remark if act.remark != None else ''
+				advertise = act.advertise if  act.advertise != None else ''
+				signstate = 'no' if u.isattent(act.id) == 0 else 'yes'
+				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -359,19 +367,21 @@ def getpublishactivity():
 			temppage = u.publishactivitys.order_by(models.Activity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			items = temppage.items
 			result = []
-			for temp in items:
-				activityid = temp.id
-				title = temp.title if temp.title != None else ''
-				number = temp.number if temp.number != None else ''
-				location = temp.location if temp.location != None else ''
-				time = temp.time if temp.time != None else ''
-				if temp.passflag == '1':
-					state = 'pass'
-				elif temp.passflag == '2':
-					state = 'nopass'
+			for act in items:
+				title = act.title if act.title != None else ''
+				number = act.number if act.number != None else ''
+				location = act.location if act.location != None else ''
+				time = act.time if act.time != None else ''
+				signnumber = act.signnumber if act.signnumber != None else ''
+				remark = act.remark if act.remark != None else ''
+				advertise = act.advertise if  act.advertise != None else ''
+				if act.passflag == '1':
+					vstate = 'pass'
+				elif act.passflag == '2':
+					vstate = 'nopass'
 				else:
-					state = 'verify'
-				output = {"id":activityid,"title":title,"number":number,"location":location,"time":time,"state":state}
+					vstate = 'verify'
+				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':vstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -396,23 +406,26 @@ def getpublishactivitydetail():
 		act = getactivitybyid(activityid)
 		if u!=None and act.author.id==u.id:
 			#result = []
-			title = act.title if act.title!=None else ''  
-			time = act.time if act.time!=None else ''
-			location=act.location if act.location!=None else ''
-			number=act.number if act.number!=None else ''
+			title = act.title if act.title != None else ''  
+			time = act.time if act.time != None else ''
+			location=act.location if act.location!= None else ''
+			number=act.number if act.number!= None else ''
 			remark = act.remark if act.remark != None else ''
 			advertise = act.advertise if act.advertise != None else ''
 			detail = act.detail if act.detail != None else ''
 			whetherimage = act.whetherimage if act.whetherimage != None else ''
 			signnumber = act.users.count()
 			signnumber = str(signnumber)
+			author = act.author.name if act.authorid != None else ''
+			authorid = act.authorid if act.authorid != None else ''
+			school = act.author.school if act.authorid != None else ''
+			gender = act.author.gender if act.authorid != None else ''
 			if act.passflag == '1':
 				state = 'pass'
 			elif act.passflag == '2':
 				state = 'nopass'
 			else:
 				state = 'verify'
-
 			imagelist = act.images.all()
 			image = []
 			thumbnail = []
@@ -422,7 +435,7 @@ def getpublishactivitydetail():
 				urlthum = "http://218.244.147.240:80/activity/activityimages/" + str(activityid)+'-'+str(number) + "_thumbnail.jpg"
 				image.append(url)
 				thumbnail.append(urlthum)
-			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'author':act.author.name if act.authorid!=None else '','signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,"thumbnail":thumbnail}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,"thumbnail":thumbnail}
 			#result.append(output)
 			state = 'successful'
 			reason = ''
