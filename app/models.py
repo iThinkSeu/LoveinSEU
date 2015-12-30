@@ -76,8 +76,16 @@ class attentactivity(db.Model):
 	id = db.Column(db.Integer,primary_key = True)
 	userid = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key = True)
 	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'),primary_key = True)
-	state = db.Column(db.String(32),default = '0')
+	state = db.Column(db.Boolean,default =False)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 
 class Visit(db.Model):
@@ -86,8 +94,6 @@ class Visit(db.Model):
 	guestid = db.Column(db.Integer, db.ForeignKey('users.id'))
 	hostid = db.Column(db.Integer, db.ForeignKey('users.id'))
 	timestamp = db.Column(db.DateTime, default = datetime.now)
-
-
 
 class User(db.Model):
 	__tablename__='users'
@@ -124,7 +130,6 @@ class User(db.Model):
 	visitors = db.relationship('Visit', foreign_keys = [Visit.hostid], backref = db.backref('host', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#all users that follow this
 	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
-
 
 	#该用户发表的帖子
 	posts = db.relationship('post',backref = 'author', lazy = 'dynamic')
@@ -175,13 +180,26 @@ class User(db.Model):
 				return 1
 		except Exception, e:
 			db.session.rollback()
-			return 2		
+			return 2	
+	def unattent(self,activity):
+		try:
+			lp = self.activitys.filter_by(activityid = activity.id).first()
+			if lp != None:
+				db.session.delete(lp)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			db.session.rollback()
+			return 2
 	def isattent(self,activityid):
 		try:
-			f = self.activitys.all()
-			L = [x.activityid for x in f]
-			flag = activityid in L
-			if flag:
+			# f = self.activitys.all()
+			# L = [x.activityid for x in f]
+			# flag = activityid in L
+			flag = self.activitys.filter_by(activityid = activityid).first()
+			if flag != None:
 				return 1
 			else:
 				return 0
@@ -208,8 +226,6 @@ class User(db.Model):
 		except Exception, e:
 			db.session.rollback()
 			return 2
-
-
 	def unfollow(self, user):
 		try:
 			f = self.followeds.filter_by(followed_id=user.id).first()
@@ -236,6 +252,20 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+	def unlikeactivity(self,activity):
+		try:
+			lp = self.likeactivitys.filter_by(activityid = activity.id).first()
+			if lp != None:
+				db.session.delete(lp)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+		
 	def visit(self, user):
 		try:
 			v = Visit(guest = self, host = user)

@@ -17,6 +17,7 @@ def signup():
 		act = getActivityInformation(activityid)
 		if u!=None:
 			temp = u.attent(act)
+			print temp
 			if temp != 2:
 				state = "successful"
 				reason = ""
@@ -35,6 +36,37 @@ def signup():
 	response = jsonify({'state':state,
 		                'reason':reason})
 	return response
+
+@activity_route.route("/deletesignup",methods=['POST'])
+def deletesignup():
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		u=getuserinformation(token)
+		act = getActivityInformation(activityid)
+		if u!=None:
+			temp = u.unattent(act)
+			print temp
+			if temp != 2:
+				state = "successful"
+				reason = ""
+			else:
+				state ='fail'
+				reason ='异常，请重新报名'
+		else:
+			state = 'fail'
+			reason = '用户不存在'
+
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+
+	response = jsonify({'state':state,
+		                'reason':reason})
+	return response
+
+
 
 @activity_route.route("/getactivityinformation",methods=['POST'])
 def getactivityinformation():
@@ -246,6 +278,43 @@ def likeactivity():
 						'reason':reason,
 						'likenumber':likenumber})
 	return response 
+@activity_route.route("/unlikeactivity",methods=['POST'])
+def unlikeactivity():
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		u = getuserinformation(token)
+		if u is not None:
+			activity1 = getactivitybyid(activityid)
+			temp = u.unlikeactivity(activity1)
+			if temp == 0:
+				activity1.likenumber = activity1.likeusers.count()
+				activity1.add()
+				state = 'successful'
+				reason = ''
+				likenumber = activity1.likenumber
+			elif temp == 1:
+				state = 'fail'
+				reason = 'already unlike'
+				likenumber = ''
+			else:
+				state = 'fail'
+				reason = 'exception'
+				likenumber = ''
+		else:
+			state = 'fail'
+			reason = 'no user'
+			likenumber = ''
+	except Exception, e:	
+		print e
+		likenumber = ''
+		state = 'fail'
+		reason = 'exception'
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'likenumber':likenumber})
+	return response 
 @activity_route.route("/searchactivity",methods = ['GET','POST'])
 def searchactivity():
 	try:
@@ -416,11 +485,11 @@ def getpublishactivity():
 				school = act.author.school if act.authorid != None else ''
 				gender = act.author.gender if act.authorid != None else ''
 				if act.passflag == '1':
-					vstate = 'pass'
+					vstate = '通过'
 				elif act.passflag == '2':
-					vstate = 'nopass'
+					vstate = '未通过'
 				else:
-					vstate = 'verify'
+					vstate = '审核中'
 				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':vstate,'advertise':advertise}
 				result.append(output)
 		else:
@@ -461,11 +530,11 @@ def getpublishactivitydetail():
 			school = act.author.school if act.authorid != None else ''
 			gender = act.author.gender if act.authorid != None else ''
 			if act.passflag == '1':
-				state = 'pass'
+				state = '通过'
 			elif act.passflag == '2':
-				state = 'nopass'
+				state = '未通过'
 			else:
-				state = 'verify'
+				state = '审核中'
 			#获取活动的海报
 			poster = activityimageAttach.query.filter_by(activityid = activityid,imageid = 0).first()
 			if poster != None:
@@ -510,7 +579,8 @@ def getactivityattentuser():
 				name = usertemp.name if usertemp.name != None else ''
 				school = usertemp.school if usertemp.school != None else ''
 				gender = usertemp.gender if usertemp.gender != None else ''
-				output = {"id":userid,"name":name,"school":school,"gender":gender}
+				flag = '0' if temp.state == 0 else '1'
+				output = {"id":userid,"name":name,"school":school,"gender":gender,'flag':flag}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -525,3 +595,62 @@ def getactivityattentuser():
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
+
+@activity_route.route("/setpassuser",methods=['POST'])
+def setpassuser():
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		userlist = request.json['userlist']
+		u = getuserinformation(token)
+		activity = getactivitybyid(activityid)
+		if u != None and activity.author.id == u.id:	
+			state = 'successful'
+			reason = ''
+			for userid in userlist:
+				temp = attentactivity.query.filter_by(userid = userid, activityid = activityid).first()
+				if temp != None:
+					temp.state = True
+					temp.add()
+		else:
+			state = 'fail'
+			reason = '非法用户'
+			result = ''
+	except Exception, e:
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
+
+@activity_route.route("/deletepassuser",methods=['POST'])
+def deletepassuser():
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		userlist = request.json['userlist']
+		u = getuserinformation(token)
+		activity = getactivitybyid(activityid)
+		if u != None and activity.author.id == u.id:	
+			state = 'successful'
+			reason = ''
+			for userid in userlist:
+				temp = attentactivity.query.filter_by(userid = userid, activityid = activityid).first()
+				if temp != None:
+					temp.state = False
+					temp.add()
+		else:
+			state = 'fail'
+			reason = '非法用户'
+			result = ''
+	except Exception, e:
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
+
