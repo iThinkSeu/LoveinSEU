@@ -410,13 +410,18 @@ def getpublishactivity():
 				advertise = act.advertise if  act.advertise != None else ''
 				signnumber = act.users.count()
 				signnumber = str(signnumber)
+				#作者信息
+				author = act.author.name if act.authorid != None else ''
+				authorid = act.authorid if act.authorid != None else ''
+				school = act.author.school if act.authorid != None else ''
+				gender = act.author.gender if act.authorid != None else ''
 				if act.passflag == '1':
 					vstate = 'pass'
 				elif act.passflag == '2':
 					vstate = 'nopass'
 				else:
 					vstate = 'verify'
-				output = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':vstate,'advertise':advertise}
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':vstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -450,6 +455,11 @@ def getpublishactivitydetail():
 			whetherimage = act.whetherimage if act.whetherimage != None else ''
 			signnumber = act.users.count()
 			signnumber = str(signnumber)
+			#作者信息
+			author = act.author.name if act.authorid != None else ''
+			authorid = act.authorid if act.authorid != None else ''
+			school = act.author.school if act.authorid != None else ''
+			gender = act.author.gender if act.authorid != None else ''
 			if act.passflag == '1':
 				state = 'pass'
 			elif act.passflag == '2':
@@ -462,7 +472,7 @@ def getpublishactivitydetail():
 				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+ '0'
 			else:
 				image = ""
-			result = {'id':act.id,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
 			state = 'successful'
 			reason = ''
 		else:
