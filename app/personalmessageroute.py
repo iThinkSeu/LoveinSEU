@@ -23,12 +23,10 @@ def sendmessage():
 			id = messageTemp.id
 			state = 'successful'
 			reason = ''
-
 		else:
 			state = 'fail'
 			reason = 'no user'
 			id = ''
-	
 		
 	except Exception, e:
 		print e

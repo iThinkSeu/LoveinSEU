@@ -750,6 +750,7 @@ def getranduser(token):
 	L1 = [x.id for x in udif]
 	f2 = u.followeds.all()
 	L2 = [y.followed_id for y in f2]
+	L2.append(1)
 	L = list(set(L1).difference(set(L2)))
 	if len(L)>7:	
 		return random.sample(L,8)

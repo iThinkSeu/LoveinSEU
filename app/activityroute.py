@@ -530,18 +530,18 @@ def getpublishactivitydetail():
 			school = act.author.school if act.authorid != None else ''
 			gender = act.author.gender if act.authorid != None else ''
 			if act.passflag == '1':
-				state = '通过'
+				passflag = '通过'
 			elif act.passflag == '2':
-				state = '未通过'
+				passflag = '未通过'
 			else:
-				state = '审核中'
+				passflag = '审核中'
 			#获取活动的海报
 			poster = activityimageAttach.query.filter_by(activityid = activityid,imageid = 0).first()
 			if poster != None:
 				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+ '0'
 			else:
 				image = ""
-			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':state,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':passflag,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
 			state = 'successful'
 			reason = ''
 		else:
