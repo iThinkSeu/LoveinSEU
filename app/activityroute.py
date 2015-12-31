@@ -82,6 +82,7 @@ def getactivityinformation():
 			state = 'successful'
 			reason = ''
 			for act in actlist:
+				#print act.passflag
 				title = act.title if act.title!=None else ''  
 				time = act.time if act.time!=None else ''
 				location=act.location if act.location!=None else ''
