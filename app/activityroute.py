@@ -490,7 +490,7 @@ def getpublishactivity():
 					vstate = '未通过'
 				else:
 					vstate = '审核中'
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':vstate,'advertise':advertise}
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'status':vstate,'advertise':advertise}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -541,7 +541,7 @@ def getpublishactivitydetail():
 				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+ '0'
 			else:
 				image = ""
-			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':passflag,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'status':passflag,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
 			state = 'successful'
 			reason = ''
 		else:
