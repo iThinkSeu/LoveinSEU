@@ -78,6 +78,7 @@ def getactivityinformation():
 		if u!=None:
 			pagetemp = Activity.query.filter_by(passflag='1').order_by(models.Activity.top.desc()).order_by(models.Activity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			actlist = pagetemp.items
+			pages = pagetemp.pages
 			result = []
 			state = 'successful'
 			reason = ''
@@ -106,13 +107,16 @@ def getactivityinformation():
 			state = 'fail'
 			reason = '用户不存在'
 			result = []
+			pages = ''
 	except Exception, e:
 		print e
 		state = 'fail'
 		reason = '异常'
 		result = []
+		pages = ''
 
 	response = jsonify({'result':result,
+						'pages':pages,
 						'state':state,
 						'reason':reason})
 	return response
@@ -375,6 +379,7 @@ def getlikeactivity():
 			state = 'successful'
 			reason = ''
 			likeactivitypage = u.likeactivitys.order_by(models.likeactivity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
+			pages = likeactivitypage.pages
 			likeitems = likeactivitypage.items
 			result = []
 			for temp in likeitems:
@@ -401,12 +406,15 @@ def getlikeactivity():
 			state = 'fail'
 			reason = 'no user'
 			result = ''
+			pages = ''
 	except Exception, e:
 		print e
 		result = ''
 		state = 'fail'
 		reason = 'exception'
+		pages = ''
 	response = jsonify({'result':result,
+						'pages':pages,
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
@@ -423,6 +431,7 @@ def getattentactivity():
 			reason = ''
 			temppage = u.activitys.order_by(models.attentactivity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			items = temppage.items
+			pages = temppage.pages
 			result = []
 			for temp in items:
 				activityid = temp.activityid
@@ -448,12 +457,15 @@ def getattentactivity():
 			state = 'fail'
 			reason = 'no user'
 			result = ''
+			pages = ''
 	except Exception, e:
 		print e
 		result = ''
 		state = 'fail'
 		reason = 'exception'
+		pages = ''
 	response = jsonify({'result':result,
+						'pages':pages,
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
@@ -470,6 +482,7 @@ def getpublishactivity():
 			reason = ''
 			temppage = u.publishactivitys.order_by(models.Activity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			items = temppage.items
+			pages = temppage.pages
 			result = []
 			for act in items:
 				title = act.title if act.title != None else ''
@@ -497,13 +510,16 @@ def getpublishactivity():
 			state = 'fail'
 			reason = 'no user'
 			result = ''
+			pages = ''
 	except Exception, e:
 		print e
 		result = ''
 		state = 'fail'
 		reason = 'exception'
+		pages = ''
 	response = jsonify({'result':result,
-						'state':state,                                                                                                                                                                                  
+						'state':state,   
+						'pages':pages,                                                                                                                                                                               
 						'reason':reason})
 	return response
 #获取发布的活动的信息
@@ -573,6 +589,7 @@ def getactivityattentuser():
 			reason = ''
 			temppage = activity.users.order_by(models.attentactivity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			items = temppage.items
+			pages = temppage.pages
 			result = []
 			for temp in items:
 				userid = temp.userid
@@ -587,13 +604,16 @@ def getactivityattentuser():
 			state = 'fail'
 			reason = '非法用户'
 			result = ''
+			pages = ''
 	except Exception, e:
 		print e
 		result = ''
 		state = 'fail'
 		reason = 'exception'
+		pages = ''
 	response = jsonify({'result':result,
-						'state':state,                                                                                                                                                                                  
+						'state':state,    
+						'pages':pages,                                                                                                                                                                              
 						'reason':reason})
 	return response
 
