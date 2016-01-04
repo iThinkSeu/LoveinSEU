@@ -3,8 +3,8 @@ from flask import Blueprint
 from flask import request,jsonify,json
 from models import *
 import os, stat
-#from PIL import Image
-import Image
+from PIL import Image
+#import Image
 import shutil
 
 
