@@ -15,7 +15,9 @@ def signup():
 		page = request.json.get('page','1')
 		x=string.atoi(str(page))
 		u=getuserinformation(token)
+		pages = 0
 		if u!=None and u.username == 'administrator':
+			pages = (Activity.query.count() + 9)/10
 			pagetemp = Activity.query.order_by(models.Activity.top.desc()).order_by(models.Activity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			actlist = pagetemp.items
 			result = []
@@ -62,7 +64,8 @@ def signup():
 
 	response = jsonify({'result':result,
 						'state':state,
-						'reason':reason})
+						'reason':reason,
+						'pages':pages})
 	return response
 
 @adminuser_route.route("/setpassactivity",methods=['POST'])
