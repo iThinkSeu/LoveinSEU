@@ -112,8 +112,8 @@ def getprofilebyid():
 			reason = ''
 			#更新好友查看次数计数器
 			lookcount = u.lookcount if u.lookcount !=None else 0
-			u.lookcount = lookcount + 1
-			u.add()
+			#u.lookcount = lookcount + 1
+			#u.add()
 
 			lookcount = str(lookcount)
 			username = u.username if u.username!=None else '' 

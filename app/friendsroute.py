@@ -18,6 +18,9 @@ def visit():
 		u = getuserinformation(token)
 		u1 = getuserbyid(id)
 		if (u is not None) and (u1 is not None) and (u.id != u1.id):
+			lookcount = u1.lookcount if u1.lookcount !=None else 0
+			u1.lookcount = lookcount + 1
+			u1.add()
 			res = u.visit(u1)
 			if res == 0:
 				state = 'successful'
@@ -42,9 +45,10 @@ def visitinfo():
 		u = getuserinformation(token)
 		u1 = getuserbyid(id)
 		if (u is not None) and (u1 is not None):
+			lookcount = u1.lookcount if u1.lookcount !=None else 0
 			state = 'successful'
 			reason = ''
-			result = {'total':u1.visitors.count(), 'today':u1.visitors.filter(cast(Visit.timestamp, Date) == date.today()).count()}
+			result = {'total':lookcount, 'today':u1.visitors.filter(cast(Visit.timestamp, Date) == date.today()).count()}
 
 	except Exception, e:
 		state = 'fail'

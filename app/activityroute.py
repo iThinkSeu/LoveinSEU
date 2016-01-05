@@ -578,6 +578,10 @@ def getpublishactivitydetail():
 @activity_route.route("/getactivityattentuser",methods=['POST'])
 def getactivityattentuser():
 	try:
+		"""get user posted images"""
+		def lifeimage_url(activityid,userid,imgid):
+			return 'http://218.244.147.240:80/picture/activitylifeimages/' + str(activityid)+'-'+str(userid)+'-'+str(imgid)
+
 		token = request.json['token']
 		activityid = request.json['activityid']
 		page = request.json.get('page','1')
@@ -591,14 +595,20 @@ def getactivityattentuser():
 			items = temppage.items
 			pages = temppage.pages
 			result = []
+
 			for temp in items:
 				userid = temp.userid
 				usertemp = getuserbyid(userid)
+				lifelist = activitylifeimage.query.filter_by(activityid = activityid,userid = userid).all()
+				images = []
+				for lifeimage in lifelist:
+					images.append(lifeimage_url(lifeimage.activityid, lifeimage.userid, lifeimage.imageid))
+
 				name = usertemp.name if usertemp.name != None else ''
 				school = usertemp.school if usertemp.school != None else ''
 				gender = usertemp.gender if usertemp.gender != None else ''
 				flag = '0' if temp.state == 0 else '1'
-				output = {"id":userid,"name":name,"school":school,"gender":gender,'flag':flag}
+				output = {"id":userid,"name":name,"school":school,"gender":gender,'flag':flag,'images':images}
 				result.append(output)
 		else:
 			state = 'fail'

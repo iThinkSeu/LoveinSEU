@@ -551,7 +551,6 @@ def getpostlikeusers():
 						'reason':reason})
 	return response
 #根据commentid得到这个comment的所有评论
-
 @community_route.route("/getcommentbycommentid",methods=['POST'])
 def getcommentbycommentid():
 	try:
@@ -621,3 +620,4 @@ def getcommentbycommentid():
 						'state':state,                                                                                                                                                                                  
 						'reason':reason})
 	return response
+

@@ -17,9 +17,9 @@ def signup():
 		u=getuserinformation(token)
 		pages = 0
 		if u!=None and u.username == 'administrator':
-			pages = (Activity.query.count() + 9)/10
 			pagetemp = Activity.query.order_by(models.Activity.top.desc()).order_by(models.Activity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			actlist = pagetemp.items
+			pages = pagetemp.pages
 			result = []
 			state = 'successful'
 			reason = ''

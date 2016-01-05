@@ -95,6 +95,24 @@ class Visit(db.Model):
 	hostid = db.Column(db.Integer, db.ForeignKey('users.id'))
 	timestamp = db.Column(db.DateTime, default = datetime.now)
 
+#上传活动的生活照
+class activitylifeimage(db.Model):
+	__tablename__ = 'activitylifeimages'
+	id = db.Column(db.Integer,primary_key = True)
+	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'),primary_key = True)
+	userid = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key = True)
+	imageid = db.Column(db.Integer,db.ForeignKey("imageurls.id"),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+
+
 class User(db.Model):
 	__tablename__='users'
 	id = db.Column(db.Integer,primary_key=True)
@@ -145,6 +163,8 @@ class User(db.Model):
 	publishactivitys = db.relationship('Activity',backref = 'author', lazy = 'dynamic')       
 	#喜欢的活动
 	likeactivitys = db.relationship('likeactivity', foreign_keys = [likeactivity.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#参加活动的生活照
+	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.userid], backref = db.backref('users', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 
 	def add(self):
@@ -420,6 +440,8 @@ class imageURL(db.Model):
 	comments = db.relationship('commentimageAttach', foreign_keys = [commentimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	#活动的图片附件
 	activitys = db.relationship('activityimageAttach', foreign_keys = [activityimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+	#活动的生活照
+	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 
 	def add(self):
 		try:
@@ -454,6 +476,8 @@ class Activity(db.Model):
 	users = db.relationship('attentactivity', foreign_keys = [attentactivity.activityid], backref = db.backref('attentwhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#活动的图片附件
 	images = db.relationship('activityimageAttach', foreign_keys = [activityimageAttach.activityid], backref = db.backref('activitys', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#报名活动用户的生活照
+	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.activityid], backref = db.backref('activitys', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#喜欢该活动的人
 	likeusers = db.relationship('likeactivity', foreign_keys = [likeactivity.activityid], backref = db.backref('likewhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	def add(self):
@@ -467,6 +491,16 @@ class Activity(db.Model):
 	def addimage(self,image):
 		try:
 			f = activityimageAttach(activitys=self, images=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+	def addlifeimage(self,user,image):
+		try:
+			f = activitylifeimage(activitys=self, users = user,images=image)
 			db.session.add(f)
 			db.session.commit()
 			return 0	
