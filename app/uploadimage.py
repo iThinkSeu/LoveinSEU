@@ -110,9 +110,9 @@ def uploadavatar():
 				fp = Image.open(dst)
 				fp.thumbnail((100,100))
 				fp.save(dst + '_thumbnail.jpg')
-			if type == "-4" or type == "-7" or type == "-10":
+			if type == "-4" or type == "-7" or type == "-10" or type == "-9":
 				fp = Image.open(dst)
-				fp.thumbnail((300,300))
+				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
 			state = 'successful'
 			reason = ''
