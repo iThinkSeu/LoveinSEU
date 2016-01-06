@@ -61,10 +61,26 @@ def login():
 			reason = ''
 			id = getuserinformation(token).id
 		else:
-			id=''
-			state = 'fail'
-			token = 'None'
-			reason = '用户名密码错误'
+			tempuser = User.query.filter_by(username=username).first()
+			if tempuser != None:
+				pwd = generatemd5(tempuser.password)
+				if pwd == password:
+					state = 'successful'
+					token = tempuser.token
+					reason = ''
+					id = tempuser.id
+					tempuser.password = pwd
+					tempuser.addpwd()
+				else:
+					id=''
+					state = 'fail'
+					token = 'None'
+					reason = '用户名密码错误'
+			else:
+				id=''
+				state = 'fail'
+				token = 'None'
+				reason = '用户名密码错误'
 	except Exception, e:
 		state = 'fail'
 		reason='异常'
