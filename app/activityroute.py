@@ -5,6 +5,7 @@ from models import *
 import models 
 from hashmd5 import *
 import string
+from sqlalchemy import Date, cast
 
 activity_route = Blueprint('activity_route', __name__)
 
@@ -575,6 +576,45 @@ def getpublishactivitydetail():
 						'state':state,
 						'reason':reason})
 	return response
+
+
+@activity_route.route("/getactivitystatistic", methods=['POST'])
+def getactivitystatistic():
+	"""get activity statistic information"""
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		activity = getactivitybyid(activityid)
+		u = getuserinformation(token)
+		if u != None and activity != None:
+			state = 'successful'
+			reason = ''
+
+			registeredTotal = activity.users.count()
+			registeredToday = activity.users.filter(cast(models.attentactivity.timestamp, Date) == date.today()).count()
+			likedTotal = activity.likeusers.count()
+			likedToday = activity.likeusers.filter(cast(models.likeactivity.timestamp, Date) == date.today()).count()
+			
+			result = {
+					  'registeredTotal':registeredTotal,
+					  'registeredToday':registeredToday,
+					  'likedTotal':likedTotal, 
+					  'likedToday':likedToday, 
+					 }
+
+		else:
+			state = 'fail'
+			reason = 'invalid access'
+			result = ''
+
+	except Exception,e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+
+	return jsonify({'state':state, 'reason':reason, 'result':result})
+
 @activity_route.route("/getactivityattentuser",methods=['POST'])
 def getactivityattentuser():
 	try:
