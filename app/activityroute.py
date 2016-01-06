@@ -596,6 +596,7 @@ def getactivitystatistic():
 			likedToday = activity.likeusers.filter(cast(models.likeactivity.timestamp, Date) == date.today()).count()
 			
 			result = {
+					  'activity':activity.title,
 					  'registeredTotal':registeredTotal,
 					  'registeredToday':registeredToday,
 					  'likedTotal':likedTotal, 
