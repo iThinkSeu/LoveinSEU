@@ -5,12 +5,66 @@ from models import *
 from hashmd5 import *
 editprofile_route = Blueprint('editprofile_route', __name__)
 
+
+@editprofile_route.route("/editprofileinfo", methods = ['POST'])
+def editprofileinfo():
+	try:
+		token = request.json['token']
+
+		school = request.json.get('school', '')
+		degree = request.json.get('degree', '')
+		department = request.json.get('department', '')
+		enrollment = request.json.get('enrollment', '')
+		name = request.json.get('name', '')
+		gender = request.json.get('gender', '')
+		birthday = request.json.get('birthday', '')
+		phone = request.json.get('phone', '')
+		wechat = request.json.get('wechat','')
+		qq = request.json.get('qq','')
+		hometown = request.json.get('hometown','')
+		hobby = request.json.get('hobby', '')
+		preference = request.json.get('preference','')
+
+		u = getuserinformation(token)
+		if u != None:
+			state = 'successful'
+			reason = ''
+			u.name = name
+			u.gender = gender
+			u.birthday = birthday
+			u.phone = phone
+			u.wechat = wechat
+			u.qq = qq 
+			u.hometown = hometown
+			u.school = school
+			u.degree = degree
+			u.department = department
+			u.enrollment = enrollment
+			u.hobby = hobby
+			u.preference = preference
+			try:
+				db.session.add(u)
+				db.session.commit()
+			
+			except Exception, e:
+				state = 'fail'
+				reason = 'exception'
+				db.session.rollback() 
+		else:
+			state = 'fail'
+			reason = 'invalid access'
+	except Exception, e:
+		state = 'fail'
+		reason = 'exception'
+
+	return jsonify({'state':state, 'reason':reason})
+
+
+
 @editprofile_route.route("/editprofile/editschoolinformation",methods=['POST'])
 def editschoolinformation():
 	try:
-		print 'hello'
-		token = request.json[u'token']
-		print token
+		token = request.json['token']
 		school = request.json['school']
 		degree = request.json['degree']
 		department = request.json['department']
@@ -42,7 +96,7 @@ def editschoolinformation():
 def editpersonalinformation():
 	try:
 		
-		token = request.json[u'token']
+		token = request.json['token']
 		name = request.json['name']
 		gender = request.json['gender']
 		birthday = request.json['birthday']
