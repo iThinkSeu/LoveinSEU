@@ -181,6 +181,14 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+	def addpwd(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2			
 		
 	def isExisted(self):
 		tempuser = User.query.filter_by(username=self.username,password=self.password).first()
