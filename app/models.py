@@ -785,9 +785,9 @@ def getranduser(token):
 	gender = u.gender
 
 	if gender == u'男':
-		udif = User.query.filter_by(gender=u"女").all()
+		udif = User.query.filter(and_(gender==u"女", id > 2)).all()
 	else:
-		udif = User.query.filter_by(gender=u"男").all()
+		udif = User.query.filter(and_(gender==u"男", id > 2)).all()
 
 	L1 = [x.id for x in udif]
 	f2 = u.followeds.all()
