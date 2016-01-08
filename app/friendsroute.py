@@ -195,6 +195,18 @@ def searchuser():
 
 @friends_route.route("/getrecommenduser",methods=['GET','POST'])
 def getrecommenduser():
+	def recommendUser(id):
+		u = getuserbyid(recommend)
+		return {
+			'id':u.id,
+			'name':u.name,
+			'birthday':u.birthday,
+			'gender':u.gender,
+			'school':u.school,
+			'degree':u.degree,
+			'department':u.department,
+			'hometown':u.hometown
+		}
 	try:
 		token = request.json['token']
 		u=getuserinformation(token)
@@ -203,7 +215,7 @@ def getrecommenduser():
 			if len(L)>0:
 				state = 'successful'
 				reason = ''
-				result = [{"id":getuserbyid(recommend).id,"name":getuserbyid(recommend).name,"gender":getuserbyid(recommend).gender,"school":getuserbyid(recommend).school} for recommend in L]
+				result = [ recommendUser(recommend) for recommend in L]
 				response = jsonify({'state':state,
 									'reason':reason,
 									'result':result
