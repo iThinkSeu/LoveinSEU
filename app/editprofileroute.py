@@ -24,7 +24,6 @@ def editprofileinfo():
 		hometown = request.json.get('hometown','')
 		hobby = request.json.get('hobby', '')
 		preference = request.json.get('preference','')
-
 		u = getuserinformation(token)
 		if u != None:
 			state = 'successful'
@@ -44,8 +43,7 @@ def editprofileinfo():
 			u.preference = preference
 			try:
 				db.session.add(u)
-				db.session.commit()
-			
+				db.session.commit()	
 			except Exception, e:
 				state = 'fail'
 				reason = 'exception'
