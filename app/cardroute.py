@@ -57,7 +57,7 @@ def getfoodcard():
 			tmprand = random.sample(listfoodcard,1)
 			if len(tmprand)>0:
 				tmpfoodcard = tmprand[0]
-				result = {"id":tmpfoodcard.id,"title":checkdb(tmpfoodcard.title),"authorid":checkdb(tmpfoodcard.authorid),"imageurl":checkdb(tmpfoodcard.imageurl),'location':checkdb(tmpfoodcard.location),'longitude':checkdb(tmpfoodcard.longitude),'latitude':checkdb(tmpfoodcard.latitude),'price':checkdb(tmpfoodcard.price),'comment':checkdb(tmpfoodcard.comment)}
+				result = {"id":tmpfoodcard.id,"title":checkdb(tmpfoodcard.title),"authorid":checkdb(tmpfoodcard.authorid),"imageurl":checkdb(tmpfoodcard.imageurl),'location':checkdb(tmpfoodcard.location),'longitude':checkdb(tmpfoodcard.longitude),'latitude':checkdb(tmpfoodcard.latitude),'price':checkdb(tmpfoodcard.price),'comment':checkdb(tmpfoodcard.comment),'likenumber':checkdb(tmpfoodcard.likenumber)}
 				state = 'successful'
 				reason = ''
 			else:
@@ -79,7 +79,42 @@ def getfoodcard():
 						'result':result})
 	return response
 
+@card_route.route("/likefoodcard",methods=['POST'])
+def likefoodcard():
+	try:
+		token = request.json['token']
+		foodcardid = request.json['foodcardid']
+		u = getuserinformation(token)
+		if u is not None:
+			tmpfoodcard = foodcard.query.filter_by(id = foodcardid).first()
+			temp = u.likefoodcard(tmpfoodcard)
+			if temp == 0:
+				state = 'successful'
+				reason = ''
+				tmpfoodcard.likenumber = tmpfoodcard.likeusers.count()
+				tmpfoodcard.add()
+				likenumber = tmpfoodcard.likenumber
+			elif temp == 1:
+				state = 'fail'
+				reason = 'already like'
+				likenumber = ''
+			else:
+				state = 'fail'
+				reason = 'exception'
+				likenumber = ''
+		else:
+			state = 'fail'
+			reason = 'no user'
+			likenumber = ''
+	except Exception, e:	
+		print e
+		likenumber = ''
+		state = 'fail'
+		reason = 'exception'
 
-
+	response = jsonify({'state':state,
+						'reason':reason,
+						'likenumber':likenumber})
+	return response 
 
 

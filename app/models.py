@@ -350,6 +350,21 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2		
+	def likefoodcard(self,foodcard):
+		try:
+			lc = self.likefoodcards.filter_by(foodcardid = foodcard.id).first()
+			if lc is None:
+				lc = likefoodcard(likeuser = self, likewhatfoodcard = foodcard)
+				db.session.add(lc)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
+
 	def publishpost(self,post):
 		try:
 			post.author = self
@@ -692,6 +707,7 @@ class foodcard(db.Model):
 	passflag = db.Column(db.String(8),default = '0')
 	disable = db.Column(db.Boolean,default = False)
 	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	likenumber = db.Column(db.Integer,default = 0)
 	likeusers = db.relationship('likefoodcard', foreign_keys = [likefoodcard.foodcardid], backref = db.backref('likewhatfoodcard', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	def add(self):
 		try:
