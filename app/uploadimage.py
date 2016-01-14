@@ -95,6 +95,13 @@ def uploadavatar():
 				images = getImageURLbyid(number)
 				activity = getactivitybyid(activityid)
 				activity.addimage(images)
+			elif type == "-11":
+				#type = -11 表示上传美食卡片
+				foodcardid = jsonstring.get('foodcardid','')
+				tmpfoodcard = foodcard.query.filter_by(id = foodcardid).first()
+				dst = '/home/www/picture/foodcards/' + str(foodcardid)
+				tmpfoodcard.imageurl = "http://218.244.147.240:80/picture/foodcards/" + str(foodcardid)
+				tmpfoodcard.add()
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 

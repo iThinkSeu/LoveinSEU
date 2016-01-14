@@ -21,6 +21,7 @@ from getprofileroute import getprofile_route
 from friendsroute import friends_route
 from personalmessageroute import personalmessage_route
 from communityroute import community_route
+from cardroute import card_route
 
 from adminuser import adminuser_route
 
@@ -37,6 +38,7 @@ app.register_blueprint(getprofile_route)		#获取用户个人信息
 app.register_blueprint(friends_route)			#获取好友关系、搜索好友、推荐好友等相关
 app.register_blueprint(personalmessage_route)	#私信相关
 app.register_blueprint(community_route)			#社区相关
+app.register_blueprint(card_route)				#卡片相关
 
 app.register_blueprint(adminuser_route)			#后台管理相关
 app.register_blueprint(share)		#分享

@@ -112,6 +112,22 @@ class activitylifeimage(db.Model):
 			db.session.rollback()
 			return 2
 
+#点赞的食物卡片
+class likefoodcard(db.Model):
+	__tablename__ = 'likefoodcards'
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key = True)
+	foodcardid = db.Column(db.Integer,db.ForeignKey('foodcards.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+
 
 class User(db.Model):
 	__tablename__='users'
@@ -165,7 +181,10 @@ class User(db.Model):
 	likeactivitys = db.relationship('likeactivity', foreign_keys = [likeactivity.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#参加活动的生活照
 	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.userid], backref = db.backref('users', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
-
+	#发起的美食卡片
+	publishfoodcards = db.relationship('foodcard',backref = 'author', lazy = 'dynamic')   	
+	#点赞的美食卡片
+	likefoodcards =  db.relationship('likefoodcard', foreign_keys = [likefoodcard.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
 	def add(self):
 		try:
@@ -353,6 +372,17 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2	
+	def publishfoodcard(self,foodcard):
+		try:
+			foodcard.author = self
+			db.session.add(foodcard)
+			#db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
 	def commenttopost(self,comment,post):
 		try:
 			comment.post = post
@@ -470,7 +500,7 @@ class Activity(db.Model):
 	number=db.Column(db.String(32))
 	signnumber = db.Column(db.Integer)
 	state = db.Column(db.String(32))
-	#disable = db.Column(db.Boolean,default =False)
+	disable = db.Column(db.Boolean,default =False)
 	remark = db.Column(db.String(32))
 	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
 	whetherimage = db.Column(db.Boolean,default =False)
@@ -590,7 +620,7 @@ class comment(db.Model):
 	commentid = db.Column(db.Integer,default = -1)
 	likenumber = db.Column(db.Integer,default = 0)
 	commentnumber = db.Column(db.Integer,default = 0)
-	disable = db.Column(db.Boolean,default = True)
+	disable = db.Column(db.Boolean,default = False)
 	likeusers = db.relationship('likecomment', foreign_keys = [likecomment.commentid], backref = db.backref('likewhatcomment', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#评论的图片，以附件的形式上传
 	images = db.relationship('commentimageAttach', foreign_keys = [commentimageAttach.commentid], backref = db.backref('comments', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
@@ -648,7 +678,30 @@ class activitytopofficial(db.Model):
 			db.session.rollback()
 			return 2
 
-
+class foodcard(db.Model):
+	__tablename__ = 'foodcards'
+	id = db.Column(db.Integer,primary_key = True)
+	title = db.Column(db.String(128))
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	imageurl = db.Column(db.String(256))
+	location = db.Column(db.String(32))
+	longitude = db.Column(db.String(32))
+	latitude = db.Column(db.String(32))
+	price = db.Column(db.String(32))
+	comment = db.Column(db.String(512))
+	passflag = db.Column(db.String(8),default = '0')
+	disable = db.Column(db.Boolean,default = False)
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	likeusers = db.relationship('likefoodcard', foreign_keys = [likefoodcard.foodcardid], backref = db.backref('likewhatfoodcard', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 
 def editschooldb(token,school,degree,department,enrollment):
@@ -862,11 +915,6 @@ def gettopofficialbyid(id):
 	a = topofficial.query.filter_by(id = id).first()
 	return a 
 
-
-if __name__ == '__main__':
-	manager.run()
-
-
 def getactivitytopofficialbyid(id):
 	a = activitytopofficial.query.filter_by(id = id).first()
 	return a 
@@ -875,7 +923,11 @@ def getactivitybyid(id):
 	return a
 
 
+
 if __name__ == '__main__':
 	manager.run()
+
+
+
 
 
