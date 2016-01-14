@@ -57,7 +57,7 @@ def getfoodcard():
 			tmprand = random.sample(listfoodcard,1)
 			if len(tmprand)>0:
 				tmpfoodcard = tmprand[0]
-				result = {"id":tmpfoodcard.id,"title":checkdb(tmpfoodcard.title),"authorid":checkdb(tmpfoodcard.authorid),"imageurl":checkdb(tmpfoodcard.imageurl),'location':checkdb(tmpfoodcard.location),'longitude':checkdb(tmpfoodcard.longitude),'latitude':checkdb(tmpfoodcard.latitude),'price':checkdb(tmpfoodcard.price),'comment':checkdb(tmpfoodcard.comment),'likenumber':checkdb(tmpfoodcard.likenumber)}
+				result = {"id":tmpfoodcard.id,"title":checkdb(tmpfoodcard.title),"authorid":checkdb(tmpfoodcard.authorid),"author":checkdb(tmpfoodcard.author.name),"imageurl":checkdb(tmpfoodcard.imageurl),'location':checkdb(tmpfoodcard.location),'longitude':checkdb(tmpfoodcard.longitude),'latitude':checkdb(tmpfoodcard.latitude),'price':checkdb(tmpfoodcard.price),'comment':checkdb(tmpfoodcard.comment),'likenumber':checkdb(tmpfoodcard.likenumber)}
 				state = 'successful'
 				reason = ''
 			else:
