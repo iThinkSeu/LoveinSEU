@@ -626,7 +626,7 @@ def validatectivityuser():
 		uid = string.atoi(str(request.json['userid']))
 		u = getuserbyid(uid)
 		activity = getactivitybyid(activityid)
-		if user != None and u != None and activity != None:
+		if user != None and u != None and activity != None and activity.author.id == user.id:
 			uu = activity.users.filter_by(userid=u.id).first()
 			state = 'successful'
 			if uu != None:
