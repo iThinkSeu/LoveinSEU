@@ -616,6 +616,44 @@ def getactivitystatistic():
 
 	return jsonify({'state':state, 'reason':reason, 'result':result})
 
+@activity_route.route("/validateactivityuser", methods=['POST'])
+def validatectivityuser():
+	"""valid user for activity"""
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		user = getuserinformation(token)
+		uid = string.atoi(str(request.json['userid']))
+		u = getuserbyid(uid)
+		activity = getactivitybyid(activityid)
+		if user != None and u != None and activity != None:
+			uu = activity.users.filter_by(userid=u.id).first()
+			state = 'successful'
+			if uu != None:
+				if uu.state:
+					reason = ''
+					result = '1'
+				else:
+					reason = u'该用户未收到邀请'
+					result = '0'
+
+			else:
+				reason = u'该用户未报名该活动'
+				result = '0'
+		else:
+			state = 'fail'
+			reason = 'invalid user or activity'
+			result = ''
+
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+
+	return jsonify({'state':state, 'reason':reason, 'result':result})
+
+
 @activity_route.route("/getactivityattentuser",methods=['POST'])
 def getactivityattentuser():
 	try:
