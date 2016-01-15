@@ -49,6 +49,12 @@ def publishactivity():
 
 @card_route.route("/getfoodcard",methods=['POST'])
 def getfoodcard():
+	def isliked(u, foodcardid):
+		lc = u.likefoodcards.filter_by(foodcardid = foodcardid).first()
+		if lc != None:
+			return 1
+		else:
+			return 0
 	try:
 		token = request.json['token']
 		u = getuserinformation(token)
@@ -59,7 +65,8 @@ def getfoodcard():
 			result = []
 			if len(tmprand)>0:
 				for tmpfoodcard in tmprand:
-					result += [{"id":tmpfoodcard.id,"title":checkdb(tmpfoodcard.title),"authorid":checkdb(tmpfoodcard.authorid),"author":checkdb(tmpfoodcard.author.name),"imageurl":checkdb(tmpfoodcard.imageurl),'location':checkdb(tmpfoodcard.location),'longitude':checkdb(tmpfoodcard.longitude),'latitude':checkdb(tmpfoodcard.latitude),'price':checkdb(tmpfoodcard.price),'comment':checkdb(tmpfoodcard.comment),'likenumber':checkdb(tmpfoodcard.likenumber)}]
+					result += [{"id":tmpfoodcard.id,"title":checkdb(tmpfoodcard.title),"authorid":checkdb(tmpfoodcard.authorid),"author":checkdb(tmpfoodcard.author.name),"imageurl":checkdb(tmpfoodcard.imageurl),'location':checkdb(tmpfoodcard.location),'longitude':checkdb(tmpfoodcard.longitude),'latitude':checkdb(tmpfoodcard.latitude),
+								'price':checkdb(tmpfoodcard.price),'comment':checkdb(tmpfoodcard.comment),'likenumber':checkdb(tmpfoodcard.likenumber), 'likeflag':isliked(u, tmpfoodcard.id)}]
 				state = 'successful'
 				reason = ''
 			else:
