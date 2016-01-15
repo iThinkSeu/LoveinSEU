@@ -97,7 +97,7 @@ def uploadavatar():
 				activity.addimage(images)
 			elif type == "-11":
 				#type = -11 表示上传美食卡片
-				foodcardid = jsonstring.get('foodcardid','')
+				foodcardid = string.atoi(str(jsonstring.get('foodcardid','0')))
 				tmpfoodcard = foodcard.query.filter_by(id = foodcardid).first()
 				dst = '/home/www/picture/foodcards/' + str(foodcardid) + '-' +str(id)
 				tmpfoodcard.imageurl = "http://218.244.147.240:80/picture/foodcards/" + str(foodcardid) + '-' +str(id)
