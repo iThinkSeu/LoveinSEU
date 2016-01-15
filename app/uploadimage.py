@@ -18,7 +18,7 @@ def uploadavatar():
 		jsonstring = json.loads(jsonstring)
 		token = jsonstring['token']
 		type = jsonstring['type'] 
-		number = jsonstring['number']
+		number = jsonstring.get('number', '')
 		messageid = jsonstring.get('messageid','')
 		postid = jsonstring.get('postid','')
 		topicid = jsonstring.get('topicid','')
