@@ -30,8 +30,8 @@ def getprofile():
 			hometown = u.hometown if u.hometown != None else ''
 			id = u.id if u.id!=None else ''
 			lookcount = u.lookcount if u.lookcount !=None else 0
-
 			lookcount = str(lookcount)#所有的返回都转化成string
+			weme = str(u.weme) 
 
 		else:
 			state = 'fail'
@@ -54,7 +54,7 @@ def getprofile():
 			id = ''
 			qianshoudongda =''
 			lookcount = ''
-
+			weme = ''
 
 
 	except Exception, e:
@@ -77,10 +77,9 @@ def getprofile():
 		hometown = ''
 		id = ''
 		lookcount = ''
-		
+		weme = ''
 
 	response = jsonify({'username':username,
-						'token':token,
 						'state':state,
 						'reason':reason,
 	 	                'school':school,
@@ -97,6 +96,7 @@ def getprofile():
 	 	                'qq':qq,
 	 	                'hometown':hometown,
 	 	                'lookcount':lookcount,
+	 	                'weme':weme,
 	 	                'id':id})
 	return response
 
@@ -110,11 +110,8 @@ def getprofilebyid():
  		if u!=None and u2!=None:
 			state = 'successful'
 			reason = ''
-			#更新好友查看次数计数器
-			lookcount = u.lookcount if u.lookcount !=None else 0
-			#u.lookcount = lookcount + 1
-			#u.add()
 
+			lookcount = u.lookcount if u.lookcount !=None else 0
 			lookcount = str(lookcount)
 			username = u.username if u.username!=None else '' 
 			school = u.school if u.school!=None else '' 				
@@ -131,7 +128,7 @@ def getprofilebyid():
 			qq = u.qq if u.qq !=None else ''
 			hometown = u.hometown if u.hometown != None else ''
 			id = u.id if u.id!=None else ''
-
+			weme = str(u.weme)
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -151,7 +148,7 @@ def getprofilebyid():
 			hometown = ''
 			id = ''
 			lookcount = ''
-
+			weme = ''
 
 	except Exception, e:
 		print e
@@ -173,7 +170,7 @@ def getprofilebyid():
 		hometown = ''
 		id = ''
 		lookcount = ''
-
+		weme = ''
 
 
 	response = jsonify({'username':username,
@@ -193,5 +190,6 @@ def getprofilebyid():
 	 	                'qq':qq,
 	 	                'hometown':hometown,
 	 	                'lookcount':lookcount,
+	 	                'weme':weme,
 	 	                'id':id})
 	return response

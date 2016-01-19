@@ -6,6 +6,7 @@ import models
 import string
 from sqlalchemy import Date, cast
 import random
+import weme
 
 card_route = Blueprint('card_route', __name__)
 
@@ -26,6 +27,8 @@ def publishactivity():
 		comment = request.json.get('comment','')
 		u = getuserinformation(token)
 		if u is not None:
+			u.weme = u.weme + weme.WEMEpublishFoodcard
+			u.addpwd()
 			comment = comment.encode('UTF-8')
 			tmpfoodcard = foodcard(title = title,location = location,longitude = longitude,latitude = latitude,price = price,comment = comment)
 			u.publishfoodcard(tmpfoodcard)
@@ -100,6 +103,8 @@ def likefoodcard():
 			if temp == 0:
 				state = 'successful'
 				reason = ''
+				u.weme = u.weme + weme.WEMELIKE
+				u.addpwd()
 				tmpfoodcard.likenumber = tmpfoodcard.likeusers.count()
 				tmpfoodcard.add()
 				likenumber = tmpfoodcard.likenumber

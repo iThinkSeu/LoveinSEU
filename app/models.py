@@ -13,15 +13,14 @@ from flask.ext.migrate import Migrate, MigrateCommand
 #save before pull
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://liewli:liewli@localhost:3306/weme?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
-#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 
 db = SQLAlchemy(app)
 
 migrage = Migrate(app,db)
-
 manager = Manager(app)
 manager.add_command('db',MigrateCommand)
 
@@ -155,6 +154,7 @@ class User(db.Model):
 	#yaoda = db.Column(db.String(32))
 	lookcount = db.Column(db.Integer,default = 0)
 	cardflag = db.Column(db.Boolean,default =False)
+	weme = db.Column(db.Integer,default = 100)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#relation
 	#all users followed by this
@@ -895,8 +895,8 @@ def getranduser(token):
 	L2 = [y.followed_id for y in f2]
 	L2.append(1)
 	L = list(set(L1).difference(set(L2)))
-	if len(L)>7:	
-		return random.sample(L,8)
+	if len(L)>9:	
+		return random.sample(L,10)
 	elif len(L)==0:
 		return []
 	else:

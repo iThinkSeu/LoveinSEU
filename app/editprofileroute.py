@@ -171,8 +171,6 @@ def editcardsetting():
 		print e
 		state = 'fail'
 		reason ='异常'
-	
-
 	response = jsonify({'state':state,
 						'reason':reason})
 	return response

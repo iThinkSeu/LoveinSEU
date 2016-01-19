@@ -5,7 +5,9 @@ from models import *
 import models 
 from hashmd5 import *
 import string
+import weme
 community_route = Blueprint('community_route', __name__)
+
 
 @community_route.route("/publishpost",methods=['POST'])
 def publishpost():
@@ -16,6 +18,8 @@ def publishpost():
 		topicid = request.json['topicid']
 		u = getuserinformation(token)
 		if u is not None:
+			u.weme = u.weme + weme.WEMEPOST
+			u.addpwd()
 			topic = gettopicbyid(topicid)
 			body = body.encode('UTF-8')
 			post1 = post(title = title,body = body,topic = topic)
@@ -47,6 +51,8 @@ def commenttopost():
 		postid = request.json['postid']
 		u = getuserinformation(token)
 		if u is not None:
+			u.weme = u.weme + weme.WEMECOMMENT
+			u.addpwd()
 			post1 = getpostbyid(postid)
 			body = body.encode('UTF-8')
 			comment1 = comment(body = body)
@@ -78,11 +84,10 @@ def commenttocomment():
 		body = request.json.get('body','')
 		destcommentid = request.json['destcommentid']
 		u = getuserinformation(token)
-		print destcommentid
 		destcomment = getcommentbyid(destcommentid)
-		print u
-		print destcomment
 		if u!=None and destcomment!=None:
+			u.weme = u.weme + weme.WEMECOMMENT
+			u.addpwd()
 			sourcecomment = comment(body = body)
 			u.commenttocomment(sourcecomment,destcomment)
 			id = sourcecomment.id
@@ -118,6 +123,8 @@ def likepost():
 			if temp == 0:
 				post1.likenumber = post1.likeusers.count()
 				post1.add()
+				u.weme = u.weme + weme.WEMELIKE
+				u.addpwd()
 				state = 'successful'
 				reason = ''
 				likenumber = post1.likenumber
@@ -144,6 +151,7 @@ def likepost():
 						'likenumber':likenumber})
 	return response
 
+
 @community_route.route("/likecomment",methods=['POST'])
 def likecomment():
 	try:
@@ -156,6 +164,8 @@ def likecomment():
 			if temp == 0:
 				comment1.likenumber = comment1.likeusers.count()
 				comment1.add()
+				u.weme = u.weme + weme.WEMELIKE
+				u.addpwd()
 				state = 'successful'
 				reason = ''
 				likenumber = comment1.likenumber
