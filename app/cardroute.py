@@ -60,7 +60,7 @@ def getfoodcard():
 		u = getuserinformation(token)
 		if u is not None:
 			listfoodcard = foodcard.query.filter_by(passflag='1').all()
-			total = foodcard.query.filter_by(passflag='1').count()
+			total = len(listfoodcard)
 			tmprand = random.sample(listfoodcard,min(10,total))
 			result = []
 			if len(tmprand)>0:

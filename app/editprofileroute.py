@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask import request,jsonify,json
 from models import *
 from hashmd5 import *
+import string 
 editprofile_route = Blueprint('editprofile_route', __name__)
 
 
@@ -10,7 +11,6 @@ editprofile_route = Blueprint('editprofile_route', __name__)
 def editprofileinfo():
 	try:
 		token = request.json['token']
-
 		school = request.json.get('school', '')
 		degree = request.json.get('degree', '')
 		department = request.json.get('department', '')
@@ -150,3 +150,30 @@ def editpreferinformation():
 	response = jsonify({'state':state,
 		                'reason':reason})
 	return response
+
+@editprofile_route.route("/editprofile/editcardsetting",methods=['POST'])
+def editcardsetting():
+	try:
+		token = request.json['token']
+		tmpcardflag = str(request.json['cardflag'])
+		u = getuserinformation(token)
+		if u !=None:
+			if tmpcardflag in ['0','1']:
+				cardflag = string.atoi(tmpcardflag)
+				u.cardflag = cardflag
+				u.addpwd()
+				state = 'successful'
+				reason = ''
+			else:
+				state = 'fail'
+				reason = 'wrong cardflag'
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason ='异常'
+	
+
+	response = jsonify({'state':state,
+						'reason':reason})
+	return response
+

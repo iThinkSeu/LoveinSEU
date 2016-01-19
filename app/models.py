@@ -154,6 +154,7 @@ class User(db.Model):
 	#autumn3=db.Column(db.String(32))
 	#yaoda = db.Column(db.String(32))
 	lookcount = db.Column(db.Integer,default = 0)
+	cardflag = db.Column(db.Boolean,default =False)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#relation
 	#all users followed by this
@@ -165,6 +166,8 @@ class User(db.Model):
 	#all users that follow this
 	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
+	#该用户举报的东西
+	reports = db.relationship('report',backref = 'author', lazy = 'dynamic')
 	#该用户发表的帖子
 	posts = db.relationship('post',backref = 'author', lazy = 'dynamic')
 	#该用户的评论
@@ -380,7 +383,7 @@ class User(db.Model):
 		try:
 			activity.author = self
 			db.session.add(activity)
-			#db.session.execute('set names utf8mb4')
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 			return 0
 		except Exception, e:
@@ -391,7 +394,18 @@ class User(db.Model):
 		try:
 			foodcard.author = self
 			db.session.add(foodcard)
-			#db.session.execute('set names utf8mb4')
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+	def publishreport(self,report):
+		try:
+			report.author = self
+			db.session.add(report)
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 			return 0
 		except Exception, e:
@@ -444,6 +458,7 @@ class Message(db.Model):
 	def add(self):
 		try:
 			db.session.add(self)
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 		except Exception, e:
 			print e
@@ -536,6 +551,7 @@ class Activity(db.Model):
 	def add(self):
 		try:
 			db.session.add(self)
+			db.session.execute('set names utf8mb4')
 			db.session.commit()
 		except Exception, e:
 			print e
@@ -607,7 +623,6 @@ class post(db.Model):
 		try:
 			db.session.add(self)
 			db.session.execute('set names utf8mb4');
-			print "mb4"
 			db.session.commit()
 			return 0
 		except Exception, e:
@@ -709,6 +724,23 @@ class foodcard(db.Model):
 	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
 	likenumber = db.Column(db.Integer,default = 0)
 	likeusers = db.relationship('likefoodcard', foreign_keys = [likefoodcard.foodcardid], backref = db.backref('likewhatfoodcard', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+class report(db.Model):
+	__tablename__ = 'reports'
+	id = db.Column(db.Integer,primary_key = True)
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	body = db.Column(db.Text)
+	type = db.Column(db.String(32))
+	typeid = db.Column(db.Integer)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
 	def add(self):
 		try:
 			db.session.add(self)
