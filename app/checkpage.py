@@ -54,15 +54,20 @@ def login():
 	try:
 		username = request.json['username']
 		password = request.json['password']
+		print "in1"
 		u=User(username=username,password=password)
 		if u.isExisted():
+			print "in success"
 			state = 'successful'
-			token = getTokeninformation(username).token
+			tmp = getTokeninformation(username)
+			token = tmp.token
+			id = tmp.id
 			reason = ''
-			id = getuserinformation(token).id
 		else:
+			print "in3"
 			tempuser = User.query.filter_by(username=username).first()
 			if tempuser != None:
+				print "in4"
 				pwd = generatemd5(tempuser.password)
 				if pwd == password:
 					state = 'successful'
