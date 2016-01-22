@@ -1,28 +1,30 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import *
 import random
 from sqlalchemy import or_
 from sqlalchemy import and_
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
+from dbSetting import create_app,db,sqlurl 
 
+if __name__ == '__main__':
+	app = Flask(__name__)
+	app.config['SQLALCHEMY_DATABASE_URI']=sqlurl
+	db.init_app(app)
+	migrage = Migrate(app,db)
+	manager = Manager(app)
+	manager.add_command('db',MigrateCommand)
 
-#from flask.ext.sqlalchemy import SQLALchemy
-#save before pull
-app = Flask(__name__)
+#app = Flask(__name__)
 
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://liewli:liewli@localhost:3306/weme?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 
-db = SQLAlchemy(app)
+#db = SQLAlchemy(app)
 
-migrage = Migrate(app,db)
-manager = Manager(app)
-manager.add_command('db',MigrateCommand)
 
 
 class Follow(db.Model):

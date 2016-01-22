@@ -83,7 +83,7 @@ def login():
 				reason = '用户名密码错误'
 	except Exception, e:
 		state = 'fail'
-		reason='异常'
+		reason='服务器异常'
 		token = 'None'
 		id = ''
 

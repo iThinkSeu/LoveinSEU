@@ -1,5 +1,7 @@
 #-*- coding: UTF-8 -*- 
+"""
 from flask import Flask,jsonify,json
+"""
 from flask import request
 from flask import render_template
 from flask import redirect
@@ -28,7 +30,10 @@ from adminuser import adminuser_route
 
 from share.share import share
 
-app = Flask(__name__)
+from dbSetting import create_app,db 
+
+#app = Flask(__name__)
+app = create_app()
 
 ##注册蓝本路由
 app.register_blueprint(check_page)  			#注册与登录
@@ -40,7 +45,7 @@ app.register_blueprint(friends_route)			#获取好友关系、搜索好友、推
 app.register_blueprint(personalmessage_route)	#私信相关
 app.register_blueprint(community_route)			#社区相关
 app.register_blueprint(card_route)				#卡片相关
-app.register_blueprint(report_route)				#卡片相关
+app.register_blueprint(report_route)			#卡片相关
 
 app.register_blueprint(adminuser_route)			#后台管理相关
 app.register_blueprint(share)		#分享
