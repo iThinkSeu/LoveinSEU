@@ -34,15 +34,17 @@ def uploadavatar():
 		#print avatar_type
 		try:
 			if type=="0":
+				print "in1 avatar"
 				dst = '/home/www/avatar/' + str(id)
+				print "in2 avatar"
 				avatarvoice = getavatarvoicebyuserid(id)
-				if avatarvoice==None:
+				if avatarvoice!=None:
+					avatarvoice.avatarurl = avatarurl
+					avatarvoice.add()
+				else:
 					avatarurl = "http://218.244.147.240:80/avatar/" + str(id)
 					tmp = avatarvoice(userid = id,avatarurl = avatarurl)
 					tmp.add()
-				else:
-					avatarvoice.avatarurl = avatarurl
-					avatarvoice.add()
 			elif type=="1":
 				dst = '/home/www/picture/qianshoudongda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="5":
