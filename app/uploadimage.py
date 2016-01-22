@@ -37,11 +37,13 @@ def uploadavatar():
 				print "in1 avatar"
 				dst = '/home/www/avatar/' + str(id)
 				print "in2 avatar"
-				avatarvoice = getavatarvoicebyuserid(id)
-				if avatarvoice!=None:
-					avatarvoice.avatarurl = avatarurl
-					avatarvoice.add()
+				avatartmp = getavatarvoicebyuserid(id)
+				print "in3 avatar"
+				if avatartmp!=None:
+					avatartmp.avatarurl = avatarurl
+					avatartmp.add()
 				else:
+					print "in4 avatar"
 					avatarurl = "http://218.244.147.240:80/avatar/" + str(id)
 					tmp = avatarvoice(userid = id,avatarurl = avatarurl)
 					tmp.add()
