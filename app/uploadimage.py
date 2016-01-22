@@ -26,7 +26,8 @@ def uploadavatar():
 		topofficialid = jsonstring.get('topofficialid','')
 		commentid = jsonstring.get('commentid','')
 		activityid = jsonstring.get('activityid','')
-		id = getuserinformation(token).id
+		u = getuserinformation(token)
+		id = u.id
 		src = request.form.get('avatar_path')
 		#print avatar
 		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
@@ -34,6 +35,14 @@ def uploadavatar():
 		try:
 			if type=="0":
 				dst = '/home/www/avatar/' + str(id)
+				avatarvoice = getavatarvoicebyuserid(id)
+				if avatarvoice==None:
+					avatarurl = "http://218.244.147.240:80/avatar/" + str(id)
+					tmp = avatarvoice(userid = id,avatarurl = avatarurl)
+					tmp.add()
+				else:
+					avatarvoice.avatarurl = avatarurl
+					avatarvoice.add()
 			elif type=="1":
 				dst = '/home/www/picture/qianshoudongda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="5":
@@ -87,7 +96,7 @@ def uploadavatar():
 				#type = -9 表示上传活动activity的生活照
 				dst = '/home/www/picture/activitylifeimages/' + str(activityid)+'-'+str(id)+'-'+str(number)
 				a = getactivitybyid(activityid)
-				u = getuserbyid(id)
+				#u = getuserbyid(id)
 				m = getImageURLbyid(number)
 				a.addlifeimage(u,m)
 			elif type == "-10":

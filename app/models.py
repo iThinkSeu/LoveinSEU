@@ -167,6 +167,8 @@ class User(db.Model):
 	#all users that follow this
 	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
+	#用户的头像和声音名片
+	avatarvoices = db.relationship('avatarvoice',backref = 'author', lazy = 'dynamic')
 	#该用户举报的东西
 	reports = db.relationship('report',backref = 'author', lazy = 'dynamic')
 	#该用户发表的帖子
@@ -199,7 +201,6 @@ class User(db.Model):
 				return 0
 			else:
 				return 1
-
 		except Exception, e:
 			print e
 			db.session.rollback()
@@ -752,6 +753,21 @@ class report(db.Model):
 			db.session.rollback()
 			return 2
 
+class avatarvoice(db.Model):
+	__tablename__ = 'avatarvoices'
+	id = db.Column(db.Integer,primary_key = True)
+	userid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	avatarurl = db.Column(db.String(256))
+	voiceurl = db.Column(db.String(256))
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
@@ -970,7 +986,9 @@ def getactivitytopofficialbyid(id):
 def getactivitybyid(id):
 	a = Activity.query.filter_by(id = id).first()
 	return a
-
+def getavatarvoicebyuserid(userid):
+	a = avatarvoice.query.filter_by(userid = userid).first()
+	return a
 
 
 if __name__ == '__main__':
