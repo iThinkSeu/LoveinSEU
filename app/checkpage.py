@@ -82,6 +82,8 @@ def login():
 				token = 'None'
 				reason = '用户名密码错误'
 	except Exception, e:
+		print "login error!!"
+		print e
 		state = 'fail'
 		reason='服务器异常'
 		token = 'None'

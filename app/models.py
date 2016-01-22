@@ -26,7 +26,6 @@ if __name__ == '__main__':
 #db = SQLAlchemy(app)
 
 
-
 class Follow(db.Model):
 	__tablename__='follows'
 	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
