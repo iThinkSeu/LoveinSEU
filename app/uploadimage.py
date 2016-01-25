@@ -138,15 +138,15 @@ def uploadavatar():
 				if voicetmp!=None:
 					voicenumber = voicetmp.voice_number if voicetmp.voice_number!=None else 0
 					voicenumber = voicenumber + 1
-					dst = '/home/www/picture/personalvoices/' + str(id) + "-" + str(voicenumber)
+					dst = '/home/www/static/personalvoices/' + str(id) + "-" + str(voicenumber)
 					#更新数据库
 					voicetmp.voice_number = voicenumber
-					voicetmp.voiceurl = 'http://218.244.147.240:80/picture/personalvoices/' + str(id) + "-" + str(voicenumber)
+					voicetmp.voiceurl = 'http://218.244.147.240:80/static/personalvoices/' + str(id) + "-" + str(voicenumber)
 					voicetmp.add()
 				else:
 					voicenumber = 1
-					dst = '/home/www/picture/personalvoices/' + str(id) + "-" + str(voicenumber)
-					voiceurl = 'http://218.244.147.240:80/picture/personalvoices/' + str(id) + "-" + str(voicenumber)
+					dst = '/home/www/static/personalvoices/' + str(id) + "-" + str(voicenumber)
+					voiceurl = 'http://218.244.147.240:80/static/personalvoices/' + str(id) + "-" + str(voicenumber)
 					tmp = avatarvoice(userid = id,voice_number = voicenumber,voiceurl = voiceurl)
 					tmp.add()				
 			else:
