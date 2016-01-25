@@ -757,7 +757,9 @@ class avatarvoice(db.Model):
 	__tablename__ = 'avatarvoices'
 	id = db.Column(db.Integer,primary_key = True)
 	userid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	avatar_number = db.Column(db.Integer,default = 0)
 	avatarurl = db.Column(db.String(256))
+	voice_number = db.Column(db.Integer,default = 0)
 	voiceurl = db.Column(db.String(256))
 	def add(self):
 		try:

@@ -26,9 +26,10 @@ def uploadavatar():
 		topofficialid = jsonstring.get('topofficialid','')
 		commentid = jsonstring.get('commentid','')
 		activityid = jsonstring.get('activityid','')
+		src = request.form.get('avatar_path')
+
 		u = getuserinformation(token)
 		id = u.id
-		src = request.form.get('avatar_path')
 		#print avatar
 		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
 		#print avatar_type
@@ -112,6 +113,23 @@ def uploadavatar():
 				dst = '/home/www/picture/foodcards/' + str(foodcardid) + '-' +str(id)
 				tmpfoodcard.imageurl = "http://218.244.147.240:80/picture/foodcards/" + str(foodcardid) + '-' +str(id)
 				tmpfoodcard.add()
+			elif type == "-12":
+				#type ==12 表示上传个人声音名片
+				voicetmp = getavatarvoicebyuserid(id)
+				if voicetmp!=None:
+					voicenumber = voicetmp.voice_number if voicetmp.voice_number!=None else 0
+					voicenumber = voicenumber + 1
+					dst = '/home/www/picture/personalvoices/' + str(id) + str(voicenumber)
+					#更新数据库
+					voicetmp.voice_number = voicenumber
+					voicetmp.voiceurl = 'http://218.244.147.240:80/picture/personalvoices/' + str(id) + str(voicenumber)
+					voicetmp.add()
+				else:
+					voicenumber = 1
+					dst = '/home/www/picture/personalvoices/' + str(id) + str(voicenumber)
+					voiceurl = 'http://218.244.147.240:80/picture/personalvoices/' + str(id) + str(voicenumber)
+					tmp = avatarvoice(userid = id,voice_number = voicenumber,voiceurl = voiceurl)
+					tmp.add()				
 			else:
 				dst = '/home/www/picture/temp/' + str(id)
 
@@ -125,7 +143,7 @@ def uploadavatar():
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
 			if type =="0" or type == "-2":
 				fp = Image.open(dst)
-				fp.thumbnail((100,100))
+				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
 			if type == "-4" or type == "-7" or type == "-10" or type == "-9":
 				fp = Image.open(dst)
