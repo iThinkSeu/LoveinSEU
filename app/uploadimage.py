@@ -33,7 +33,7 @@ def uploadavatar():
 			if type=="0":
 				avatartmp = getavatarvoicebyuserid(id)
 				if avatartmp!=None:
-					avatarnumber = avatartmp.avatar_number if avatar_number != None else 0
+					avatarnumber = avatartmp.avatar_number if avatartmp.avatar_number != None else 0
 					avatarnumber = avatarnumber + 1
 					#路径
 					dst = '/home/www/avatar/' + str(id) + '-' + str(avatarnumber)
