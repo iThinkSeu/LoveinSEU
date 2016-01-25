@@ -11,7 +11,6 @@ import shutil
 
 upload_image = Blueprint('upload_image', __name__)
 
-@upload_image.route("/messageAppendix",methods=['POST'])
 @upload_image.route("/uploadavatar", methods=['POST'])
 def uploadavatar():
 	try:
@@ -30,20 +29,36 @@ def uploadavatar():
 
 		u = getuserinformation(token)
 		id = u.id
-		#print avatar
-		#avatar_type =  request.form.get('avatar_content_type').split('/')[-1]
-		#print avatar_type
 		try:
 			if type=="0":
-				dst = '/home/www/avatar/' + str(id)
 				avatartmp = getavatarvoicebyuserid(id)
-				avatarurl = "http://218.244.147.240:80/avatar/" + str(id)
 				if avatartmp!=None:
+					avatarnumber = avatartmp.avatar_number if avatar_number != None else 0
+					avatarnumber = avatarnumber + 1
+					#路径
+					dst = '/home/www/avatar/' + str(id) + '-' + str(avatarnumber)
+					avatarurl = "http://218.244.147.240:80/avatar/" + str(id) + '-' + str(avatarnumber)
+					#更新数据库
+					avatartmp.avatar_number = avatarnumber
 					avatartmp.avatarurl = avatarurl
 					avatartmp.add()
 				else:
-					tmp = avatarvoice(userid = id,avatarurl = avatarurl)
+					avatarnumber = 1
+					#路径
+					dst = '/home/www/avatar/' + str(id) + '-' + str(avatarnumber)
+					avatarurl = "http://218.244.147.240:80/avatar/" + str(id) + '-' + str(avatarnumber)
+					#第一次上传头像，新增
+					tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
 					tmp.add()
+				#移动文件
+				shutil.move(src, dst)
+				os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
+				#生成缩略图
+				fp = Image.open(dst)
+				fp.thumbnail((200,200))
+				fp.save(dst + '_thumbnail.jpg')
+				#为了兼容性加的东西
+				dst = '/home/www/avatar/' + str(id)
 			elif type=="1":
 				dst = '/home/www/picture/qianshoudongda/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="5":
