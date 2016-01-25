@@ -53,6 +53,10 @@ def uploadavatar():
 				#移动文件
 				shutil.copy(src, dst)
 				os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
+				#生成卡片头像
+				fp = Image.open(dst)
+				fp.thumbnail((500,500))
+				fp.save(dst + '_card.jpg')
 				#生成缩略图
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
@@ -156,11 +160,11 @@ def uploadavatar():
 
 			shutil.move(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			if type =="0" or type == "-2":
+			if type =="0":
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
-				fp.save(dst + '_thumbnail.jpg')
-			if type == "-4" or type == "-7" or type == "-10" or type == "-9":
+				fp.save(dst + '_card.jpg')
+			if type == "-4" or type == "-7" or type == "-10" or type == "-9" or type == "-2":
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
