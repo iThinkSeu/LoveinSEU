@@ -51,7 +51,7 @@ def uploadavatar():
 					tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
 					tmp.add()
 				#移动文件
-				shutil.move(src, dst)
+				shutil.copy(src, dst)
 				os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
 				#生成缩略图
 				fp = Image.open(dst)
