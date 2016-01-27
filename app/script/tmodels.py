@@ -16,6 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:0596@223.3.36.246:3306/flask
 db = SQLAlchemy(app)
 
 
+
 class Follow(db.Model):
 	__tablename__='follows'
 	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
@@ -747,10 +748,14 @@ class avatarvoice(db.Model):
 	__tablename__ = 'avatarvoices'
 	id = db.Column(db.Integer,primary_key = True)
 	userid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	name = db.Column(db.String(32))
+	gender = db.Column(db.String(32))
 	avatar_number = db.Column(db.Integer,default = 0)
 	avatarurl = db.Column(db.String(256))
 	voice_number = db.Column(db.Integer,default = 0)
 	voiceurl = db.Column(db.String(256))
+	cardflag = db.Column(db.Boolean,default =False)
+	disable = db.Column(db.Boolean,default = False)
 	def add(self):
 		try:
 			db.session.add(self)
@@ -760,6 +765,8 @@ class avatarvoice(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+
+
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()

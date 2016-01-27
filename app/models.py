@@ -757,10 +757,14 @@ class avatarvoice(db.Model):
 	__tablename__ = 'avatarvoices'
 	id = db.Column(db.Integer,primary_key = True)
 	userid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	name = db.Column(db.String(32))
+	gender = db.Column(db.String(32))
 	avatar_number = db.Column(db.Integer,default = 0)
 	avatarurl = db.Column(db.String(256))
 	voice_number = db.Column(db.Integer,default = 0)
 	voiceurl = db.Column(db.String(256))
+	cardflag = db.Column(db.Boolean,default =False)
+	disable = db.Column(db.Boolean,default = False)
 	def add(self):
 		try:
 			db.session.add(self)

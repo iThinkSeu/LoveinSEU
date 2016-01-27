@@ -7,6 +7,9 @@ for id in xrange(1,1000):
 	#数据库操作
 	avatartmp = getavatarvoicebyuserid(id)
 	if avatartmp!=None:
+		avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
+		avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
+		avatartmp.add()
 		print "have done!"
 	else:
 		avatarnumber = 1
