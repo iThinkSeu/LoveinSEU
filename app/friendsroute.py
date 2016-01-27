@@ -197,6 +197,7 @@ def searchuser():
 def getrecommenduser():
 	def recommendUser(id):
 		u = getuserbyid(recommend)
+		avatarvoice = u.avatarvoices.first()
 		return {
 			'id':u.id,
 			'name':u.name,
@@ -205,7 +206,8 @@ def getrecommenduser():
 			'school':u.school,
 			'degree':u.degree,
 			'department':u.department,
-			'hometown':u.hometown
+			'hometown':u.hometown,
+			'voice':avatarvoice and avatarvoice.voiceurl or ''
 		}
 	try:
 		token = request.json['token']
