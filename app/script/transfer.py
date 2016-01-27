@@ -3,6 +3,11 @@ import shutil
 import os,stat
 from tmodels import *
 
+"""define checkdbNone"""
+def checkdb(dbNone):
+	return dbNone if dbNone!=None else ''
+
+
 cnt1 = 0
 cnt2 = 0
 cnt3 = 0
@@ -17,11 +22,12 @@ for id in xrange(1,1000):
 		try:
 			avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
 			avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
+			print " in try"
 		except Exception, e:
 			cnt4 = cnt4 + 1
 			print "None author"
 		avatartmp.add()
-		print str(id) + ":" + avatartmp.author.name +"," + avatartmp.name + avatartmp.author.gender+"," + avatartmp.gender + "have done!"
+		print str(id) + ":" + checkdb(avatartmp.author.name) +"," + checkdb(avatartmp.name) + checkdb(avatartmp.author.gender)+"," + checkdb(avatartmp.gender) + "have done!"
 	else:
 		cnt2 = cnt2 + 1
 		avatarnumber = 1
