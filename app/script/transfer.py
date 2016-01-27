@@ -17,9 +17,10 @@ for id in xrange(1,1000):
 		try:
 			avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
 			avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
-		 except Exception, e:
-		 	cnt4 = cnt4 + 1
-		 	print "None author"
+		except Exception, e:
+			cnt4 = cnt4 + 1
+			print "None author"
+
 		avatartmp.add()
 		print "have done!"
 	else:
