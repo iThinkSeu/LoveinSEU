@@ -14,7 +14,7 @@ for id in xrange(1,1000):
 		avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
 		avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
 		avatartmp.disable = 0 if avatartmp.disable==None else avatartmp.disable
-		avatartmp.passflag  = 0 if avatartmp.passflag == None else avatartmp.disable
+		avatartmp.cardflag  = 0 if avatartmp.cardflag == None else avatartmp.cardflag
 		avatartmp.add()
 		print "have done!"
 	else:
@@ -31,7 +31,6 @@ for id in xrange(1,1000):
 			#第一次上传头像，新增
 			tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
 			tmp.add()
-
 print "have done = " + str(cnt1)
 print "no avatar = " + str(cnt2)
 print "add new = " + str(cnt3)
