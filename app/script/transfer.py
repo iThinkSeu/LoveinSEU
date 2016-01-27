@@ -13,8 +13,8 @@ for id in xrange(1,1000):
 		cnt1 = cnt1 + 1
 		avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
 		avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
-		avatartmp.disable = 0 
-		avatartmp.cardflag  = 0 
+		avatartmp.disable = False 
+		avatartmp.cardflag  = False 
 		avatartmp.add()
 		print "have done!"
 	else:
