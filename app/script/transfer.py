@@ -6,15 +6,20 @@ from tmodels import *
 cnt1 = 0
 cnt2 = 0
 cnt3 = 0
+cnt4 = 0
 for id in xrange(1,1000):
 	#数据库操作
 	avatartmp = getavatarvoicebyuserid(id)
 	if avatartmp!=None:
 		cnt1 = cnt1 + 1
-		avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
-		avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
 		avatartmp.disable = False 
-		avatartmp.cardflag  = False 
+		avatartmp.cardflag  = False
+		try:
+			avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
+			avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
+		 except Exception, e:
+		 	cnt4 = cnt4 + 1
+		 	print "None author"
 		avatartmp.add()
 		print "have done!"
 	else:
@@ -32,7 +37,7 @@ for id in xrange(1,1000):
 			tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
 			tmp.add()
 print "have done = " + str(cnt1)
+print "no author = " + str(cnt4)
 print "no avatar = " + str(cnt2)
 print "add new = " + str(cnt3)
-
 
