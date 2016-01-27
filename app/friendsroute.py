@@ -207,7 +207,7 @@ def getrecommenduser():
 			'degree':u.degree,
 			'department':u.department,
 			'hometown':u.hometown,
-			'voice':avatarvoice and avatarvoice.voiceurl or ''
+			'voice':avatarvoice and avatarvoice.voiceurl or 'http://www.weme.space/static/personalvoices/37-1'
 		}
 	try:
 		token = request.json['token']
