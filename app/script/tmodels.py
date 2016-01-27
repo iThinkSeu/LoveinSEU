@@ -4,7 +4,7 @@ from datetime import *
 import random
 from sqlalchemy import or_
 from sqlalchemy import and_
-
+from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
