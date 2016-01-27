@@ -20,9 +20,8 @@ for id in xrange(1,1000):
 		except Exception, e:
 			cnt4 = cnt4 + 1
 			print "None author"
-
 		avatartmp.add()
-		print "have done!"
+		print str(id) + ":" + avatartmp.author.name +"," + avatartmp.name + avatartmp.author.gender+"," + avatartmp.gender + "have done!"
 	else:
 		cnt2 = cnt2 + 1
 		avatarnumber = 1
