@@ -13,8 +13,8 @@ for id in xrange(1,1000):
 		cnt1 = cnt1 + 1
 		avatartmp.name = avatartmp.author.name if avatartmp.author.name!=None else ''
 		avatartmp.gender = avatartmp.author.gender if avatartmp.author.gender!=None else ''
-		avatartmp.disable = 0 if avatartmp.disable==None
-		avatartmp.passflag  = 0 if avatartmp.passflag == None
+		avatartmp.disable = 0 if avatartmp.disable==None else avatartmp.disable
+		avatartmp.passflag  = 0 if avatartmp.passflag == None else avatartmp.disable
 		avatartmp.add()
 		print "have done!"
 	else:
