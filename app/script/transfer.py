@@ -56,12 +56,14 @@ for id in xrange(1,1050):
 		src = source + str(id)
 		dst = source + str(id) + '-' + str(avatarnumber)
 		avatarurl = "http://218.244.147.240:80/avatar/" + str(id) + '-' + str(avatarnumber)
-		if os.path.exists(src):
+		u = getuserbyid(id)
+		if os.path.exists(src) and u!=None:
 			cnt3 = cnt3 + 1
 			shutil.copy(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
 			#第一次上传头像，新增
 			print str(id)+":add new"
+
 			tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
 			tmp.add()
 			tmp.name = tmp.author.name if tmp.author.name!=None else ''
