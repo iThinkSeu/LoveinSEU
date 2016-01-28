@@ -36,15 +36,20 @@ for id in xrange(1,1050):
 		avatarnumber = avatartmp.avatar_number
 		src = source + str(id) + '-' + str(avatarnumber)
 		dst = source + str(id) + '-' + str(avatarnumber)
-		if os.path.exists(src):
+		if os.path.exists(dst):
 			cnt5 = cnt5 + 1
-			fp = Image.open(dst)
-			fp.thumbnail((500,500))
-			fp.save(dst + '_card.jpg')
-			#生成缩略图
-			fp = Image.open(dst)
-			fp.thumbnail((200,200))
-			fp.save(dst + '_thumbnail.jpg')
+			#print dst
+			try:
+				fp = Image.open(dst)
+				fp.thumbnail((500,500))
+				fp.save(dst + '_card.jpg')
+				#生成缩略图
+				fp = Image.open(dst)
+				fp.thumbnail((200,200))
+				fp.save(dst + '_thumbnail.jpg')
+			except Exception, e:
+				print dst +　"image error"
+
 	else:
 		cnt2 = cnt2 + 1
 		avatarnumber = 1
