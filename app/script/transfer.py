@@ -34,7 +34,7 @@ for id in xrange(1,1050):
 		#print str(id) + ":" + checkdb(avatartmp.author.name) +"," + checkdb(avatartmp.name) + checkdb(avatartmp.author.gender)+"," + checkdb(avatartmp.gender) + "have done!"
 		#转存卡片缩略图
 		avatarnumber = avatartmp.avatar_number
-		src = source + str(id)
+		src = source + str(id) + '-' + str(avatarnumber)
 		dst = source + str(id) + '-' + str(avatarnumber)
 		if os.path.exists(src):
 			cnt5 = cnt5 + 1
