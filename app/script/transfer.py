@@ -27,7 +27,7 @@ for id in xrange(1,1050):
 			cnt4 = cnt4 + 1
 			print "None author"
 		avatartmp.add()
-		print str(id) + 'havedone'
+		print str(id) + ':havedone'
 		#print str(id) + ":" + checkdb(avatartmp.author.name) +"," + checkdb(avatartmp.name) + checkdb(avatartmp.author.gender)+"," + checkdb(avatartmp.gender) + "have done!"
 	else:
 		cnt2 = cnt2 + 1
@@ -41,7 +41,10 @@ for id in xrange(1,1050):
 			shutil.copy(src, dst)
 			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
 			#第一次上传头像，新增
+			print str(id)+":add new"
 			tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
+			tmp.name = tmp.author.name if tmp.author.name!=None else ''
+			tmp.gender = tmp.author.gender if tmp.author.gender!=None else ''
 			tmp.add()
 			#生成中等缩略图
 			fp = Image.open(dst)
