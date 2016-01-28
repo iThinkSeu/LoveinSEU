@@ -58,25 +58,28 @@ for id in xrange(1,1050):
 		avatarurl = "http://218.244.147.240:80/avatar/" + str(id) + '-' + str(avatarnumber)
 		u = getuserbyid(id)
 		if os.path.exists(src) and u!=None:
-			cnt3 = cnt3 + 1
-			shutil.copy(src, dst)
-			os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
-			#第一次上传头像，新增
-			print str(id)+":add new"
-
-			tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
-			tmp.add()
-			tmp.name = tmp.author.name if tmp.author.name!=None else ''
-			tmp.gender = tmp.author.gender if tmp.author.gender!=None else ''
-			tmp.add()
-			#生成中等缩略图
-			fp = Image.open(dst)
-			fp.thumbnail((500,500))
-			fp.save(dst + '_card.jpg')
-			#生成缩略图
-			fp = Image.open(dst)
-			fp.thumbnail((200,200))
-			fp.save(dst + '_thumbnail.jpg')
+			try:
+				cnt3 = cnt3 + 1
+				shutil.copy(src, dst)
+				os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
+				#第一次上传头像，新增
+				print str(id)+":add new"
+				tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
+				tmp.add()
+				tmp.name = tmp.author.name if tmp.author.name!=None else ''
+				tmp.gender = tmp.author.gender if tmp.author.gender!=None else ''
+				tmp.add()
+				#生成中等缩略图
+				fp = Image.open(dst)
+				fp.thumbnail((500,500))
+				fp.save(dst + '_card.jpg')
+				#生成缩略图
+				fp = Image.open(dst)
+				fp.thumbnail((200,200))
+				fp.save(dst + '_thumbnail.jpg')
+			except Exception, e:
+				print "image error" + str(dst)
+				
 print "have done = " + str(cnt1)
 print "no author = " + str(cnt4)
 print "no avatar = " + str(cnt2)
