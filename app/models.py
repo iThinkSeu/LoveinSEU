@@ -924,6 +924,23 @@ def getranduser(token):
 		return []
 	else:
 		return L
+def getrandcard(u):
+	gender = u.gender
+	if gender == u'女':
+		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"男", avatarvoice.cardflag != 1)).all()
+	else:
+		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"女", avatarvoice.cardflag != 1)).all()
+	L1 = [x.userid for x in udif]
+	f2 = u.followeds.all()
+	L2 = [y.followed_id for y in f2]
+	L2.append(1)
+	L = list(set(L1).difference(set(L2)))
+	if len(L)>9:	
+		return random.sample(L,10)
+	elif len(L)==0:
+		return []
+	else:
+		return L
 
 def getMessagebyid(id):
 	a = Message.query.filter_by(id = id).first()

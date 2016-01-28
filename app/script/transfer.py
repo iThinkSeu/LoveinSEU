@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+"""该文件是为了将之前没有录入数据库的图片文件路径信息，录入处理的脚本文件
+	2016-1-28 by yqs
+"""
+
 import shutil
 import os,stat
 from PIL import Image
@@ -18,6 +23,7 @@ for id in xrange(1,1050):
 	avatartmp = getavatarvoicebyuserid(id)
 	source = '/home/www/avatar/'
 	if avatartmp!=None:
+		#已经录入
 		cnt1 = cnt1 + 1
 		avatartmp.disable = False 
 		avatartmp.cardflag  = False
@@ -51,6 +57,7 @@ for id in xrange(1,1050):
 				print "image error" + str(dst)
 
 	else:
+		#还没录入
 		cnt2 = cnt2 + 1
 		avatarnumber = 1
 		src = source + str(id)
@@ -77,9 +84,8 @@ for id in xrange(1,1050):
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
-			except Exception, e:
-				print "image error" + str(dst)
-				
+				except Exception, e:
+					print "image error" + str(dst)
 print "have done = " + str(cnt1)
 print "no author = " + str(cnt4)
 print "no avatar = " + str(cnt2)

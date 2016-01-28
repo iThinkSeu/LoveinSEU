@@ -196,7 +196,7 @@ def searchuser():
 @friends_route.route("/getrecommenduser",methods=['GET','POST'])
 def getrecommenduser():
 	def recommendUser(id):
-		u = getuserbyid(recommend)
+		u = getuserbyid(id)
 		avatarvoice = u.avatarvoices.first()
 		return {
 			'id':u.id,
@@ -207,13 +207,14 @@ def getrecommenduser():
 			'degree':u.degree,
 			'department':u.department,
 			'hometown':u.hometown,
+			'avatar':avatarvoice.avatarurl if avatarvoice.avatarurl!=None else '',
 			'voice':avatarvoice and avatarvoice.voiceurl or 'http://www.weme.space/static/personalvoices/37-1'
 		}
 	try:
 		token = request.json['token']
 		u=getuserinformation(token)
  		if u != None:
-			L = getranduser(token)
+			L = getrandcard(u)
 			if len(L)>0:
 				state = 'successful'
 				reason = ''
