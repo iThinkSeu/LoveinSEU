@@ -110,7 +110,6 @@ def getprofilebyid():
  		if u!=None and u2!=None:
 			state = 'successful'
 			reason = ''
-
 			lookcount = u.lookcount if u.lookcount !=None else 0
 			lookcount = str(lookcount)
 			username = u.username if u.username!=None else '' 
@@ -129,6 +128,28 @@ def getprofilebyid():
 			hometown = u.hometown if u.hometown != None else ''
 			id = u.id if u.id!=None else ''
 			weme = str(u.weme)
+			#好友关系
+			uFollowList = u2.followeds.all()
+			FollowuList = u2.followers.all()
+			ufollowFlag = id in [y.followed_id for y in uFollowList]
+			followuFlag = id in [x.follower_id for x in FollowuList]
+			if ufollowFlag==False and followuFlag == False:
+				followflag = '0'
+			elif ufollowFlag and followuFlag == False:
+				followflag = '1'
+			elif followuFlag and ufollowFlag == False:
+				followflag = '2'
+			elif ufollowFlag == True and followuFlag == True:
+				followflag = '3'
+			else:
+				followflag = '4'
+			#比较大小
+			if u2.birthday < u.birthday:
+				birthflag = '1'
+			elif u2.birthday > u.birthday:
+				birthflag = '-1'
+			else:
+				birthflag = '0' 
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -149,6 +170,8 @@ def getprofilebyid():
 			id = ''
 			lookcount = ''
 			weme = ''
+			followflag = ''
+			birthflag = '' 
 
 	except Exception, e:
 		print e
@@ -171,7 +194,8 @@ def getprofilebyid():
 		id = ''
 		lookcount = ''
 		weme = ''
-
+		followflag = ''
+		birthflag = '' 
 
 	response = jsonify({'username':username,
 						'state':state,
@@ -191,5 +215,7 @@ def getprofilebyid():
 	 	                'hometown':hometown,
 	 	                'lookcount':lookcount,
 	 	                'weme':weme,
+	 	                'followflag':followflag,
+	 	                'birthflag':birthflag,
 	 	                'id':id})
 	return response
