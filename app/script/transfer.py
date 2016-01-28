@@ -43,6 +43,7 @@ for id in xrange(1,1050):
 			#第一次上传头像，新增
 			print str(id)+":add new"
 			tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
+			tmp.add()
 			tmp.name = tmp.author.name if tmp.author.name!=None else ''
 			tmp.gender = tmp.author.gender if tmp.author.gender!=None else ''
 			tmp.add()
