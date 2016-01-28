@@ -12,9 +12,11 @@ cnt1 = 0
 cnt2 = 0
 cnt3 = 0
 cnt4 = 0
+cnt5 = 0
 for id in xrange(1,1050):
 	#数据库操作
 	avatartmp = getavatarvoicebyuserid(id)
+	source = '/avatar/'
 	if avatartmp!=None:
 		cnt1 = cnt1 + 1
 		avatartmp.disable = False 
@@ -26,13 +28,26 @@ for id in xrange(1,1050):
 		except Exception, e:
 			cnt4 = cnt4 + 1
 			print "None author"
+
 		avatartmp.add()
 		print str(id) + ':havedone'
 		#print str(id) + ":" + checkdb(avatartmp.author.name) +"," + checkdb(avatartmp.name) + checkdb(avatartmp.author.gender)+"," + checkdb(avatartmp.gender) + "have done!"
+		#转存卡片缩略图
+		avatarnumber = avatartmp.avatar_number
+		src = source + str(id)
+		dst = source + str(id) + '-' + str(avatarnumber)
+		if os.path.exists(src):
+			cnt5 = cnt5 + 1
+			fp = Image.open(dst)
+			fp.thumbnail((500,500))
+			fp.save(dst + '_card.jpg')
+			#生成缩略图
+			fp = Image.open(dst)
+			fp.thumbnail((200,200))
+			fp.save(dst + '_thumbnail.jpg')
 	else:
 		cnt2 = cnt2 + 1
 		avatarnumber = 1
-		source = '/avatar/'
 		src = source + str(id)
 		dst = source + str(id) + '-' + str(avatarnumber)
 		avatarurl = "http://218.244.147.240:80/avatar/" + str(id) + '-' + str(avatarnumber)
