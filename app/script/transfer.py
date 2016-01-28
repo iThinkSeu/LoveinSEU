@@ -16,7 +16,7 @@ cnt5 = 0
 for id in xrange(1,1050):
 	#数据库操作
 	avatartmp = getavatarvoicebyuserid(id)
-	source = '/avatar/'
+	source = '/home/www/avatar/'
 	if avatartmp!=None:
 		cnt1 = cnt1 + 1
 		avatartmp.disable = False 
