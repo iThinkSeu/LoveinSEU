@@ -6,6 +6,11 @@ from hashmd5 import *
 import re
 getprofile_route = Blueprint('getprofile_route', __name__)
 
+#防止数据库为空
+"""define checkdbNone"""
+def checkdb(dbNone):
+	return dbNone if dbNone!=None else ''
+
 @getprofile_route.route("/getprofile",methods=['GET','POST'])
 def getprofile():
 	try:
@@ -147,21 +152,21 @@ def getprofilebyid():
 			reason = ''
 			lookcount = u.lookcount if u.lookcount !=None else 0
 			lookcount = str(lookcount)
-			username = u.username if u.username!=None else '' 
-			school = u.school if u.school!=None else '' 				
-			degree = u.degree if u.degree!=None else ''
-			department = u.department if u.department!=None else ''
-			enrollment = u.enrollment if u.enrollment!=None else ''
-			name = u.name if u.name!=None else ''
-			gender = u.gender if u.gender!=None else ''
-			birthday = u.birthday if u.birthday!=None else ''
-			hobby = u.hobby if u.hobby!=None else ''
-			preference = u.preference if u.preference!=None else '' 
-			phone = u.phone if u.phone!=None else ''
-			wechat = u.wechat if u.wechat != None else ''
-			qq = u.qq if u.qq !=None else ''
-			hometown = u.hometown if u.hometown != None else ''
-			id = u.id if u.id!=None else ''
+			username = checkdb(u.username) 
+			school = checkdb(u.school) 				
+			degree = checkdb(u.degree)
+			department = checkdb(u.department)
+			enrollment = checkdb(u.enrollment)
+			name = checkdb(u.name)
+			gender = checkdb(u.gender)
+			birthday = checkdb(u.birthday)
+			hobby = checkdb(u.hobby)
+			preference = checkdb(u.preference) 
+			phone = checkdb(u.phone)
+			wechat = checkdb(u.wechat)
+			qq = checkdb(u.qq)
+			hometown = checkdb(u.hometown)
+			id = checkdb(u.id)
 			weme = str(u.weme)
 			#好友关系
 			uFollowList = u2.followeds.all()
@@ -189,6 +194,8 @@ def getprofilebyid():
 			match = re.match(r'\d{4}-(\d{1,2})-(\d{1,2})', u.birthday)
 			if match:
 				constellation = getconstelleation(int(match.group(1)), int(match.group(2)))
+			certification = checkdb(u.certification)
+
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -211,6 +218,7 @@ def getprofilebyid():
 			weme = ''
 			followflag = ''
 			birthflag = '' 
+			certification = ''
 
 	except Exception, e:
 		print e
@@ -235,6 +243,7 @@ def getprofilebyid():
 		weme = ''
 		followflag = ''
 		birthflag = '' 
+		certification = ''
 
 	response = jsonify({'username':username,
 						'state':state,
@@ -257,6 +266,7 @@ def getprofilebyid():
 	 	                'followflag':followflag,
 	 	                'birthflag':birthflag,
 	 	                'id':id,
+	 	                'certification':certification,
 	 	                'constellation':constellation
 	 	                })
 	return response

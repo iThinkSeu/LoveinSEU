@@ -156,6 +156,7 @@ class User(db.Model):
 	lookcount = db.Column(db.Integer,default = 0)
 	cardflag = db.Column(db.Boolean,default =False)
 	weme = db.Column(db.Integer,default = 100)
+	certification = db.Column(db.Boolean,default =False)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#relation
 	#all users followed by this
@@ -790,6 +791,7 @@ class schoolcertification(db.Model):
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	checkflag = db.Column(db.Boolean,default = False)
 	checktime = db.Column(db.DateTime)
+	checkresult = db.Column(db.Boolean,default = False)
 	def add(self):
 		try:
 			db.session.add(self)
