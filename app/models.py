@@ -167,6 +167,8 @@ class User(db.Model):
 	#all users that follow this
 	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
+	#校园认证
+	certifications = db.relationship('schoolcertification',backref = 'author', lazy = 'dynamic')
 	#用户的头像和声音名片
 	avatarvoices = db.relationship('avatarvoice',backref = 'author', lazy = 'dynamic')
 	#该用户举报的东西
@@ -765,6 +767,29 @@ class avatarvoice(db.Model):
 	voiceurl = db.Column(db.String(256))
 	cardflag = db.Column(db.Boolean,default =False)
 	disable = db.Column(db.Boolean,default = False)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+
+class schoolcertification(db.Model):
+	__tablename__ = 'schoolcertifications'
+	id = db.Column(db.Integer,primary_key = True)
+	userid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	name = db.Column(db.String(32))
+	gender = db.Column(db.String(32))
+	school = db.Column(db.String(32))
+	studentID = db.Column(db.String(64))
+	pictureurl = db.Column(db.String(256))
+	location = db.Column(db.String(64))
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	checkflag = db.Column(db.Boolean,default = False)
+	checktime = db.Column(db.DateTime)
 	def add(self):
 		try:
 			db.session.add(self)

@@ -91,7 +91,6 @@ def getSendUserList():
 							unReadnum=unReadnum+1
 					senduser = getuserbyid(Id)
 					if senduser != None:
-						print Id, unReadnum
 						output = {"SendId":Id ,"unreadnum":unReadnum,"name":senduser.name,"gender":senduser.gender,"school":senduser.school,"text":text,"lasttime":lasttime}
 						result.append(output)
 			state = 'successful'

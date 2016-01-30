@@ -30,6 +30,8 @@ def uploadavatar():
 		u = getuserinformation(token)
 		id = u.id
 		try:
+			state = 'successful'
+			reason = ''
 			if type=="0":
 				avatartmp = getavatarvoicebyuserid(id)
 				if avatartmp!=None:
@@ -148,8 +150,21 @@ def uploadavatar():
 					dst = '/home/www/static/personalvoices/' + str(id) + "-" + str(voicenumber)
 					voiceurl = 'http://218.244.147.240:80/static/personalvoices/' + str(id) + "-" + str(voicenumber)
 					tmp = avatarvoice(userid = id,voice_number = voicenumber,voiceurl = voiceurl)
-					tmp.add()				
+					tmp.add()
+			elif type == "-13":
+				#type = -13 表示上传cetification的附件图片
+				certid = jsonstring.get('certificationid','')
+				dst = '/home/www/static/schoolcertifications/' + str(id) + "-" + str(certid)
+				tmp = schoolcertification.query.filter_by(id = certid)
+				if tmp!=None:
+					tmp.pictureurl = 'http://218.244.147.240:80/static/schoolcertifications/' + str(id) + "-" + str(certid)
+					tmp.add()
+				else:
+					state = 'fail'
+					reason = 'no this certification id'
 			else:
+				state = 'fail'
+				reason = 'no this type'				
 				dst = '/home/www/picture/temp/' + str(id)
 
 			'''
@@ -168,8 +183,6 @@ def uploadavatar():
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
-			state = 'successful'
-			reason = ''
 		except Exception, e:
 			print e 
 			state = 'fail'

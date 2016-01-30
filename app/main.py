@@ -25,11 +25,10 @@ from personalmessageroute import personalmessage_route
 from communityroute import community_route
 from cardroute import card_route
 from report import report_route
-
 from adminuser import adminuser_route
+from schoolcertification import certification_route
 
 from share.share import share
-
 from dbSetting import create_app,db 
 
 #app = Flask(__name__)
@@ -46,6 +45,7 @@ app.register_blueprint(personalmessage_route)	#私信相关
 app.register_blueprint(community_route)			#社区相关
 app.register_blueprint(card_route)				#卡片相关
 app.register_blueprint(report_route)			#卡片相关
+app.register_blueprint(certification_route)		#校园认证
 
 app.register_blueprint(adminuser_route)			#后台管理相关
 app.register_blueprint(share)		#分享
