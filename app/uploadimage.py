@@ -155,7 +155,7 @@ def uploadavatar():
 				#type = -13 表示上传cetification的附件图片
 				certid = jsonstring.get('certificationid','')
 				dst = '/home/www/static/schoolcertifications/' + str(id) + "-" + str(certid)
-				tmp = schoolcertification.query.filter_by(id = certid)
+				tmp = schoolcertification.query.filter_by(id = certid).first()
 				if tmp!=None:
 					tmp.pictureurl = 'http://218.244.147.240:80/static/schoolcertifications/' + str(id) + "-" + str(certid)
 					tmp.add()
