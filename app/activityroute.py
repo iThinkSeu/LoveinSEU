@@ -6,6 +6,7 @@ import models
 from hashmd5 import *
 import string
 from sqlalchemy import Date, cast
+import weme
 
 activity_route = Blueprint('activity_route', __name__)
 
@@ -768,3 +769,47 @@ def deletepassuser():
 						'reason':reason})
 	return response
 
+#活动评论模块
+@activity_route.route("/commenttoactivity",methods=['POST'])
+def commenttoactivity():
+	try:
+		token = request.json['token']
+		body = request.json.get('body','')
+		activityid = request.json['activityid']
+		u = getuserinformation(token)
+		if u is not None:
+			state = 'successful'
+			reason = ''
+			activitytmp = getactivitybyid(activityid)
+			if activitytmp!=None:
+				u.weme = u.weme + weme.WEMECOMMENT
+				u.addpwd()
+				body = body.encode('UTF-8')
+				commenttmp = commentact(body = body)
+				u.commenttoactivity(commenttmp,activitytmp)
+				id = commenttmp.id
+				activitytmp.commentnumber = activitytmp.comments.count()
+				activitytmp.add()
+				commentnumber = activitytmp.commentnumber
+			else:
+				state = 'fail'
+				reason = 'no activity'
+				id = ''
+				commentnumber = ''
+		else:
+			id = ''
+			state = 'fail'
+			reason = 'no user'
+			commentnumber = ''
+	except Exception, e:	
+		print e
+		id = ''
+		commentnumber = ''
+		state = 'fail'
+		reason = 'exception'
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'commentnumber':commentnumber,
+						'id':id})
+	return response

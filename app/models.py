@@ -62,6 +62,21 @@ class likecomment(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+#活动的评论点赞关系表
+class likecommentact(db.Model):
+	__tablename__ = 'likecommentacts'
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key = True)
+	commentid = db.Column(db.Integer,db.ForeignKey('commentacts.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 #喜欢的活动
 class likeactivity(db.Model):
 	__tablename__ = 'likeactivitys'
@@ -178,6 +193,8 @@ class User(db.Model):
 	posts = db.relationship('post',backref = 'author', lazy = 'dynamic')
 	#该用户的评论
 	comments = db.relationship('comment', backref = 'author',lazy = 'dynamic')
+	#该用户评论活动的评论
+	commentacts = db.relationship('commentact', backref = 'author',lazy = 'dynamic')
 	#likeposts的外键，该用户喜欢了哪些帖子
 	likeposts = db.relationship('likepost', foreign_keys = [likepost.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#likecomments的外键。该用户喜欢了哪些评论
@@ -194,7 +211,7 @@ class User(db.Model):
 	publishfoodcards = db.relationship('foodcard',backref = 'author', lazy = 'dynamic')   	
 	#点赞的美食卡片
 	likefoodcards =  db.relationship('likefoodcard', foreign_keys = [likefoodcard.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
-
+	#
 	def add(self):
 		try:
 			tempuser = User.query.filter_by(username=self.username).first()
@@ -430,6 +447,19 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2		
+	def commenttoactivity(self,commentact,activity):
+		try:
+			commentact.activity = activity
+			commentact.author = self
+			commentact.commentid = -1
+			db.session.add(commentact)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
 	def commenttocomment(self,comment,destcomment):
 		try:
 			comment.post = destcomment.post
@@ -479,6 +509,13 @@ class Message(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+
+class commentactimageAttach(db.Model):
+	__tablename__ = "commentactimageattachs"
+	id = db.Column(db.Integer,primary_key = True)
+	commentid = db.Column(db.Integer,db.ForeignKey('commentacts.id'),primary_key = True)
+	imageid = db.Column(db.Integer,db.ForeignKey('imageurls.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
 
 class commentimageAttach(db.Model):
 	__tablename__ = "commentimageattachs"
@@ -553,6 +590,8 @@ class Activity(db.Model):
 	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.activityid], backref = db.backref('activitys', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#喜欢该活动的人
 	likeusers = db.relationship('likeactivity', foreign_keys = [likeactivity.activityid], backref = db.backref('likewhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#活动的评论
+	comments = db.relationship('commentact',backref = 'activity',lazy = 'dynamic')
 	def add(self):
 		try:
 			db.session.add(self)
@@ -671,6 +710,40 @@ class comment(db.Model):
 	def addimage(self,image):
 		try:
 			f = commentimageAttach(comments=self, images=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+
+class commentact(db.Model):
+	__tablename__ = 'commentacts'
+	id = db.Column(db.Integer,primary_key = True)
+	body = db.Column(db.Text)
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'))
+	commentid = db.Column(db.Integer,default = -1)
+	likenumber = db.Column(db.Integer,default = 0)
+	commentnumber = db.Column(db.Integer,default = 0)
+	disable = db.Column(db.Boolean,default = False)
+	likeusers = db.relationship('likecommentact', foreign_keys = [likecommentact.commentid], backref = db.backref('likewhatcomment', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#评论的图片，以附件的形式上传
+	images = db.relationship('commentactimageAttach', foreign_keys = [commentactimageAttach.commentid], backref = db.backref('comments', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+	def addimage(self,image):
+		try:
+			f = commentactimageAttach(comments=self, images=image)
 			db.session.add(f)
 			db.session.commit()
 			return 0	
