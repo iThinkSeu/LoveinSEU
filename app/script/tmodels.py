@@ -4,14 +4,15 @@ from datetime import *
 import random
 from sqlalchemy import or_
 from sqlalchemy import and_
+from sqlalchemy import text
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
+#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:SEUqianshou2015@218.244.147.240:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://liewli:liewli@localhost:3306/weme?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://ZRR:zrr520@223.3.56.153:3306/flasktestdb?charset=utf8"
-#app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:root@localhost:3306/flasktestdb?charset=utf8"
 #app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:0596@223.3.36.246:3306/flasktestdb?charset=utf8"
 db = SQLAlchemy(app)
 
@@ -44,6 +45,21 @@ class likecomment(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	userid = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key = True)
 	commentid = db.Column(db.Integer,db.ForeignKey('comments.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+#活动的评论点赞关系表
+class likecommentact(db.Model):
+	__tablename__ = 'likecommentacts'
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key = True)
+	commentid = db.Column(db.Integer,db.ForeignKey('commentacts.id'),primary_key = True)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	def add(self):
 		try:
@@ -147,6 +163,7 @@ class User(db.Model):
 	lookcount = db.Column(db.Integer,default = 0)
 	cardflag = db.Column(db.Boolean,default =False)
 	weme = db.Column(db.Integer,default = 100)
+	certification = db.Column(db.Boolean,default =False)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
 	#relation
 	#all users followed by this
@@ -158,6 +175,8 @@ class User(db.Model):
 	#all users that follow this
 	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
+	#校园认证
+	certifications = db.relationship('schoolcertification',backref = 'author', lazy = 'dynamic')
 	#用户的头像和声音名片
 	avatarvoices = db.relationship('avatarvoice',backref = 'author', lazy = 'dynamic')
 	#该用户举报的东西
@@ -166,10 +185,14 @@ class User(db.Model):
 	posts = db.relationship('post',backref = 'author', lazy = 'dynamic')
 	#该用户的评论
 	comments = db.relationship('comment', backref = 'author',lazy = 'dynamic')
+	#该用户评论活动的评论
+	commentacts = db.relationship('commentact', backref = 'author',lazy = 'dynamic')
 	#likeposts的外键，该用户喜欢了哪些帖子
 	likeposts = db.relationship('likepost', foreign_keys = [likepost.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#likecomments的外键。该用户喜欢了哪些评论
 	likecomments =  db.relationship('likecomment', foreign_keys = [likecomment.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#likecommentacts的外键。该用户喜欢了哪些活动评论
+	likecommentacts =  db.relationship('likecommentact', foreign_keys = [likecommentact.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#参加的活动activity
 	activitys = db.relationship('attentactivity', foreign_keys = [attentactivity.userid], backref = db.backref('attentuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#发起的活动
@@ -182,7 +205,7 @@ class User(db.Model):
 	publishfoodcards = db.relationship('foodcard',backref = 'author', lazy = 'dynamic')   	
 	#点赞的美食卡片
 	likefoodcards =  db.relationship('likefoodcard', foreign_keys = [likefoodcard.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
-
+	#
 	def add(self):
 		try:
 			tempuser = User.query.filter_by(username=self.username).first()
@@ -346,6 +369,20 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2		
+	def likecommentact(self,comment):
+		try:
+			lc = self.likecommentacts.filter_by(commentid = comment.id).first()
+			if lc is None:
+				lc = likecommentact(likeuser = self, likewhatcomment = comment)
+				db.session.add(lc)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
 	def likefoodcard(self,foodcard):
 		try:
 			lc = self.likefoodcards.filter_by(foodcardid = foodcard.id).first()
@@ -418,6 +455,19 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2		
+	def commenttoactivity(self,commentact,activity):
+		try:
+			commentact.activity = activity
+			commentact.author = self
+			commentact.commentid = -1
+			db.session.add(commentact)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
 	def commenttocomment(self,comment,destcomment):
 		try:
 			comment.post = destcomment.post
@@ -430,7 +480,20 @@ class User(db.Model):
 		except Exception, e:
 			print e
 			db.session.rollback()
-			return 2			
+			return 2	
+	def commenttocommentact(self,commentact,destcomment):
+		try:
+			commentact.activity = destcomment.activity
+			commentact.author = self
+			commentact.commentid = destcomment.id
+			db.session.add(commentact)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2				
 							
 
 class MessageAndimage(db.Model):
@@ -467,6 +530,13 @@ class Message(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+
+class commentactimageAttach(db.Model):
+	__tablename__ = "commentactimageattachs"
+	id = db.Column(db.Integer,primary_key = True)
+	commentid = db.Column(db.Integer,db.ForeignKey('commentacts.id'),primary_key = True)
+	imageid = db.Column(db.Integer,db.ForeignKey('imageurls.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
 
 class commentimageAttach(db.Model):
 	__tablename__ = "commentimageattachs"
@@ -541,6 +611,8 @@ class Activity(db.Model):
 	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.activityid], backref = db.backref('activitys', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#喜欢该活动的人
 	likeusers = db.relationship('likeactivity', foreign_keys = [likeactivity.activityid], backref = db.backref('likewhatactivity', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#活动的评论
+	comments = db.relationship('commentact',backref = 'activity',lazy = 'dynamic')
 	def add(self):
 		try:
 			db.session.add(self)
@@ -667,6 +739,40 @@ class comment(db.Model):
 			db.session.rollback()
 			return 2	
 
+class commentact(db.Model):
+	__tablename__ = 'commentacts'
+	id = db.Column(db.Integer,primary_key = True)
+	body = db.Column(db.Text)
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	activityid = db.Column(db.Integer,db.ForeignKey('activitys.id'))
+	commentid = db.Column(db.Integer,default = -1)
+	likenumber = db.Column(db.Integer,default = 0)
+	commentnumber = db.Column(db.Integer,default = 0)
+	disable = db.Column(db.Boolean,default = False)
+	likeusers = db.relationship('likecommentact', foreign_keys = [likecommentact.commentid], backref = db.backref('likewhatcomment', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#评论的图片，以附件的形式上传
+	images = db.relationship('commentactimageAttach', foreign_keys = [commentactimageAttach.commentid], backref = db.backref('comments', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
+	def addimage(self,image):
+		try:
+			f = commentactimageAttach(comments=self, images=image)
+			db.session.add(f)
+			db.session.commit()
+			return 0	
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
+
 class topofficial(db.Model):
 	__tablename__ = 'topofficials'
 	id = db.Column(db.Integer,primary_key=True)
@@ -766,7 +872,29 @@ class avatarvoice(db.Model):
 			db.session.rollback()
 			return 2
 
-
+class schoolcertification(db.Model):
+	__tablename__ = 'schoolcertifications'
+	id = db.Column(db.Integer,primary_key = True)
+	userid = db.Column(db.Integer,db.ForeignKey('users.id'))
+	name = db.Column(db.String(32))
+	gender = db.Column(db.String(32))
+	school = db.Column(db.String(32))
+	studentID = db.Column(db.String(64))
+	pictureurl = db.Column(db.String(256))
+	location = db.Column(db.String(64))
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	checkflag = db.Column(db.Boolean,default = False)
+	checktime = db.Column(db.DateTime)
+	checkresult = db.Column(db.Boolean,default = False)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
@@ -917,6 +1045,23 @@ def getranduser(token):
 		return []
 	else:
 		return L
+def getrandcard(u):
+	gender = u.gender
+	if gender == u'女':
+		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"男", avatarvoice.cardflag != 1)).all()
+	else:
+		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"女", avatarvoice.cardflag != 1)).all()
+	L1 = [x.userid for x in udif]
+	f2 = u.followeds.all()
+	L2 = [y.followed_id for y in f2]
+	L2.append(1)
+	L = list(set(L1).difference(set(L2)))
+	if len(L)>9:	
+		return random.sample(L,10)
+	elif len(L)==0:
+		return []
+	else:
+		return L
 
 def getMessagebyid(id):
 	a = Message.query.filter_by(id = id).first()
@@ -971,6 +1116,11 @@ def getpostcommentbypage(page,postid):
 	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
 	return a
 
+def getpostcommentactbylimit(endid,activityid):
+	db.session.execute('set names utf8mb4')
+	a = commentact.query.filter(and_(commentact.activityid == activityid,commentact.commentid == -1)).order_by(commentact.timestamp.desc()).filter(text("id<:value")).params(value=endid).limit(8)
+	return a
+
 def getcommenttocommentbyid(destcommentid):
 	db.session.execute('set names utf8mb4')
 	a= comment.query.filter(comment.commentid.in_(destcommentid)).order_by(comment.timestamp.desc()).all()
@@ -990,6 +1140,8 @@ def getavatarvoicebyuserid(userid):
 	return a
 
 
+if __name__ == '__main__':
+	manager.run()
 
 
 

@@ -793,7 +793,7 @@ def commenttoactivity():
 				commentnumber = activitytmp.commentnumber
 			else:
 				state = 'fail'
-				reason = 'no activity'
+				reason = 'no this activityid'
 				id = ''
 				commentnumber = ''
 		else:
@@ -813,3 +813,155 @@ def commenttoactivity():
 						'commentnumber':commentnumber,
 						'id':id})
 	return response
+
+@activity_route.route("/commenttocommentact",methods=['POST'])
+def commenttocommentact():
+	try:
+		token = request.json['token']
+		body = request.json.get('body','')
+		destcommentid = request.json['destcommentid']
+		u = getuserinformation(token)
+		destcomment = commentact.query.filter_by(id = destcommentid).first()
+		if u!=None and destcomment!=None:
+			u.weme = u.weme + weme.WEMECOMMENT
+			u.addpwd()
+			sourcecomment = commentact(body = body)
+			u.commenttocommentact(sourcecomment,destcomment)
+			id = sourcecomment.id
+			activity = destcomment.activity
+			activity.commentnumber = activity.comments.count()
+			activity.add()
+			state = 'successful'
+			reason = ''
+		else:
+			id = ''
+			state = 'fail'
+			reason = 'no user or no destcomment'
+	except Exception, e:	
+		print e
+		id = ''
+		state = 'fail'
+		reason = 'exception'
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'id':id})
+	return response
+
+@activity_route.route("/likecommentact",methods=['POST'])
+def likecommentact():
+	try:
+		token = request.json['token']
+		commentid = request.json['commentid']
+		u = getuserinformation(token)
+		if u is not None:
+			comment1 = commentact.query.filter_by(id=commentid).first()
+			temp = u.likecommentact(comment1)
+			if temp == 0:
+				comment1.likenumber = comment1.likeusers.count()
+				comment1.add()
+				u.weme = u.weme + weme.WEMELIKE
+				u.addpwd()
+				state = 'successful'
+				reason = ''
+				likenumber = comment1.likenumber
+			elif temp == 1:
+				state = 'fail'
+				reason = 'already like'
+				likenumber = ''
+			else:
+				state = 'fail'
+				reason = 'exception'
+				likenumber = ''
+		else:
+			state = 'fail'
+			reason = 'no user'
+			likenumber = ''
+	except Exception, e:	
+		print e
+		likenumber = ''
+		state = 'fail'
+		reason = 'exception'
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'likenumber':likenumber})
+	return response
+
+#返回activity的评论
+@activity_route.route("/getactivitycomment",methods=['POST'])
+def getactivitycomment():
+	try:
+		token = request.json['token']
+		activityid = request.json['activityid']
+		endidstr = request.json['endid']
+		endid = string.atoi(str(endidstr))
+		u = getuserinformation(token)
+		if u is not None:	
+			state = 'successful'
+			reason = ''
+			commentlistitems = getactivitycommentbylimit(endid,activityid)
+			result = []
+			for items in commentlistitems:
+				#获取这条评论的图片附件链接
+				commentimage = items.images.all()
+				image = []
+				thumbnail = []
+				for commentimagetemp in commentimage:
+					number = commentimagetemp.imageid
+					url = "http://218.244.147.240:80/community/commentattachs/"+ str(items.activityid) + "-" + str(items.id) + "-" + str(number)
+					urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.activityid) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
+					image.append(url)
+					thumbnail.append(urlthum)
+				#获取回复这条评论的所有评论
+				tempcontent = []
+				array = []
+				tempcontent.append(items.id)
+				while True:
+					temp = getcommenttocommentactbyid(tempcontent)
+					if len(temp) == 0:
+						break
+					L = [idtemp.id for idtemp in temp]
+					for idtemp in temp:
+						L1 = [idtemp.timestamp,idtemp.id]
+						array.append(L1) 
+
+					#commentinlist.extend(L)
+					tempcontent = L
+				array.sort()
+				Lsort = [xx[1] for xx in array]
+				ctcresult = []
+				for i in range(len(Lsort)):
+					ctcommenttemp = getcommentactbyid(Lsort[i])
+					commentsource = ctcommenttemp
+					commentdest = getcommentactbyid(ctcommenttemp.commentid)
+					ctcoutput = {"id":commentsource.id,"authorid":commentsource.author.id,"timestamp":commentsource.timestamp,"name":commentsource.author.name,"body":commentsource.body,"destname":commentdest.author.name,"destuserid":commentdest.author.id,"destcommentid":commentdest.id}
+					ctcresult.append(ctcoutput)
+				#附加这条评论的一些基础信息
+				name = items.author.name if items.author.name != None else ''
+				school = items.author.school if items.author.school != None else ''
+				gender = items.author.gender if items.author.gender != None else ''
+				body = items.body if items.body != None else ''
+				likeuserstemp = items.likeusers.all()
+				L = [(temp2.userid) for temp2 in likeuserstemp]
+				if u.id in L:
+					flag = '1'
+				else:
+					flag = '0'
+				output = {"id":items.id,"image":image,"thumbnail":thumbnail,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
+				result.append(output)
+		else:
+			state = 'fail'
+			reason = 'no user'
+			result = ''
+	except Exception, e:
+		#raise 
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'result':result,
+						'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
+

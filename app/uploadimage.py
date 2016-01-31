@@ -162,6 +162,13 @@ def uploadavatar():
 				else:
 					state = 'fail'
 					reason = 'no this certification id'
+			elif type == "-14":
+				#type = -14表示上传commentact的图片附件
+				images = getImageURLbyid(number)
+				commentacts = getcommentactbyid(commentid) 
+				commentacts.addimage(images)
+				activityid = commentacts.activityid
+				dst = '/home/www/activity/commentactsImage/' + str(activityid) + '-' + str(commentid) + '-' + str(number)
 			else:
 				state = 'fail'
 				reason = 'no this type'				

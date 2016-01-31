@@ -4,6 +4,7 @@ from datetime import *
 import random
 from sqlalchemy import or_
 from sqlalchemy import and_
+from sqlalchemy import text
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 from dbSetting import create_app,db,sqlurl 
@@ -199,6 +200,8 @@ class User(db.Model):
 	likeposts = db.relationship('likepost', foreign_keys = [likepost.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#likecomments的外键。该用户喜欢了哪些评论
 	likecomments =  db.relationship('likecomment', foreign_keys = [likecomment.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#likecommentacts的外键。该用户喜欢了哪些活动评论
+	likecommentacts =  db.relationship('likecommentact', foreign_keys = [likecommentact.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#参加的活动activity
 	activitys = db.relationship('attentactivity', foreign_keys = [attentactivity.userid], backref = db.backref('attentuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#发起的活动
@@ -375,6 +378,20 @@ class User(db.Model):
 			print e
 			db.session.rollback()
 			return 2		
+	def likecommentact(self,comment):
+		try:
+			lc = self.likecommentacts.filter_by(commentid = comment.id).first()
+			if lc is None:
+				lc = likecommentact(likeuser = self, likewhatcomment = comment)
+				db.session.add(lc)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2		
 	def likefoodcard(self,foodcard):
 		try:
 			lc = self.likefoodcards.filter_by(foodcardid = foodcard.id).first()
@@ -472,7 +489,20 @@ class User(db.Model):
 		except Exception, e:
 			print e
 			db.session.rollback()
-			return 2			
+			return 2	
+	def commenttocommentact(self,commentact,destcomment):
+		try:
+			commentact.activity = destcomment.activity
+			commentact.author = self
+			commentact.commentid = destcomment.id
+			db.session.add(commentact)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2				
 							
 
 class MessageAndimage(db.Model):
@@ -552,6 +582,8 @@ class imageURL(db.Model):
 	activitys = db.relationship('activityimageAttach', foreign_keys = [activityimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 	#活动的生活照
 	lifeimages = db.relationship('activitylifeimage', foreign_keys = [activitylifeimage.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
+	#活动的评论附图	
+	commentacts = db.relationship('commentactimageAttach', foreign_keys = [commentactimageAttach.imageid],backref = db.backref('images',lazy = 'joined'),lazy = 'dynamic',cascade = 'all,delete-orphan')
 
 	def add(self):
 		try:
@@ -1077,6 +1109,12 @@ def getcommentbyid(id):
 	db.session.execute('set names utf8mb4');
 	a = comment.query.filter_by(id = id).first()	
 	return a
+
+def getcommentactbyid(id):
+	db.session.execute('set names utf8mb4');
+	a = commentact.query.filter_by(id = id).first()	
+	return a
+
 def gettopofficial():
 	a = topofficial.query.order_by(topofficial.rank).all()
 	return a
@@ -1095,10 +1133,23 @@ def getpostcommentbypage(page,postid):
 	a = comment.query.filter(and_(comment.postid == postid,comment.commentid == -1)).order_by(comment.timestamp.desc()).paginate(page, per_page=8, error_out=False)
 	return a
 
+def getactivitycommentbylimit(endid,activityid):
+	db.session.execute('set names utf8mb4')
+	if endid==0:
+		a = commentact.query.filter(and_(commentact.activityid == activityid,commentact.commentid == -1)).order_by(commentact.timestamp.desc()).limit(8)
+	else:
+		a = commentact.query.filter(and_(commentact.activityid == activityid,commentact.commentid == -1)).order_by(commentact.timestamp.desc()).filter(text("id<:value")).params(value=endid).limit(8)
+	return a
+
 def getcommenttocommentbyid(destcommentid):
 	db.session.execute('set names utf8mb4')
-	a= comment.query.filter(comment.commentid.in_(destcommentid)).order_by(comment.timestamp.desc()).all()
+	a = comment.query.filter(comment.commentid.in_(destcommentid)).order_by(comment.timestamp.desc()).all()
 	return a
+def getcommenttocommentactbyid(destcommentid):
+	db.session.execute('set names utf8mb4')
+	a = commentact.query.filter(commentact.commentid.in_(destcommentid)).order_by(commentact.timestamp.desc()).all()
+	return a
+
 def gettopofficialbyid(id):
 	a = topofficial.query.filter_by(id = id).first()
 	return a 
