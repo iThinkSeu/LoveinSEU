@@ -909,8 +909,8 @@ def getactivitycomment():
 				thumbnail = []
 				for commentimagetemp in commentimage:
 					number = commentimagetemp.imageid
-					url = "http://218.244.147.240:80/community/commentattachs/"+ str(items.activityid) + "-" + str(items.id) + "-" + str(number)
-					urlthum = "http://218.244.147.240:80/community/commentattachs/" + str(items.activityid) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
+					url = "http://218.244.147.240:80/activity/commentactsImage/"+ str(items.activityid) + "-" + str(items.id) + "-" + str(number)
+					urlthum = "http://218.244.147.240:80/activity/commentactsImage/" + str(items.activityid) + "-" + str(items.id) + "-" + str(number) + "_thumbnail.jpg"
 					image.append(url)
 					thumbnail.append(urlthum)
 				#获取回复这条评论的所有评论
