@@ -775,10 +775,14 @@ class commentact(db.Model):
 			return 2
 	def addimage(self,image):
 		try:
-			f = commentactimageAttach(comments=self, images=image)
-			db.session.add(f)
-			db.session.commit()
-			return 0	
+			tmp = commentactimageAttach.query.filter_by(commentid = self.id,imageid=image.id).first()
+			if tmp==None:
+				f = commentactimageAttach(comments=self, images=image)
+				db.session.add(f)
+				db.session.commit()
+				return 0
+			else:
+				return 1	
 		except Exception, e:
 			print e
 			db.session.rollback()
