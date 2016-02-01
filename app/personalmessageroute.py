@@ -5,6 +5,7 @@ from models import *
 from hashmd5 import *
 import string;
 import datetime
+from push import *
 
 personalmessage_route = Blueprint('personalmessage_route', __name__)
 
@@ -21,6 +22,9 @@ def sendmessage():
 			messageTemp = Message(SendId = SendId, RecId = RecId, text = text)
 			messageTemp.add()
 			id = messageTemp.id
+			uu = getuserbyid(RecId)
+			if uu is not None:
+				notify_message_to_user(uu, u)
 			state = 'successful'
 			reason = ''
 		else:

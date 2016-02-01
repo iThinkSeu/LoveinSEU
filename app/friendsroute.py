@@ -69,7 +69,7 @@ def follow():
 		if (u is not None) and (u2 is not None):
 			temp = u.follow(u2);
 			if temp == 0:
-				notify_follow_to_user(u, u2)
+				notify_follow_to_user(u2, u)
 				state = 'successful'
 				reason = ''
 			elif temp==1:
