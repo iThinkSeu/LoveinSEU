@@ -30,6 +30,7 @@ from schoolcertification import certification_route
 
 from share.share import share
 from dbSetting import create_app,db 
+from push import push
 
 #app = Flask(__name__)
 app = create_app()
@@ -49,6 +50,7 @@ app.register_blueprint(certification_route)		#校园认证
 
 app.register_blueprint(adminuser_route)			#后台管理相关
 app.register_blueprint(share)		#分享
+app.register_blueprint(push)
 
 
 if __name__ == '__main__':

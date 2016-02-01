@@ -111,6 +111,20 @@ class Visit(db.Model):
 	hostid = db.Column(db.Integer, db.ForeignKey('users.id'))
 	timestamp = db.Column(db.DateTime, default = datetime.now)
 
+class IOSDeviceToken(db.Model):
+	__tablename__ = 'iosdevicetoken'
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key = True)
+	devicetoken = db.Column(db.String(256))
+	timestamp = db.Column(db.DateTime, default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+
 #上传活动的生活照
 class activitylifeimage(db.Model):
 	__tablename__ = 'activitylifeimages'
@@ -215,6 +229,7 @@ class User(db.Model):
 	#点赞的美食卡片
 	likefoodcards =  db.relationship('likefoodcard', foreign_keys = [likefoodcard.userid], backref = db.backref('likeuser', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#
+	iosdevicetoken = db.relationship('IOSDeviceToken', foreign_keys = [IOSDeviceToken.userid], backref = db.backref('user', lazy='joined', uselist=False), lazy = 'joined', uselist = False, cascade = 'all, delete-orphan')
 	def add(self):
 		try:
 			tempuser = User.query.filter_by(username=self.username).first()
@@ -450,7 +465,15 @@ class User(db.Model):
 		except Exception, e:
 			print e
 			db.session.rollback()
-			return 2	
+			return 2
+	def add_ios_device_token(self, iosdevicetoken):
+		try:
+			iosdevicetoken.user = self
+			db.session.add(iosdevicetoken)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()	
 	def commenttopost(self,comment,post):
 		try:
 			comment.post = post
