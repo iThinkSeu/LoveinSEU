@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from flask import Blueprint
 from flask import request,jsonify,json
 from models import *
@@ -18,7 +19,7 @@ def send_message_to_user(userid, alert):
 def notify_follow_to_user(u, friend):
 	try:
 		if u is not None and friend is not None:
-			alert = friend.name + "关注了你"
+			alert = friend.name + u'关注了你'
 			payload = Payload(alert=alert, sound="default", custom = {'type':'follow', 'userid':friendid})
 	except Exception, e:
 		print e
