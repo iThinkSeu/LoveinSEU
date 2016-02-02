@@ -234,7 +234,9 @@ def gettopiclist():
 			topiclist = gettopiclistdb()
 			result = []
 			for i in range(len(topiclist)):
-				output = {"id":topiclist[i].id,"theme":topiclist[i].theme,"imageurl":topiclist[i].imageurl,"note":topiclist[i].note,"number":topiclist[i].number}
+				posts = post.query.filter_by(topicid=topiclist[i].id).all()
+				hotindex = sum([p.likenumber + p.commentnumber for p in posts])
+				output = {"id":topiclist[i].id,"theme":topiclist[i].theme,"imageurl":topiclist[i].imageurl,"note":topiclist[i].note,"number":hotindex}
 				result.append(output)
 		else:
 			state = 'fail'
