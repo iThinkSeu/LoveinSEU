@@ -19,6 +19,7 @@ def sendmessage():
 		u = getuserinformation(token)
 		if u != None:
 			SendId = u.id
+			text = text.encode('UTF-8')
 			messageTemp = Message(SendId = SendId, RecId = RecId, text = text)
 			messageTemp.add()
 			id = messageTemp.id
