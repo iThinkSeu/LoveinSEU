@@ -7,6 +7,7 @@ from hashmd5 import *
 import string
 from sqlalchemy import Date, cast
 import weme
+from utility import *
 
 activity_route = Blueprint('activity_route', __name__)
 
@@ -948,7 +949,7 @@ def getactivitycomment():
 					flag = '1'
 				else:
 					flag = '0'
-				output = {"id":items.id,"image":image,"thumbnail":thumbnail,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
+				output = {"id":items.id,"image":image,"thumbnail":thumbnail,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag, 'constelleation':getconstelleation(items.author.birthday)}
 				result.append(output)
 		else:
 			state = 'fail'
