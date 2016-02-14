@@ -28,7 +28,7 @@ def show(postid):
 			urlthum = "http://218.244.147.240:80/community/postattachs/" + str(topicid) + "-" + str(post.id) + "-" + str(number) + "_thumbnail.jpg"
 			image.append(url)
 			thumbnail.append(urlthum)
-
+        #body_break = "<br />".join(body.split("\n"))
         return render_template('post.html', title=title, body=body, images=image, avatar = avatar, name=name, school = school, department=department)
     except TemplateNotFound:
         abort(404)

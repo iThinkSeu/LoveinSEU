@@ -4,12 +4,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>WE</title>
+    <title>WEME唯觅</title>
 
     <!-- Bootstrap -->
     <link href={{ url_for('.static', filename='css/bootstrap.min.css') }} rel="stylesheet">
     <link href={{ url_for('.static', filename='css/post.css') }} rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href={{url_for('.static', filename='css/swiper.min.css')}}>
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -24,7 +25,7 @@
   	<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
   		
   	<table>
-  		<tr><td rowspan='3' width="20%"><div><img src={{avatar}} height='100' width='100' class='img-circle'></div></td> <td width="80%"><div class='text-center'><font color="darkgrey" size="5">{{school}}</font></div></td></tr>
+  		<tr><td rowspan='3' width="20%"><div><a href="http://www.weme.space"><img src={{avatar}} height='100' width='100' class='img-circle'></a></div></td> <td width="80%"><div class='text-center'><font color="darkgrey" size="5">{{school}}</font></div></td></tr>
   		<tr><td> <div class='text-center'><font color="darkgrey" size="4">{{department}}</font></div></td></tr>
   		<tr><td> <div class='text-center'><font color="lightgrey" size="3">{{name}}</font></div></td></tr>
 
@@ -33,62 +34,48 @@
   </div>
   </div>
   	&nbsp;
-    <div class="text-left"><font size="5" color="#3e5d9e"><p style="padding:0px 0px 0px 20px">{{title}}</p></font></div>
-     <div class= "text-left"><font size="2"><p style="padding:0px 0px 0px 20px">{{body}}</p></font></div>
-&nbsp;
-<div class="container">
- <div id="carousel-post" class="carousel slide" data-ride="carousel">
-  <!-- Indicators -->
-  <ol class="carousel-indicators">
-  	{% for img in images %}
-	  	{% if loop.index0 == 0 %} 
-	  		<li data-target="#carousel-post" data-slide-to="0" class="active"></li>
-	  	{% else %}
-	  		<li data-target="#carousel-post" data-slide-to={{ loop.index0 }}></li>
-	  	{% endif %}
-  	{% endfor %}
-  </ol>
-
-
-  <!-- Wrapper for slides -->
-  
-  
-  <div class="carousel-inner" role="listbox">
-  	{% for img in images %}
-  		{% if loop.index0 == 0 %}
-  			 <div class="item active slider-size" style="background:url({{img}}) center center; background-size:cover;" >
-  			 	<!--<div style="background:url({{img}}) center center; background-size:cover;" class="slider-size" > -->
-      			<!--<img src= {{ img }} alt="" class="img-responsive center-block">-->
-      			<!-- <div class="carousel-caption"></div> -->
-    		</div>
-  		{% else %}
-  			 <div class="item slider-size" style="background:url({{img}}) center center; background-size:cover;" >
-  			 	<!--<div style="background:url({{img}}) center center; background-size:cover;" class="slider-size" >-->
-      			<!--<img src= {{ img }} alt="" class="img-responsive center-block">-->
-      			<!-- <div class="carousel-caption"></div> -->
-    		</div>
-  		{% endif %}
-  	{% endfor %}
-
-  </div>
-
-
-  <!-- Controls -->
-  <a class="left carousel-control" href="#carousel-post" role="button" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="right carousel-control" href="#carousel-post" role="button" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-
+    <div class="text-left"><font size="5" color="#3e5d9e"><p style="padding:0px 10px 0px 10px">{{title}}</p></font></div>
+<div class="swiper-container gallery-top">
+    <div class="swiper-wrapper">
+      {% for img in images %}
+      <div class = "swiper-slide" style = "background-image:url({{img}})"></div>
+      {% endfor %}
+    </div>
 </div>
- </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script type="text/javascript" src={{url_for('.static', filename='js/jquery.min.js')}}></script>
-    <script type="text/javascript" src={{url_for('.static', filename='js/bootstrap.min.js')}}></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
+<div class="swiper-container gallery-thumbs">
+     <div class="swiper-wrapper">
+      {% for img in images %}
+      <div class = "swiper-slide" style = "background-image:url({{img}})"></div>
+      {% endfor %}
+    </div>
+</div>
+&nbsp;
+&nbsp;
+<div class= "text-left"><font size="2"><p style="padding:0px 10px 0px 10px">{{body|replace("\n", "<br />"|safe)}}</p></font></div>
+
+<script type="text/javascript" src={{url_for('.static', filename='js/jquery.min.js')}}></script>
+<script type="text/javascript" src={{url_for('.static', filename='js/bootstrap.min.js')}}></script>
+<script type="text/javascript" src={{url_for('.static', filename='js/swiper.min.js')}}></script>
+<script>
+var galleryTop = new Swiper('.gallery-top', {
+    nextButton: '.swiper-button-next',
+    prevButton: '.swiper-button-prev',
+    spaceBetween: 10,
+    loop:true,
+    loopedSlides: 5, //looped slides should be the same     
+})
+var galleryThumbs = new Swiper('.gallery-thumbs', {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    touchRatio: 0.2,
+    loop:true,
+    loopedSlides: 5, //looped slides should be the same
+    slideToClickedSlide: true
+});
+galleryTop.params.control = galleryThumbs;
+galleryThumbs.params.control = galleryTop;
+
+</script>
   </body>
 </html>
