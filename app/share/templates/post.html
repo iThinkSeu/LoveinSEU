@@ -6,18 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WEME唯觅</title>
 
-    <!-- Bootstrap -->
     <link href={{ url_for('.static', filename='css/bootstrap.min.css') }} rel="stylesheet">
-    <link href={{ url_for('.static', filename='css/post.css') }} rel="stylesheet">
     <link rel="stylesheet" type="text/css" href={{url_for('.static', filename='css/swiper.min.css')}}>
+    <link href={{ url_for('.static', filename='css/post.css') }} rel="stylesheet">
 
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
   </head>
   <body>
   	&nbsp;
@@ -41,6 +33,7 @@
       <div class = "swiper-slide" style = "background-image:url({{img}})"></div>
       {% endfor %}
     </div>
+      <div class="swiper-pagination"></div>
 </div>
 
 <div class="swiper-container gallery-thumbs">
@@ -51,9 +44,8 @@
     </div>
 </div>
 &nbsp;
-&nbsp;
-<div class= "text-left"><font size="2"><p style="padding:0px 10px 0px 10px">{{body|replace("\n", "<br />"|safe)}}</p></font></div>
-
+<div class= "text-left"><font size="2"><p style="padding:0px 10px 10px 10px">{{body|replace("\n", "<br />"|safe)}}</p></font></div>
+<div><font size="2" color="#3e5d9e"><a href="http://www.weme.space"><p style="text-align:right;padding:0px 20px 0px 0px;font-weight:bold">WEME唯觅-只唯寻觅你</p></a></font></div>
 <script type="text/javascript" src={{url_for('.static', filename='js/jquery.min.js')}}></script>
 <script type="text/javascript" src={{url_for('.static', filename='js/bootstrap.min.js')}}></script>
 <script type="text/javascript" src={{url_for('.static', filename='js/swiper.min.js')}}></script>
@@ -61,6 +53,7 @@
 var galleryTop = new Swiper('.gallery-top', {
     nextButton: '.swiper-button-next',
     prevButton: '.swiper-button-prev',
+    pagination : '.swiper-pagination',
     spaceBetween: 10,
     loop:true,
     loopedSlides: 5, //looped slides should be the same     
