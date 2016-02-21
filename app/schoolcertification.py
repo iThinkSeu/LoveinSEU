@@ -65,7 +65,7 @@ def getallcertification():
 							'location':checkdb(cert.location),
 							'pictureurl':checkdb(cert.pictureurl),
 							'location':checkdb(cert.location),
-							'checkflag':checkdb(cert.checkflag),
+							'checkresult':checkdb(cert.checkresult),
 							'timestamp':checkdb(cert.timestamp)
 						 }
 				result.append(output)
