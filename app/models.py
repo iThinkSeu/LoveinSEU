@@ -933,6 +933,24 @@ class schoolcertification(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+class androidversion(db.Model):
+	__tablename__ = 'androidversions'
+	id = db.Column(db.Integer,primary_key = True)
+	v1 = db.Column(db.Integer,default = 0)
+	v2 = db.Column(db.Integer,default = 0)
+	v3 = db.Column(db.Integer,default = 0)
+	wemeurl = db.Column(db.String(256))
+	disable = db.Column(db.Boolean,default = False)	
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()
