@@ -1171,7 +1171,7 @@ def gettopiclistdb():
 	return a
 def getpostlistbypage(page,topicid):
 	db.session.execute('set names utf8mb4')
-	a = post.query.filter_by(topicid = topicid).order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
+	a = post.query.filter_by(topicid = topicid).filter_by(disable = 0).order_by(post.top.desc()).order_by(post.timestamp.desc()).paginate(page, per_page=5, error_out=False)
 	return a
 def getpostcommentbypage(page,postid):
 	db.session.execute('set names utf8mb4')

@@ -29,6 +29,7 @@ def uploadavatar():
 
 		u = getuserinformation(token)
 		id = u.id
+		result = {}
 		try:
 			state = 'successful'
 			reason = ''
@@ -171,34 +172,19 @@ def uploadavatar():
 				dst = '/home/www/activity/commentactsImage/' + str(activityid) + '-' + str(commentid) + '-' + str(number)
 			elif type == "-15":
 				#type = -15 表示上传更新的android APK安装包
-				wemeapk = androidversion.query.filter_by(disable = False).order_by(androidversion.timestamp.desc()).first()
-				if wemeapk==None:
-					v1 = 1
-					v2 = 0
-					v3 = 0
-					dst = '/home/www/static/androidapk/' "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-					wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-					wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
-					wemeapktemp.add()
-				else:
-					v1 = wemeapk.v1
-					v2 = wemeapk.v2
-					v3 = wemeapk.v3
-					v3 = v3 + 1
-					if v3 > 9:
-						v2 = v2 + 1
-						v3 = 0
-					if v2 > 9:
-						v1 = v1 + 1
-						v2 = 0
-					dst = '/home/www/static/androidapk/' "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-					wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-					wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
-					wemeapktemp.add()
+				v1 = jsonstring.get('v1','0')
+				v2 = jsonstring.get('v2','0')
+				v3 = jsonstring.get('v3','0')
+				dst = '/home/www/static/androidapk/' "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
+				wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
+				wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
+				wemeapktemp.add()
+				result = {"v1":v1,"v2":v2,"v3":v3}
 			else:
 				state = 'fail'
 				reason = 'no this type'				
 				dst = '/home/www/picture/temp/' + str(id)
+
 
 			'''
 			if os.path.exists(dst):
@@ -228,6 +214,7 @@ def uploadavatar():
 
 
 	response = jsonify({'id':id,
+						'result':result,
 						'state':state,
 						'reason':reason})
 	return response

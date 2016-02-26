@@ -18,9 +18,9 @@ def checkdb(dbNone):
 def checkapkversion():
 	try:
 		token = request.json['token']
-		v1 = string.atoi(str(request.json.get('v1','1')))
-		v2 = string.atoi(str(request.json.get('v2','0')))
-		v3 = string.atoi(str(request.json.get('v3','0')))
+		v1_now = string.atoi(str(request.json.get('v1','1')))
+		v2_now = string.atoi(str(request.json.get('v2','0')))
+		v3_now = string.atoi(str(request.json.get('v3','0')))
 		u = getuserinformation(token)
 		if u is not None:
 			wemeapk = androidversion.query.filter_by(disable = False).order_by(androidversion.timestamp.desc()).first()
@@ -28,8 +28,8 @@ def checkapkversion():
 				v1_newest = wemeapk.v1
 				v2_newest = wemeapk.v2
 				v3_newest = wemeapk.v3
-				numNow = v1*100 + v2*10 + v3
-				numNewest = v1_newest*100 + v2_newest*10 + v3_newest
+				numNow = v1_now*10000 + v2_now*100 + v3_now
+				numNewest = v1_newest*10000 + v2_newest*100 + v3_newest
 				print "now" + str(numNow)
 				print "newest" + str(numNewest)
 				if numNow < numNewest:
