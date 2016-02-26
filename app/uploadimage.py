@@ -175,7 +175,7 @@ def uploadavatar():
 				v1 = jsonstring.get('v1','0')
 				v2 = jsonstring.get('v2','0')
 				v3 = jsonstring.get('v3','0')
-
+				
 				wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
 				apk = androidversion.query.filter_by(v1 = v1,v2 = v2, v3 = v3).first()
 				if apk != None:

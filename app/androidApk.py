@@ -20,6 +20,7 @@ def checkapkversion():
 		v1_now = string.atoi(str(request.json.get('v1','1')))
 		v2_now = string.atoi(str(request.json.get('v2','0')))
 		v3_now = string.atoi(str(request.json.get('v3','0')))
+		version_newest = {}
 		wemeapk = androidversion.query.filter_by(disable = False).order_by(androidversion.timestamp.desc()).first()
 		if wemeapk!=None:
 			v1_newest = wemeapk.v1
@@ -35,6 +36,7 @@ def checkapkversion():
 				apkurl = ""
 			state = "successful"
 			reason = ""
+			version_newest = {"v1":v1_newest,"v2":v2_newest,"v3":v3_newest}
 		else:
 			state = 'fail'
 			reason = 'Not apk in server'
@@ -47,7 +49,8 @@ def checkapkversion():
 		update_flag = "no"
 		apkurl = ""
 
-	response = jsonify({'updateflag':update_flag,
+	response = jsonify({'version_newest':version_newest,
+						'updateflag':update_flag,
 						'apkurl':apkurl,
 						'state':state,
 						'reason':reason})
