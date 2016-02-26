@@ -171,7 +171,7 @@ def uploadavatar():
 				dst = '/home/www/activity/commentactsImage/' + str(activityid) + '-' + str(commentid) + '-' + str(number)
 			elif type == "-15":
 				#type = -15 表示上传更新的android APK安装包
-				wemeapk = androidversion.query.filter_by(disable = False).order_by(androidversion.timestamp).first()
+				wemeapk = androidversion.query.filter_by(disable = False).order_by(androidversion.timestamp.desc()).first()
 				if wemeapk==None:
 					v1 = 1
 					v2 = 0

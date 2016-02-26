@@ -27,6 +27,7 @@ from cardroute import card_route
 from report import report_route
 from adminuser import adminuser_route
 from schoolcertification import certification_route
+from androidApk import androidapk_route
 
 from share.share import share
 from dbSetting import create_app,db 
@@ -47,6 +48,7 @@ app.register_blueprint(community_route)			#社区相关
 app.register_blueprint(card_route)				#卡片相关
 app.register_blueprint(report_route)			#卡片相关
 app.register_blueprint(certification_route)		#校园认证
+app.register_blueprint(androidapk_route)        #安卓安装包
 
 app.register_blueprint(adminuser_route)			#后台管理相关
 app.register_blueprint(share)		#分享
