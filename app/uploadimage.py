@@ -186,9 +186,9 @@ def uploadavatar():
 					wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
 					wemeapktemp.add()
 					result = {"v1":v1,"v2":v2,"v3":v3,"have":"update successful"}
-				dstnewest = '/home/www/static/androidapk/' + "weme_newest.apk"
-				shutil.copy(src, dstnewest)
-				os.chmod(dstnewest, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
+					dstnewest = '/home/www/static/androidapk/' + "weme_newest.apk"
+					shutil.copy(src, dstnewest)
+					os.chmod(dstnewest, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
 			else:
 				state = 'fail'
 				reason = 'no this type'				
