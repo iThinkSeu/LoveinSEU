@@ -36,7 +36,7 @@ def checkapkversion():
 				apkurl = ""
 			state = "successful"
 			reason = ""
-			version_newest = {"v1":v1_newest,"v2":v2_newest,"v3":v3_newest}
+			version_newest = {"v1":str(v1_newest),"v2":str(v2_newest),"v3":str(v3_newest)}
 		else:
 			state = 'fail'
 			reason = 'Not apk in server'
