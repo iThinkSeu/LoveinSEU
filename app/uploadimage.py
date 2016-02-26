@@ -171,14 +171,14 @@ def uploadavatar():
 				dst = '/home/www/activity/commentactsImage/' + str(activityid) + '-' + str(commentid) + '-' + str(number)
 			elif type == "-15":
 				#type = -15 表示上传更新的android APK安装包
-				wemeapk = wemeversion.query.filter_by(disable = False).order_by(wemeversion.timestamp).first()
+				wemeapk = androidversion.query.filter_by(disable = False).order_by(androidversion.timestamp).first()
 				if wemeapk==None:
 					v1 = 1
 					v2 = 0
 					v3 = 0
 					dst = '/home/www/static/androidapk/' "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
 					wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-					wemeapktemp = wemeversion(v1 = v1,v2 = v2,v3 = v3,wemeurl = wemeurl)
+					wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
 					wemeapktemp.add()
 				else:
 					v1 = wemeapk.v1
@@ -193,7 +193,7 @@ def uploadavatar():
 						v2 = 0
 					dst = '/home/www/static/androidapk/' "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
 					wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-					wemeapktemp = wemeversion(v1 = v1,v2 = v2,v3 = v3,wemeurl = wemeurl)
+					wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
 					wemeapktemp.add()
 			else:
 				state = 'fail'
