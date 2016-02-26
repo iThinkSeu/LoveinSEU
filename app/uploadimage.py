@@ -175,11 +175,20 @@ def uploadavatar():
 				v1 = jsonstring.get('v1','0')
 				v2 = jsonstring.get('v2','0')
 				v3 = jsonstring.get('v3','0')
-				dst = '/home/www/static/androidapk/' "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
+
 				wemeurl = 'http://218.244.147.240:80/static/androidapk/' + "weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
-				wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
-				wemeapktemp.add()
-				result = {"v1":v1,"v2":v2,"v3":v3}
+				apk = androidversion.query.filter_by(v1 = v1,v2 = v2, v3 = v3).first()
+				if apk != None:
+					dst = '/home/www/picture/temp/' + "weme_V" + str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
+					result = {"v1":v1,"v2":v2,"v3":v3,"have":"already have this version"}
+				else:
+					dst = '/home/www/static/androidapk/'+"weme_V"+ str(v1) + "." + str(v2) + "." + str(v3) + ".apk"
+					wemeapktemp = androidversion(v1 = v1,v2 = v2,v3 = v3, wemeurl = wemeurl)
+					wemeapktemp.add()
+					result = {"v1":v1,"v2":v2,"v3":v3,"have":"update successful"}
+				dstnewest = '/home/www/static/androidapk/' + "weme_neweast.apk"
+				shutil.copy(src, dstnewest)
+				os.chmod(dstnewest, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
 			else:
 				state = 'fail'
 				reason = 'no this type'				
