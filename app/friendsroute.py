@@ -212,7 +212,7 @@ def getrecommenduser():
 			'degree':u.degree,
 			'department':u.department,
 			'hometown':u.hometown,
-			'avatar':avatarvoice.avatarurl if avatarvoice.avatarurl!=None else '',
+			'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
 			'voice':avatarvoice and avatarvoice.voiceurl or '',
 		}
 	try:

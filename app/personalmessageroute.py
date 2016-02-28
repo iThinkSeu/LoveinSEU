@@ -55,8 +55,11 @@ def readmessage():
 			if m.RecId == str(u.id):
 				m.state = 0
 				m.add()			
-			state = 'successful'
-			reason = ''
+				state = 'successful'
+				reason = ''
+			else:
+				state = 'fail'
+				reason = 'token user is not receiver'
 		else:
 			state = 'fail'
 			reason = 'no user'
