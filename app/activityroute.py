@@ -104,7 +104,10 @@ def getactivityinformation():
 				else:
 					signstate = 'yes'
 				signnumber = str(signnumber)
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+				timestate = act.state if act.state != None else ''
+				sponsor = act.sponsor if act.sponsor != None else ''
+				top = str(act.top) if act.top != None else ''
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top}
 				result.append(output)
 		else:
 			state = 'fail'

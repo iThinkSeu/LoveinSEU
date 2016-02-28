@@ -627,6 +627,7 @@ class Activity(db.Model):
 	number=db.Column(db.String(32))
 	signnumber = db.Column(db.Integer)
 	state = db.Column(db.String(32))
+	sponsor = db.Column(db.String(125)) 
 	disable = db.Column(db.Boolean,default =False)
 	remark = db.Column(db.String(32))
 	authorid = db.Column(db.Integer,db.ForeignKey('users.id'))
