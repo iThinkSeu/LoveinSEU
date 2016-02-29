@@ -107,7 +107,7 @@ def getactivityinformation():
 				timestate = act.state if act.state != None else ''
 				sponsor = act.sponsor if act.sponsor != None else ''
 				top = str(act.top) if act.top != None else ''
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top, 'activitystate':act.state or ''}
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -462,7 +462,7 @@ def getattentactivity():
 				authorid = act.authorid if act.authorid != None else ''
 				school = act.author.school if act.authorid != None else ''
 				gender = act.author.gender if act.authorid != None else ''
-				passState = '已通过' if temp.state == True else ''
+				passState = '已通过' if temp.state == True else '等待审核'
 				timestate = act.state if act.state != None else ''
 				sponsor = act.sponsor if act.sponsor != None else ''
 				top = str(act.top) if act.top != None else ''
