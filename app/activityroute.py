@@ -140,13 +140,14 @@ def publishactivity():
 		advertise = request.json.get('advertise','')
 		detail = request.json.get('detail','')
 		label = request.json.get('label','')
+		sponsor = request.json.get('sponsor','')
 		#print whetherimage
 		#x=string.atoi(whetherimage)
 		#print x
 		u = getuserinformation(token)
 		if u is not None:
 			detail = detail.encode('UTF-8')
-			activity1 = Activity(title = title,time = time,location = location,number = number,remark = remark,advertise = advertise,detail = detail,label = label)
+			activity1 = Activity(title = title,time = time,location = location,number = number,remark = remark,advertise = advertise,detail = detail,label = label,sponsor = sponsor)
 			if whetherimage=='0':
 				activity1.whetherimage = False
 			else:
@@ -228,13 +229,16 @@ def getactivitydetail():
 			#是否喜欢
 			templike = act.likeusers.filter_by(userid = u.id).first()
 			flag = '0' if templike is None else '1'
+			timestate = act.state if act.state != None else ''
+			sponsor = act.sponsor if act.sponsor != None else ''
+			top = str(act.top) if act.top != None else ''
 			#获取活动的海报
 			poster = activityimageAttach.query.filter_by(activityid = activityid,imageid = 0).first()
 			if poster != None:
 				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+'0'
 			else:
 				image = ""
-			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,'likeflag':flag,"imageurl":image,'timestate':timestate,'sponsor':sponsor,'top':top}
 			state = 'successful'
 			reason = ''
 		else:
@@ -405,8 +409,10 @@ def getlikeactivity():
 				authorid = act.authorid if act.authorid != None else ''
 				school = act.author.school if act.authorid != None else ''
 				gender = act.author.gender if act.authorid != None else ''
-
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+				timestate = act.state if act.state != None else ''
+				sponsor = act.sponsor if act.sponsor != None else ''
+				top = str(act.top) if act.top != None else ''
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -456,8 +462,11 @@ def getattentactivity():
 				authorid = act.authorid if act.authorid != None else ''
 				school = act.author.school if act.authorid != None else ''
 				gender = act.author.gender if act.authorid != None else ''
-
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise}
+				passState = '已通过' if temp.state == True else ''
+				timestate = act.state if act.state != None else ''
+				sponsor = act.sponsor if act.sponsor != None else ''
+				top = str(act.top) if act.top != None else ''
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,"passState":passState,'timestate':timestate,'sponsor':sponsor,'top':top}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -504,13 +513,16 @@ def getpublishactivity():
 				authorid = act.authorid if act.authorid != None else ''
 				school = act.author.school if act.authorid != None else ''
 				gender = act.author.gender if act.authorid != None else ''
+				timestate = act.state if act.state != None else ''
+				sponsor = act.sponsor if act.sponsor != None else ''
+				top = str(act.top) if act.top != None else ''
 				if act.passflag == '1':
 					vstate = '通过'
 				elif act.passflag == '2':
 					vstate = '未通过'
 				else:
 					vstate = '审核中'
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'status':vstate,'advertise':advertise}
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'status':vstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -552,6 +564,9 @@ def getpublishactivitydetail():
 			authorid = act.authorid if act.authorid != None else ''
 			school = act.author.school if act.authorid != None else ''
 			gender = act.author.gender if act.authorid != None else ''
+			timestate = act.state if act.state != None else ''
+			sponsor = act.sponsor if act.sponsor != None else ''
+			top = str(act.top) if act.top != None else ''
 			if act.passflag == '1':
 				passflag = '通过'
 			elif act.passflag == '2':
@@ -564,7 +579,7 @@ def getpublishactivitydetail():
 				image = "http://218.244.147.240:80/activity/activityimages/"+ str(activityid)+'-'+ '0'
 			else:
 				image = ""
-			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'status':passflag,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image}
+			result = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'status':passflag,'detail':detail,'advertise':advertise,'whetherimage':whetherimage,"imageurl":image,'timestate':timestate,'sponsor':sponsor,'top':top}
 			state = 'successful'
 			reason = ''
 		else:
