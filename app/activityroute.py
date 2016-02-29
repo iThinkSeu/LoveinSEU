@@ -107,7 +107,7 @@ def getactivityinformation():
 				timestate = act.state if act.state != None else ''
 				sponsor = act.sponsor if act.sponsor != None else ''
 				top = str(act.top) if act.top != None else ''
-				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top}
+				output = {'id':act.id,'author':author,'authorid':authorid,'school':school,'gender':gender,'title':title,'time':time,'location':location,'number':number,'signnumber':signnumber,'remark':remark,'state':signstate,'advertise':advertise,'timestate':timestate,'sponsor':sponsor,'top':top, 'activitystate':act.state or ''}
 				result.append(output)
 		else:
 			state = 'fail'
