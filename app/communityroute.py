@@ -361,7 +361,7 @@ def getpostdetail():
 				thumbnail.append(urlthum)
 			likeuserpage = post.likeusers.order_by(models.likepost.timestamp.desc()).paginate(x, per_page=10, error_out=False)
 			likeitems = likeuserpage.items
-			L = [str(temp.userid) for temp in likeitems] 
+			LL = [str(temp.userid) for temp in likeitems] 
 			#判断自己是否点赞了这篇
 			likeuserstemp = post.likeusers.all()
 			L = [(temp2.userid) for temp2 in likeuserstemp]
@@ -369,7 +369,7 @@ def getpostdetail():
 				flag = '1'
 			else:
 				flag = '0'
-			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":L,"flag":flag}
+			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":LL,"flag":flag}
 		else:
 			state = 'fail'
 			reason = 'no user'
