@@ -257,6 +257,12 @@ class User(db.Model):
 		if tempuser is None:
 			return 0
 		else:
+			return 
+	def isExistedusername(self):
+		tempuser = User.query.filter_by(username = self.username).first()
+		if tempuser is None:
+			return 0
+		else:
 			return 1
 	def attent(self,activity):
 		try:
@@ -952,6 +958,21 @@ class androidversion(db.Model):
 			print e
 			db.session.rollback()
 			return 2
+class checkMsg(db.Model):
+	__tablename__ = 'checkMsgs'
+	id = db.Column(db.Integer,primary_key = True)
+	phone = db.Column(db.String(64))
+	code = db.Column(db.String(32))
+	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.execute('set names utf8mb4')
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2	
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()

@@ -11,6 +11,7 @@ check_page = Blueprint('check_page', __name__)
 def register():
 	try:
 		username=request.json[u'username']
+		password=request.json['password']
 		temp = checkName(username)
 		if temp==False:		
 			response = jsonify({
@@ -19,12 +20,11 @@ def register():
 								'reason':'用户名不能包含中文且至少要两个字母',
 								'token':'chinese'})
 			return response
-		password=request.json['password']
 		token= hashToken(username,password)
 		u=User(username=username,password=password,token=token)
-		temp=u.add()
-		print temp
-		if temp==0:
+		if u.isExistedusername() == 0:
+			##未完成，加code验证码判断相关逻辑
+			u.add()
 			state = 'successful'
 			reason = ''
 			token = hashToken(username,password)

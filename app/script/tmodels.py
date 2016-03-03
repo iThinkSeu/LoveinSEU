@@ -234,6 +234,12 @@ class User(db.Model):
 			return 0
 		else:
 			return 1
+	def isExistedusername(self):
+		tempuser = User.query.filter_by(username = self.username).first()
+		if tempuser is None:
+			return 0
+		else:
+			return 1
 	def attent(self,activity):
 		try:
 			flag = self.activitys.filter_by(activityid = activity.id).first()
