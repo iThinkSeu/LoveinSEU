@@ -174,6 +174,7 @@ def login():
 			state = 'successful'
 			tmp = getTokeninformation(username)
 			token = tmp.token
+			gender = tmp.gender
 			id = tmp.id
 			reason = ''
 		else:
@@ -187,6 +188,7 @@ def login():
 					id = tempuser.id
 					tempuser.password = pwd
 					tempuser.addpwd()
+					gender = tempuser.gender
 				else:
 					id=''
 					state = 'fail'
@@ -206,6 +208,7 @@ def login():
 		id = ''
 
 	response = jsonify({'id':id,
+						'gender':gender,
 						'state':state,
 						'reason':reason,
 						'token':token})
