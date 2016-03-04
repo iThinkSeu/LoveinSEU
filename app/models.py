@@ -257,7 +257,7 @@ class User(db.Model):
 		if tempuser is None:
 			return 0
 		else:
-			return 
+			return 1 
 	def isExistedusername(self):
 		tempuser = User.query.filter_by(username = self.username).first()
 		if tempuser is None:
