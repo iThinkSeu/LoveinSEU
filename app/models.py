@@ -257,7 +257,7 @@ class User(db.Model):
 		if tempuser is None:
 			return 0
 		else:
-			return 
+			return 1
 	def isExistedusername(self):
 		tempuser = User.query.filter_by(username = self.username).first()
 		if tempuser is None:
@@ -961,9 +961,11 @@ class androidversion(db.Model):
 class checkMsg(db.Model):
 	__tablename__ = 'checkMsgs'
 	id = db.Column(db.Integer,primary_key = True)
-	phone = db.Column(db.String(64))
-	code = db.Column(db.String(32))
-	timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+	phone = db.Column(db.String(64), nullable = False)
+	code = db.Column(db.String(32), nullable=False)
+	timestamp = db.Column(db.DateTime,default = datetime.now, nullable=False)
+	__table_args__ = (db.UniqueConstraint('phone', name='phone_unique'),)
+
 	def add(self):
 		try:
 			db.session.add(self)
