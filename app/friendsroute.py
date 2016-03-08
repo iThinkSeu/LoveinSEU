@@ -199,7 +199,7 @@ def searchuser():
 @friends_route.route("/getrecommenduser",methods=['GET','POST'])
 def getrecommenduser():
 	
-	def recommendUser(id):
+	def recommendUser(utoken,id):
 		u = getuserbyid(id)
 		avatarvoice = u.avatarvoices.first()
 
@@ -212,6 +212,7 @@ def getrecommenduser():
 			'degree':u.degree,
 			'department':u.department,
 			'hometown':u.hometown,
+			'likeflag':'1' if utoken.is_likeuser(u) else '0',
 			'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
 			'voice':avatarvoice and avatarvoice.voiceurl or '',
 		}
@@ -223,7 +224,7 @@ def getrecommenduser():
 			if len(L)>0:
 				state = 'successful'
 				reason = ''
-				result = [ recommendUser(recommend) for recommend in L]
+				result = [ recommendUser(u,recommend) for recommend in L]
 				response = jsonify({'state':state,
 									'reason':reason,
 									'result':result
