@@ -318,3 +318,26 @@ def unlikeusercard():
 	response = jsonify({'state':state,
 		                'reason':reason})
 	return response
+
+@friends_route.route("/getlikeusernumber",methods=['POST'])
+def getlikeusernumber():
+	try:
+		token = request.json['token']
+		u=getuserinformation(token)
+		likenumber = ''
+		if (u is not None):
+			likenumber = u.bewhatuserlikeds.count()
+			state = 'successful'
+			reason = ''
+		else:
+			state = 'fail'
+			reason = 'Nouser'
+
+	except Exception, e:
+			state = 'e'
+			reason = 'e'
+
+	response = jsonify({'likenumber':likenumber,
+						'state':state,
+		                'reason':reason})
+	return response
