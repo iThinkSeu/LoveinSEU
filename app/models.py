@@ -141,7 +141,6 @@ class activitylifeimage(db.Model):
 			print e
 			db.session.rollback()
 			return 2
-
 #点赞的食物卡片
 class likefoodcard(db.Model):
 	__tablename__ = 'likefoodcards'
@@ -158,6 +157,21 @@ class likefoodcard(db.Model):
 			db.session.rollback()
 			return 2
 
+#点赞用户卡片
+class likeusercard(db.Model):
+	__tablename__ = 'likeusercards'
+	id = db.Column(db.Integer, primary_key = True)
+	likeid = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key = True)
+	likedid = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key = True)
+	timestamp = db.Column(db.DateTime,default = datetime.now)
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 2
 
 class User(db.Model):
 	__tablename__='users'
@@ -198,6 +212,10 @@ class User(db.Model):
 	#all users that follow this
 	visiteds = db.relationship('Visit', foreign_keys = [Visit.guestid], backref = db.backref('guest', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 
+	#点赞用户卡片
+	likewharusercards = db.relationship('likeusercard', foreign_keys = [likeusercard.likeid], backref = db.backref('liker', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
+	#all users that like this
+	bewhatuserlikeds = db.relationship('likeusercard', foreign_keys = [likeusercard.likedid], backref = db.backref('liked', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#校园认证
 	certifications = db.relationship('schoolcertification',backref = 'author', lazy = 'dynamic')
 	#用户的头像和声音名片
@@ -334,6 +352,34 @@ class User(db.Model):
 		except Exception, e:
 			db.session.rollback()
 			return 2
+	def likeuser(self, user):
+		try:
+			temp = self.likewharusercards.filter_by(likedid=user.id).first()
+			if temp == None:
+				f = likeusercard(liker=self, liked=user)
+				db.session.add(f)
+				db.session.commit()
+				return 0
+			else:
+				return 1	
+		except Exception, e:
+			db.session.rollback()
+			return 2
+	def unlikeuser(self, user):
+		try:
+			f = self.likewharusercards.filter_by(likedid=user.id).first()
+			if f:
+				db.session.delete(f)
+				db.session.commit()
+				return 0
+			else:
+				return 1
+		except Exception, e:
+			db.session.rollback()
+			return 2
+	def is_likeuser(self, user):
+		u=self.likewharusercards.filter_by(likedid=user.id).first()
+		return  u is not None
 	def likeactivity(self,activity):
 		try:
 			lp = self.likeactivitys.filter_by(activityid = activity.id).first()
@@ -974,7 +1020,8 @@ class checkMsg(db.Model):
 		except Exception, e:
 			print e
 			db.session.rollback()
-			return 2	
+			return 2				
+
 
 def editschooldb(token,school,degree,department,enrollment):
 	u=User.query.filter_by(token=token).first()

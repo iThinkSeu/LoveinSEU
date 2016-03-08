@@ -252,3 +252,69 @@ def getrecommenduser():
 							'result':[]
 							})
 	return response
+
+@friends_route.route("/likeusercard",methods=['POST'])
+def likeusercard():
+	try:
+		token = request.json['token']
+		userid = request.json['userid']
+		u=getuserinformation(token)
+		u2=User.query.filter_by(id=userid).first()
+		flag = "0"
+		if (u is not None) and (u2 is not None):
+			temp = u.likeuser(u2)
+			if temp == 0:
+				if u2.is_likeuser(u):
+					flag = "1"
+				state = 'successful'
+				reason = ''
+			elif temp==1:
+				if u2.is_likeuser(u):
+					flag = "1"
+				state = 'fail'
+				reason = 'already like';
+			else:
+				state='fail'
+				reason='e'
+		else:
+			state = 'fail'
+			reason = 'Nouser'
+
+	except Exception, e:
+			state = 'e'
+			reason = 'e'
+
+	response = jsonify({'flag':flag,
+						'state':state,
+		                'reason':reason})
+	return response
+
+@friends_route.route("/unlikeusercard",methods=['POST'])
+def unlikeusercard():
+	try:
+		token = request.json['token']
+		userid = request.json['userid']
+		u=getuserinformation(token)
+		u2=User.query.filter_by(id=userid).first()
+		if (u is not None) and (u2 is not None):
+			temp = u.unlikeuser(u2)
+			if temp == 0:
+				state = 'successful'
+				reason = ''
+			elif temp==1:
+				state = 'fail'
+				reason = 'already unlike';
+			else:
+				state='fail'
+				reason='e'
+		else:
+			state = 'fail'
+			reason = 'Nouser'
+
+	except Exception, e:
+			state = 'e'
+			reason = 'e'
+
+	response = jsonify({'state':state,
+		                'reason':reason})
+	return response

@@ -34,7 +34,9 @@ phone = "15950501807"
 code = "059624"
 sendMsg(phone,code)
 '''
-username = 'ithinkker'
-password = '123456'
-u = User(username=username,password=password)
-print u.isExistedusername()
+
+u = User.query.filter_by(id = 72).first()
+print u.name
+u2 = User.query.filter_by(id = 74).first()
+
+u.likeuser(u2)
