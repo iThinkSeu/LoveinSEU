@@ -85,8 +85,8 @@ for id in xrange(1,1050):
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
-				except Exception, e:
-					print "image error" + str(dst)
+			except Exception, e:
+				print "image error" + str(dst)
 print "have done = " + str(cnt1)
 print "no author = " + str(cnt4)
 print "no avatar = " + str(cnt2)
