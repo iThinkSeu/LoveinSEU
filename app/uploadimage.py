@@ -44,6 +44,8 @@ def uploadavatar():
 					#更新数据库
 					avatartmp.avatar_number = avatarnumber
 					avatartmp.avatarurl = avatarurl
+					avatartmp.gender = u.gender
+					avatartmp.name = u.name
 					avatartmp.add()
 				else:
 					avatarnumber = 1
@@ -51,7 +53,7 @@ def uploadavatar():
 					dst = '/home/www/avatar/' + str(id) + '-' + str(avatarnumber)
 					avatarurl = "http://218.244.147.240:80/avatar/" + str(id) + '-' + str(avatarnumber)
 					#第一次上传头像，新增
-					tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber)
+					tmp = avatarvoice(userid = id,avatarurl = avatarurl,avatar_number = avatarnumber,gender = u.gender,name = u.name)
 					tmp.add()
 				#移动文件
 				shutil.copy(src, dst)

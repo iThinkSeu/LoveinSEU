@@ -264,16 +264,11 @@ def likeusercard():
 		flag = "0"
 		if (u is not None) and (u2 is not None):
 			temp = u.likeuser(u2)
-			if temp == 0:
+			if temp == 0 or temp == 1:
 				if u2.is_likeuser(u):
 					flag = "1"
 				state = 'successful'
 				reason = ''
-			elif temp==1:
-				if u2.is_likeuser(u):
-					flag = "1"
-				state = 'fail'
-				reason = 'already like';
 			else:
 				state='fail'
 				reason='e'
