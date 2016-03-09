@@ -19,7 +19,7 @@ cnt2 = 0
 cnt3 = 0
 cnt4 = 0
 cnt5 = 0
-for id in xrange(1,1050):
+for id in xrange(1040,1500):
 	#数据库操作
 	avatartmp = getavatarvoicebyuserid(id)
 	source = '/home/www/avatar/'
