@@ -6,6 +6,7 @@ import models
 from hashmd5 import *
 import string
 import weme
+from cache import *
 community_route = Blueprint('community_route', __name__)
 
 
@@ -62,6 +63,7 @@ def commenttopost():
 			post1.add()
 			state = 'successful'
 			reason = ''
+			redis_store.hincrby(COMMUNITY_TOPIC_HOTINDEX_KEY, str(post1.topicid))
 		else:
 			id = ''
 			state = 'fail'
@@ -128,6 +130,7 @@ def likepost():
 				state = 'successful'
 				reason = ''
 				likenumber = post1.likenumber
+				redis_store.hincrby(COMMUNITY_TOPIC_HOTINDEX_KEY, str(post1.topicid))
 			elif temp == 1:
 				state = 'fail'
 				reason = 'already like'
@@ -233,9 +236,14 @@ def gettopiclist():
 			reason = ''
 			topiclist = gettopiclistdb()
 			result = []
+			has_cache = redis_store.exists(COMMUNITY_TOPIC_HOTINDEX_KEY)
 			for i in range(len(topiclist)):
-				posts = post.query.filter_by(disable = 0).filter_by(topicid=topiclist[i].id).all()
-				hotindex = sum([p.likenumber + p.commentnumber for p in posts])
+				if has_cache and redis_store.hexists(COMMUNITY_TOPIC_HOTINDEX_KEY, str(topiclist[i].id)):
+					hotindex = redis_store.hget(COMMUNITY_TOPIC_HOTINDEX_KEY, str(topiclist[i].id))
+				else:
+					posts = post.query.filter_by(disable = 0).filter_by(topicid=topiclist[i].id).all()
+					hotindex = sum([p.likenumber + p.commentnumber for p in posts])
+					redis_store.hset(COMMUNITY_TOPIC_HOTINDEX_KEY, str(topiclist[i].id), hotindex)
 				output = {"id":topiclist[i].id,"theme":topiclist[i].theme,"imageurl":topiclist[i].imageurl,"note":topiclist[i].note,"number":hotindex}
 				result.append(output)
 		else:
