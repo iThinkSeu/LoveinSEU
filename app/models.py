@@ -1175,9 +1175,9 @@ def getranduser(token):
 def getrandcard(u):
 	gender = u.gender
 	if gender == u'女':
-		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"男", avatarvoice.cardflag != 1)).all()
+		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"男", avatarvoice.cardflag != 1)).filter(avatarvoice.disable == 0).all()
 	else:
-		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"女", avatarvoice.cardflag != 1)).all()
+		udif = avatarvoice.query.filter(and_(avatarvoice.gender==u"女", avatarvoice.cardflag != 1)).filter(avatarvoice.disable == 0).all()
 	L1 = [x.userid for x in udif]
 	f2 = u.followeds.all()
 	L2 = [y.followed_id for y in f2]

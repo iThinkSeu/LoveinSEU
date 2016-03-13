@@ -8,6 +8,11 @@ import string
 
 adminuser_route = Blueprint('adminuser_route', __name__)
 
+#防止数据库为空
+"""define checkdbNone"""
+def checkdb(dbNone):
+	return dbNone if dbNone!=None else ''
+
 @adminuser_route.route("/getallactivity",methods=['POST'])
 def signup():
 	try:
@@ -24,7 +29,7 @@ def signup():
 			state = 'successful'
 			reason = ''
 			for act in actlist:
-				title = act.title if act.title!=None else ''  
+				id = act.title if act.title!=None else ''  
 				time = act.time if act.time!=None else ''
 				location=act.location if act.location!=None else ''
 				number=act.number if act.number!=None else ''
@@ -109,6 +114,103 @@ def setnopassactivity():
 				if activity != None:
 					activity.passflag = '2'
 					activity.add()
+		else:
+			state = 'fail'
+			reason = '非法用户'
+			result = ''
+	except Exception, e:
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
+
+
+@adminuser_route.route("/getallusercard",methods=['POST'])
+def getallusercard():
+	try:
+		token = request.json['token']
+		page = request.json.get('page','1')
+		x=string.atoi(str(page))
+		u=getuserinformation(token)
+		pages = 0
+		if u!=None and u.username == 'administrator':
+			pagetemp = avatarvoice.query.order_by(models.avatarvoice.id.desc()).paginate(x, per_page=10, error_out=False)
+			cardlist = pagetemp.items
+			pages = pagetemp.pages
+			result = []
+			state = 'successful'
+			reason = ''
+			for card in cardlist:
+				output = {	'id':card.id,
+							'userid':card.userid,
+							'avatarurl':checkdb(card.avatarurl),
+							'voiceurl':checkdb(card.voiceurl),
+							'gender':checkdb(card.gender),
+							'cardflag':checkdb(card.cardflag),
+							'disable':checkdb(card.disable),
+							'name':checkdb(card.name)
+						}
+				result.append(output)
+		else:
+			state = 'fail'
+			reason = '用户不存在'
+			result = []
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = '异常'
+		result = []
+
+	response = jsonify({'result':result,
+						'state':state,
+						'reason':reason,
+						'pages':pages})
+	return response
+
+@adminuser_route.route("/setpassusercard",methods=['POST'])
+def setpassusercard():
+	try:
+		token = request.json['token']
+		usercardlist = request.json['usercardlist']
+		u = getuserinformation(token)	
+		if u != None and u.username == 'administrator':	
+			state = 'successful'
+			reason = ''
+			for usercardid in usercardlist:
+				usercard = avatarvoice.query.filter_by(id = usercardid).first()
+				if usercard != None:
+					usercard.disable = 0
+					usercard.add()
+		else:
+			state = 'fail'
+			reason = '非法用户'
+			result = ''
+	except Exception, e:
+		print e
+		result = ''
+		state = 'fail'
+		reason = 'exception'
+	response = jsonify({'state':state,                                                                                                                                                                                  
+						'reason':reason})
+	return response
+
+@adminuser_route.route("/setnopassusercard",methods=['POST'])
+def setnopassusercard():
+	try:
+		token = request.json['token']
+		usercardlist = request.json['usercardlist']
+		u = getuserinformation(token)	
+		if u != None and u.username == 'administrator':	
+			state = 'successful'
+			reason = ''
+			for usercardid in usercardlist:
+				usercard = avatarvoice.query.filter_by(id = usercardid).first()
+				if usercard != None:
+					usercard.disable = 1
+					usercard.add()
 		else:
 			state = 'fail'
 			reason = '非法用户'
