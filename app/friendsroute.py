@@ -8,6 +8,7 @@ import datetime
 from sqlalchemy import Date, cast
 from datetime import date
 from push import *
+from cache import *
 
 
 friends_route = Blueprint('friends_route', __name__)
@@ -195,8 +196,89 @@ def searchuser():
 						'result':result})
 	return response
 
+@friends_route.route('/getrecommenduser', methods=['POST'])
+def get_recommend_user():
+	def recommendUser(utoken,id):
+		u = getuserbyid(id)
+		avatarvoice = u.avatarvoices.first()
 
-@friends_route.route("/getrecommenduser",methods=['GET','POST'])
+		return {
+			'id':u.id,
+			'name':u.name,
+			'birthday':u.birthday,
+			'gender':u.gender,
+			'school':u.school,
+			'degree':u.degree,
+			'department':u.department,
+			'hometown':u.hometown,
+			'likeflag':'1' if utoken.is_likeuser(u) else '0',
+			'match':'1' if(utoken.is_likeuser(u) and u.is_likeuser(utoken)) else '0', 
+			'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
+			'voice':avatarvoice and avatarvoice.voiceurl or '',
+		}
+	try:
+		token = request.json['token']
+		u=getuserinformation(token)
+ 		if u != None:
+ 			state = "successful"
+ 			reason = ''
+ 			if (u.gender == u"男" and redis_store.exists(RECOMMEND_USER_FEMALE_KEY)) or (u.gender == u'女' and redis_store.exists(RECOMMEND_USER_MALE_KEY)):
+ 				is_male = u.gender == u'男'
+ 				length = redis_store.llen(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY)
+ 				rec = random.sample(xrange(length), 10)
+ 				result = []
+ 				for r in rec:
+ 					key = redis_store.lindex(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY, r)
+ 					if redis_store.hexists(RECOMMEND_USER_KEY, key):
+ 						result.append(json.loads(redis_store.hget(RECOMMEND_USER_KEY, key)))
+ 					else:
+ 						r = recommendUser(u,int(key))
+ 						result.append(r)
+ 						redis_store.hset(RECOMMEND_USER_KEY, key, json.dumps(r))				
+
+			elif (u.gender == u'男' or u.gender == u'女') and ((not redis_store.exists(RECOMMEND_USER_FEMALE_KEY)) or (not redis_store.exists(RECOMMEND_USER_MALE_KEY))):  				
+ 				female = avatarvoice.query.filter(and_(avatarvoice.gender==u"女", avatarvoice.cardflag != 1)).filter(avatarvoice.disable == 0).all()
+ 				male = avatarvoice.query.filter(and_(avatarvoice.gender==u"男", avatarvoice.cardflag != 1)).filter(avatarvoice.disable == 0).all()
+ 				for f in female:
+ 					redis_store.lpush(RECOMMEND_USER_FEMALE_KEY,str(f.userid))
+ 				for m in male:
+ 					redis_store.lpush(RECOMMEND_USER_MALE_KEY,str(m.userid))
+
+ 				redis_store.expire(RECOMMEND_USER_FEMALE_KEY, 60*60)
+ 				redis_store.expire(RECOMMEND_USER_MALE_KEY, 60*60)
+ 				redis_store.expire(RECOMMEND_USER_KEY, 60*60)
+ 				if u.gender == u'男':
+ 					length = len(female)
+ 					rec = random.sample(xrange(length), 10)
+ 					result = [ recommendUser(u, female[r].userid) for r in rec]
+ 				else:
+ 					length = len(male)
+ 					rec = random.sample(xrange(length), 10)
+ 					result = [ recommendUser(u, male[r].userid) for r in rec]
+
+ 			else:
+ 				state = 'fail'
+ 				reason = 'gender unclear'
+ 				result = ''	
+
+
+ 		else:
+ 			state = 'fail'
+ 			reason = 'invalid'
+ 			result = ''
+ 	except Exception, e:
+ 		print e
+ 		state = 'fail'
+ 		reason = 'exception'
+  		result = ''
+
+  	return jsonify({
+  		'state':state, 
+  		'reason':reason,
+  		'result':result
+  		})
+
+@friends_route.route("/getrecommendusers",methods=['GET','POST'])
 def getrecommenduser():
 	
 	def recommendUser(utoken,id):
