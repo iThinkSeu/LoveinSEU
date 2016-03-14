@@ -57,7 +57,7 @@ app.register_blueprint(share)		#分享
 app.register_blueprint(push)
 
 #clear redis after restart
-clear_redis()
+#clear_redis()
 
 if __name__ == '__main__':
 	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)))

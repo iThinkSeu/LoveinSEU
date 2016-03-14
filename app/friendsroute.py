@@ -213,6 +213,7 @@ def getrecommenduser():
 			'department':u.department,
 			'hometown':u.hometown,
 			'likeflag':'1' if utoken.is_likeuser(u) else '0',
+			'match':'1' if(utoken.is_likeuser(u) and u.is_likeuser(utoken)) else '0', 
 			'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
 			'voice':avatarvoice and avatarvoice.voiceurl or '',
 		}
