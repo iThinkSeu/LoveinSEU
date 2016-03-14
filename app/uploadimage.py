@@ -46,6 +46,7 @@ def uploadavatar():
 					avatartmp.avatarurl = avatarurl
 					avatartmp.gender = u.gender
 					avatartmp.name = u.name
+					avatartmp.disable = 0
 					avatartmp.add()
 				else:
 					avatarnumber = 1
