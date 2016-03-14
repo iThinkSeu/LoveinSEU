@@ -125,6 +125,7 @@ def reset_password():
 @check_page.route("/register",methods=['POST'])
 def register():
 	try:
+		"""
 		username=request.json[u'username']
 		password=request.json['password']
 		temp = checkName(username)
@@ -149,6 +150,11 @@ def register():
 			reason = '用户名已被注册'
 			token = 'Haveresiger'
 			id=''
+		"""
+		state = "fail"
+		reason = "旧版已废弃，请升级至最新版本（weme.space可下载）"
+		id = ''
+		token = ''
 	except Exception, e:
 		print e
 		state = 'fail'
