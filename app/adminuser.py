@@ -29,7 +29,7 @@ def signup():
 			state = 'successful'
 			reason = ''
 			for act in actlist:
-				id = act.title if act.title!=None else ''  
+				title = act.title if act.title!=None else ''  
 				time = act.time if act.time!=None else ''
 				location=act.location if act.location!=None else ''
 				number=act.number if act.number!=None else ''
