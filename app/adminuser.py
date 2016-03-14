@@ -146,7 +146,7 @@ def getallusercard():
 			for card in cardlist:
 				output = {	'id':card.id,
 							'userid':card.userid,
-							'avatarurl':checkdb(card.avatarurl),
+							'avatarurl':card.avatarurl + "_card.jpg" if card.avatarurl!=None else '',
 							'voiceurl':checkdb(card.voiceurl),
 							'gender':checkdb(card.gender),
 							'cardflag':checkdb(card.cardflag),
