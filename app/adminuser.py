@@ -18,11 +18,12 @@ def signup():
 	try:
 		token = request.json['token']
 		page = request.json.get('page','1')
+		number = int(request.json.get('number','10'))
 		x=string.atoi(str(page))
 		u=getuserinformation(token)
 		pages = 0
 		if u!=None and u.username == 'administrator':
-			pagetemp = Activity.query.order_by(models.Activity.top.desc()).order_by(models.Activity.timestamp.desc()).paginate(x, per_page=10, error_out=False)
+			pagetemp = Activity.query.order_by(models.Activity.top.desc()).order_by(models.Activity.timestamp.desc()).paginate(x, per_page=number, error_out=False)
 			actlist = pagetemp.items
 			pages = pagetemp.pages
 			result = []
@@ -133,11 +134,101 @@ def getallusercard():
 	try:
 		token = request.json['token']
 		page = request.json.get('page','1')
+		number = int(request.json.get('number','10'))
 		x=string.atoi(str(page))
 		u=getuserinformation(token)
 		pages = 0
 		if u!=None and u.username == 'administrator':
-			pagetemp = avatarvoice.query.order_by(models.avatarvoice.id.desc()).paginate(x, per_page=10, error_out=False)
+			pagetemp = avatarvoice.query.order_by(models.avatarvoice.id.desc()).paginate(x, per_page=number, error_out=False)
+			cardlist = pagetemp.items
+			pages = pagetemp.pages
+			result = []
+			state = 'successful'
+			reason = ''
+			for card in cardlist:
+				output = {	'id':card.id,
+							'userid':card.userid,
+							'avatarurl':card.avatarurl + "_card.jpg" if card.avatarurl!=None else '',
+							'voiceurl':checkdb(card.voiceurl),
+							'gender':checkdb(card.gender),
+							'cardflag':checkdb(card.cardflag),
+							'disable':checkdb(card.disable),
+							'name':checkdb(card.name)
+						}
+				result.append(output)
+		else:
+			state = 'fail'
+			reason = '用户不存在'
+			result = []
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = '异常'
+		result = []
+
+	response = jsonify({'result':result,
+						'state':state,
+						'reason':reason,
+						'pages':pages})
+	return response
+
+@adminuser_route.route("/getallusercardfilter",methods=['POST'])
+def getallusercardfilter():
+	try:
+		token = request.json['token']
+		page = request.json.get('page','1')
+		number = int(request.json.get('number','10'))
+		disable = int(request.json.get('disable','0'))
+		x=string.atoi(str(page))
+		u=getuserinformation(token)
+		pages = 0
+		if u!=None and u.username == 'administrator':
+			pagetemp = avatarvoice.query.filter_by(disable = disable).order_by(models.avatarvoice.id.desc()).paginate(x, per_page=number, error_out=False)
+			cardlist = pagetemp.items
+			pages = pagetemp.pages
+			result = []
+			state = 'successful'
+			reason = ''
+			for card in cardlist:
+				output = {	'id':card.id,
+							'userid':card.userid,
+							'avatarurl':card.avatarurl + "_card.jpg" if card.avatarurl!=None else '',
+							'voiceurl':checkdb(card.voiceurl),
+							'gender':checkdb(card.gender),
+							'cardflag':checkdb(card.cardflag),
+							'disable':checkdb(card.disable),
+							'name':checkdb(card.name)
+						}
+				result.append(output)
+		else:
+			state = 'fail'
+			reason = '用户不存在'
+			result = []
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = '异常'
+		result = []
+
+	response = jsonify({'result':result,
+						'state':state,
+						'reason':reason,
+						'pages':pages})
+	return response
+
+@adminuser_route.route("/getallusercardbygender",methods=['POST'])
+def getallusercardbygender():
+	try:
+		token = request.json['token']
+		page = request.json.get('page','1')
+		gender = request.json.get('gender','女')
+		disable = int(request.json.get('disable','0'))
+		number = int(request.json.get('number','10'))
+		x=string.atoi(str(page))
+		u=getuserinformation(token)
+		pages = 0
+		if u!=None and u.username == 'administrator':
+			pagetemp = avatarvoice.query.filter_by(disable = disable).filter_by(gender = gender).order_by(models.avatarvoice.id.desc()).paginate(x, per_page=number, error_out=False)
 			cardlist = pagetemp.items
 			pages = pagetemp.pages
 			result = []
