@@ -176,6 +176,7 @@ def login():
 		username = request.json['username']
 		password = request.json['password']
 		u=User(username=username,password=password)
+		gender = ''
 		if u.isExisted():
 			state = 'successful'
 			tmp = getTokeninformation(username)
@@ -218,6 +219,6 @@ def login():
 						'state':state,
 						'reason':reason,
 						'token':token})
-	print state, reason
+	#print state, reason
 	return response
 
