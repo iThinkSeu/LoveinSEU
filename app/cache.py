@@ -1,6 +1,6 @@
 import redis
 
-redis_store = redis.Redis()
+redis_store = redis.Redis(password="rediscacheserver")
 
 KEY_PREFIX = 'WEME'
 
