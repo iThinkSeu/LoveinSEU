@@ -236,8 +236,9 @@ def get_recommend_user():
  				redis_store.set(RECOMMEND_USER_FLAG, "1")
  				redis_store.expire(RECOMMEND_USER_FLAG, 60*60)
 				# print "create newly register users"
-				new_male = User.query.filter(and_(cast(User.timestamp, Date) == date.today(), User.gender==u'男')).all()
-				new_female = User.query.filter(and_(cast(User.timestamp, Date) == date.today(), User.gender==u'女')).all()
+				three_days_ago = datetime.now() - timedelta(days=3)
+				new_male = User.query.filter(and_(User.timestamp >= three_days_ago, User.gender==u'男')).all()
+				new_female = User.query.filter(and_(User.timestamp >= three_days_ago, User.gender==u'女')).all()
 				redis_store.ltrim(RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY, 1, 0)
 				redis_store.ltrim(RECOMMEND_USER_NEW_REGISTERED_MALE_KEY, 1, 0)
 				for m in new_male:
@@ -286,7 +287,8 @@ def get_recommend_user():
  					like_user = random.sample(xrange(like_len), min(1, like_len)) if like_len else []
  					# print "fetch %s from like users" % len(like_user)
  					for l in like_user:
- 						rec.append(pref['liked'][l])
+ 						if pref['liked'][l] not in rec:
+ 							rec.append(pref['liked'][l])
  						# print "like id  %s" % pref['liked'][l]
  					# print rec
 
@@ -294,7 +296,8 @@ def get_recommend_user():
  					follow_user = random.sample(xrange(follow_len), min(1, follow_len)) if follow_len else []
  					# print "fetch %s from follow users" % len(follow_user)
  					for f in follow_user:
- 						rec.append(pref['followed'][f])
+ 						if not pref['followed'][f] in rec:
+ 							rec.append(pref['followed'][f])
  					# print rec
 
  				length = redis_store.llen(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY)
@@ -305,6 +308,7 @@ def get_recommend_user():
  						rec.append(key)
 
  				# print rec
+ 				random.shuffle(rec)
  				for r in rec:
  					if int(r) == u.id :
  						continue
