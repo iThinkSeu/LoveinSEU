@@ -231,8 +231,11 @@ def get_recommend_user():
  		if u != None:
  			state = "successful"
  			reason = ''
- 			if (not redis_store.exists(RECOMMEND_USER_NEW_REGISTERED_MALE_KEY)) or (not redis_store.exists(RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY)):
-				print "create newly register users"
+
+ 			if not redis_store.exists(RECOMMEND_USER_FLAG):
+ 				redis_store.set(RECOMMEND_USER_FLAG, "1")
+ 				redis_store.expire(RECOMMEND_USER_FLAG, 60*60)
+				# print "create newly register users"
 				new_male = User.query.filter(and_(cast(User.timestamp, Date) == date.today(), User.gender==u'男')).all()
 				new_female = User.query.filter(and_(cast(User.timestamp, Date) == date.today(), User.gender==u'女')).all()
 				redis_store.ltrim(RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY, 1, 0)
@@ -245,9 +248,6 @@ def get_recommend_user():
 					avatar_voice = m.avatarvoices.first()
 					if avatar_voice and avatar_voice.cardflag != 1 and avatar_voice.disable == 0:
 						redis_store.lpush(RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY, str(f.id))
-
-				redis_store.expire(RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY, 60*60)
-				redis_store.expire(RECOMMEND_USER_NEW_REGISTERED_MALE_KEY, 60*60)
 
 			if  not redis_store.hexists(RECOMMEND_USER_PREF_KEY, str(u.id)):
 				liked_users = []
@@ -276,7 +276,7 @@ def get_recommend_user():
  				rec = []
  				new_user_len = redis_store.llen(is_male and RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY or RECOMMEND_USER_NEW_REGISTERED_MALE_KEY)
  				new_rec = random.sample(xrange(new_user_len), min(3, new_user_len)) if new_user_len else []
- 				print "fetch %s from new users" % len(new_rec)
+ 				# print "fetch %s from new users" % len(new_rec)
  				for n in new_rec:
  					rec.append(redis_store.lindex(is_male and RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY or RECOMMEND_USER_NEW_REGISTERED_MALE_KEY, n))
 
@@ -284,38 +284,39 @@ def get_recommend_user():
  					pref = json.loads(redis_store.hget(RECOMMEND_USER_PREF_KEY, str(u.id)))
  					like_len = len(pref['liked'])
  					like_user = random.sample(xrange(like_len), min(1, like_len)) if like_len else []
- 					print "fetch %s from like users" % len(like_user)
+ 					# print "fetch %s from like users" % len(like_user)
  					for l in like_user:
  						rec.append(pref['liked'][l])
- 						print "like id  %s" % pref['liked'][l]
- 						print rec
+ 						# print "like id  %s" % pref['liked'][l]
+ 					# print rec
 
  					follow_len = len(pref['followed'])
  					follow_user = random.sample(xrange(follow_len), min(1, follow_len)) if follow_len else []
- 					print "fetch %s from follow users" % len(follow_user)
+ 					# print "fetch %s from follow users" % len(follow_user)
  					for f in follow_user:
  						rec.append(pref['followed'][f])
- 						print rec
+ 					# print rec
 
  				length = redis_store.llen(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY)
  				other  = random.sample(xrange(length), min(length, 10-len(rec)))
  				for o in other:
  					key = redis_store.lindex(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY, o)
- 					rec.append(key)
+ 					if not key in rec:
+ 						rec.append(key)
 
- 				print rec
- 				for r in list(set(rec)):
+ 				# print rec
+ 				for r in rec:
  					if int(r) == u.id :
  						continue
  					if redis_store.hexists(RECOMMEND_USER_KEY, r):
- 						print "fetch from redis"
+ 						# print "fetch from redis"
  						result.append(json.loads(redis_store.hget(RECOMMEND_USER_KEY, r)))
  					else:
- 						print "fetch from mysql"
+ 						# print "fetch from mysql"
  						uu = recommendUser(u,int(r))
  						if uu:
  							result.append(uu)
- 							redis_store.hset(RECOMMEND_USER_KEY, key, json.dumps(uu))				
+ 							redis_store.hset(RECOMMEND_USER_KEY, r, json.dumps(uu))				
 
 			elif (u.gender == u'男' or u.gender == u'女') and ((not redis_store.exists(RECOMMEND_USER_FEMALE_KEY)) or (not redis_store.exists(RECOMMEND_USER_MALE_KEY))):  				
  				female = avatarvoice.query.filter(and_(avatarvoice.gender==u"女", avatarvoice.cardflag != 1)).filter(avatarvoice.disable == 0).all()
