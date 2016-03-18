@@ -167,6 +167,7 @@ def searchuser():
 		token = request.json['token']
 		text = request.json['text']
 		u = getuserinformation(token)
+		result = []
 		if u != None:
 			L = []
 			temp = getuserbyid(text)
@@ -174,12 +175,18 @@ def searchuser():
 			if temp != None:
 				state = "successful"
 				reason = ''
-				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in L]
+				for search in L:
+					if search.id>1000:
+						output = {"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} 
+						result.append(output)
 			else:
 				tempname = getuserbyname(text)
 				state = "successful"
 				reason = ''
-				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in tempname]
+				for search in tempname:
+					if search.id>1000:
+						output = {"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} 
+						result.append(output)
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -222,6 +229,7 @@ def get_recommend_user():
  		if u != None:
  			state = "successful"
  			reason = ''
+ 			LikeList = u.bewhatuserlikeds
  			if (u.gender == u"男" and redis_store.exists(RECOMMEND_USER_FEMALE_KEY)) or (u.gender == u'女' and redis_store.exists(RECOMMEND_USER_MALE_KEY)):
  				is_male = u.gender == u'男'
  				length = redis_store.llen(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY)
