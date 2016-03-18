@@ -69,6 +69,7 @@ def register_user():
 				u.add()
 				id = getuserinformation(token).id
 
+
 		else:
 			state  = 'fail'
 			reason = '该手机号已被注册'
