@@ -167,6 +167,7 @@ def searchuser():
 		token = request.json['token']
 		text = request.json['text']
 		u = getuserinformation(token)
+		result = []
 		if u != None:
 			L = []
 			temp = getuserbyid(text)
@@ -174,12 +175,18 @@ def searchuser():
 			if temp != None:
 				state = "successful"
 				reason = ''
-				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in L]
+				for search in L:
+					if search.id>1000:
+						output = {"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} 
+						result.append(output)
 			else:
 				tempname = getuserbyname(text)
 				state = "successful"
 				reason = ''
-				result = [{"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} for search in tempname]
+				for search in tempname:
+					if search.id>1000:
+						output = {"id":search.id,"name":search.name,"gender":search.gender,"school":search.school} 
+						result.append(output)
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -224,6 +231,7 @@ def get_recommend_user():
  		if u != None:
  			state = "successful"
  			reason = ''
+<<<<<<< HEAD
  			if (not redis_store.exists(RECOMMEND_USER_NEW_REGISTERED_MALE_KEY)) or (not redis_store.exists(RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY)):
 				print "create newly register users"
 				new_male = User.query.filter(and_(cast(User.timestamp, Date) == date.today(), User.gender==u'男')).all()
@@ -263,6 +271,9 @@ def get_recommend_user():
 				redis_store.hset(RECOMMEND_USER_PREF_KEY, str(u.id), json.dumps(pref))
 
 
+=======
+ 			LikeList = u.bewhatuserlikeds
+>>>>>>> 3a95dbfb87f80a825e5e140597ca34eeeb73ec22
  			if (u.gender == u"男" and redis_store.exists(RECOMMEND_USER_FEMALE_KEY)) or (u.gender == u'女' and redis_store.exists(RECOMMEND_USER_MALE_KEY)):
  				is_male = u.gender == u'男'
  				total = 10
