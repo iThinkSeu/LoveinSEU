@@ -158,7 +158,10 @@ def getprofilebyid():
 				birthflag = '0' 
 			
 			constellation = getconstelleation(u.birthday)
-			certification = checkdb(u.certification)
+			certification = '1' if u.certification else '0'
+			avatarvoice = u.avatarvoices.first()
+			voiceurl = avatarvoice and avatarvoice.voiceurl or ''
+
 
 		else:
 			state = 'fail'
@@ -183,6 +186,7 @@ def getprofilebyid():
 			followflag = ''
 			birthflag = '' 
 			certification = ''
+			voiceurl = ''
 
 	except Exception, e:
 		print e
@@ -208,6 +212,7 @@ def getprofilebyid():
 		followflag = ''
 		birthflag = '' 
 		certification = ''
+		voiceurl = ''
 
 	response = jsonify({'username':username,
 						'state':state,
@@ -231,6 +236,7 @@ def getprofilebyid():
 	 	                'birthflag':birthflag,
 	 	                'id':id,
 	 	                'certification':certification,
-	 	                'constellation':constellation
+	 	                'constellation':constellation,
+	 	                'voice':voiceurl
 	 	                })
 	return response
