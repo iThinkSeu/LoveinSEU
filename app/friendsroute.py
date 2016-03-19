@@ -272,7 +272,7 @@ def get_recommend_user():
 
  			if (u.gender == u"男" and redis_store.exists(RECOMMEND_USER_FEMALE_KEY)) or (u.gender == u'女' and redis_store.exists(RECOMMEND_USER_MALE_KEY)):
  				is_male = u.gender == u'男'
- 				total = 10
+ 				total = 15
  				result = []
  				rec = []
  				new_user_len = redis_store.llen(is_male and RECOMMEND_USER_NEW_REGISTERED_FEMALE_KEY or RECOMMEND_USER_NEW_REGISTERED_MALE_KEY)
@@ -301,7 +301,7 @@ def get_recommend_user():
  					# print rec
 
  				length = redis_store.llen(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY)
- 				other  = random.sample(xrange(length), min(length, 10-len(rec)))
+ 				other  = random.sample(xrange(length), min(length, total-len(rec)))
  				for o in other:
  					key = redis_store.lindex(is_male and RECOMMEND_USER_FEMALE_KEY or RECOMMEND_USER_MALE_KEY, o)
  					if not key in rec:
