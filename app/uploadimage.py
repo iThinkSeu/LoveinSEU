@@ -210,10 +210,15 @@ def uploadavatar():
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
-			if type == "-4" or type == "-7" or type == "-10" or type == "-9" or type == "-2" or type == "-14":
+			if type == "-4" or type == "-10" or type == "-9" or type == "-2" or type == "-14":
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
+			if type == "-7":
+				fp = Image.open(dst)
+				fp.thumbnail((400,400))
+				fp.save(dst + '_thumbnail.jpg')
+
 		except Exception, e:
 			print e 
 			state = 'fail'
