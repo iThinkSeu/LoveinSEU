@@ -208,16 +208,16 @@ def get_recommend_user():
 	def recommendUser(utoken,id):
 		u = getuserbyid(id)
 		avatarvoice = u.avatarvoices.first()
-		if avatarvoice:
+		if avatarvoice and u.gender:
 			return {
 				'id':u.id,
 				'name':u.name,
-				'birthday':u.birthday,
-				'gender':u.gender,
-				'school':u.school,
-				'degree':u.degree,
-				'department':u.department,
-				'hometown':u.hometown,
+				'birthday':checkdb(u.birthday),
+				'gender':checkdb(u.gender),
+				'school':checkdb(u.school),
+				'degree':checkdb(u.degree),
+				'department':checkdb(u.department),
+				'hometown':checkdb(u.hometown),
 				'likeflag':'1' if utoken.is_likeuser(u) else '0',
 				'match':'1' if(utoken.is_likeuser(u) and u.is_likeuser(utoken)) else '0', 
 				'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
