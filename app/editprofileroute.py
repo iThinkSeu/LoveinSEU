@@ -25,11 +25,42 @@ def editprofileinfo():
 		hobby = request.json.get('hobby', '')
 		preference = request.json.get('preference','')
 		u = getuserinformation(token)
+		avatarvoice = u.avatarvoices.first()
 		if u != None:
-			state = 'successful'
-			reason = ''
+			#print gender
+
+			if gender == u"男":
+				if u.gender!=u"女":
+					u.gender = gender
+					if avatarvoice!=None:
+						avatarvoice.gender = gender
+						avatarvoice.add()
+					state = 'successful'
+					reason = ''
+				else:
+					print u.gender
+					state = 'fail'
+					reason = '性别只能设置一次，不能更改！'
+
+			elif gender == u"女":
+				if u.gender!=u"男":
+					u.gender = gender
+					if avatarvoice!=None:
+						avatarvoice.gender = gender
+						avatarvoice.add()
+					state = 'successful'
+					reason = ''
+				else:
+					#print u.gender
+					state = 'fail'
+					reason = '性别只能设置一次，不能更改！'
+			else:
+				#print u.gender
+				state = 'fail'
+				reason = '请输入性别信息！'	
+			
 			u.name = name
-			u.gender = gender
+			#u.gender = gender
 			u.birthday = birthday
 			u.phone = phone
 			u.wechat = wechat
@@ -64,22 +95,30 @@ def editprofileinfo():
 def editschoolinformation():
 	try:
 		token = request.json['token']
-		school = request.json['school']
-		degree = request.json['degree']
-		department = request.json['department']
-		enrollment = request.json['enrollment']
-
-		writestate = editschooldb(token,school,degree,department,enrollment)
-		if not writestate:
-			state = 'successful'
-			reason = ''
-
-		elif writestate == 2:
-			state = 'fail'
-			reason = 'no user'
+		school = request.json.get('school','')
+		degree = request.json.get('degree','')
+		department = request.json.get('department','')
+		enrollment = request.json.get('enrollment','')
+		u = getuserinformation(token)
+		if u != None:
+			u.school = school
+			u.degree = degree
+			u.department = department
+			u.enrollment = enrollment
+			try:
+				state = 'successful'
+				reason = ''
+				db.session.add(u)
+				db.session.commit()
+				db.session.close()	
+			except Exception, e:
+				state = 'fail'
+				reason = 'exception'
+				db.session.rollback() 
 		else:
 			state = 'fail'
-			reason = 'db error'
+			reason = 'invalid access'
+
 
 	except Exception, e:
 		print e
@@ -96,24 +135,60 @@ def editpersonalinformation():
 	try:
 		
 		token = request.json['token']
-		name = request.json['name']
-		gender = request.json['gender']
-		birthday = request.json['birthday']
-		phone = request.json['phone']
+		name = request.json.get('name','')
+		gender = request.json.get('gender','')
+		birthday = request.json.get('birthday','')
+		phone = request.json.get('phone','')
 		wechat = request.json.get('wechat',' ')
 		qq = request.json.get('qq',' ')
 		hometown = request.json.get('hometown',' ')
+		u = getuserinformation(token)
+		if u != None:
+			#判断性别是否填写过了
+			if gender == u"男":
+				if u.gender!=u"女":
+					u.gender = gender
+					state = 'successful'
+					reason = ''
+				else:
+					print u.gender
+					state = 'fail'
+					reason = '性别只能设置一次，不能更改！'
 
-		writestate = editpersonaldb(token,name,gender,birthday,phone,wechat,qq,hometown)
-		if not writestate:
-			state = 'successful'
-			reason = ''
-		elif writestate == 2:
-			state = 'fail'
-			reason = 'no user'
+			elif gender == u"女":
+				if u.gender!=u"男":
+					u.gender = gender
+					state = 'successful'
+					reason = ''
+				else:
+					#print u.gender
+					state = 'fail'
+					reason = '性别只能设置一次，不能更改！'
+			else:
+				#print u.gender
+				state = 'fail'
+				reason = '请输入性别信息！'	
+
+			u.name = name
+			#u.gender = gender
+			u.birthday = birthday
+			u.phone = phone
+			u.wechat = wechat
+			u.qq = qq 
+			u.hometown = hometown
+			try:
+				db.session.add(u)
+				db.session.commit()
+				db.session.close()	
+			except Exception, e:
+				state = 'fail'
+				reason = 'exception'
+				db.session.rollback() 
+
 		else:
 			state = 'fail'
-			reason = 'db error'
+			reason = 'invalid access'
+
 
 	except Exception, e:
 		print e
@@ -160,7 +235,11 @@ def editcardsetting():
 		if u !=None:
 			if tmpcardflag in ['0','1']:
 				cardflag = string.atoi(tmpcardflag)
-				u.cardflag = cardflag
+				avatarvoice = u.avatarvoices.first()
+				if avatarvoice!=None:
+					avatarvoice.cardflag = cardflag
+					avatarvoice.add()
+				avatarvoice.cardflag = cardflag
 				u.addpwd()
 				state = 'successful'
 				reason = ''
