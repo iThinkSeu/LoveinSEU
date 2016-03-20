@@ -205,24 +205,28 @@ def searchuser():
 
 @friends_route.route('/getrecommenduser', methods=['POST'])
 def get_recommend_user():
+	def checkdb(dbNone):
+		return dbNone if dbNone!=None else ''
+
 	def recommendUser(utoken,id):
 		u = getuserbyid(id)
-		avatarvoice = u.avatarvoices.first()
-		if avatarvoice and u.gender:
-			return {
-				'id':u.id,
-				'name':u.name,
-				'birthday':checkdb(u.birthday),
-				'gender':checkdb(u.gender),
-				'school':checkdb(u.school),
-				'degree':checkdb(u.degree),
-				'department':checkdb(u.department),
-				'hometown':checkdb(u.hometown),
-				'likeflag':'1' if utoken.is_likeuser(u) else '0',
-				'match':'1' if(utoken.is_likeuser(u) and u.is_likeuser(utoken)) else '0', 
-				'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
-				'voice':avatarvoice and avatarvoice.voiceurl or '',
-			}
+		if u:
+			avatarvoice = u.avatarvoices.first()
+			if avatarvoice and u.gender:
+				return {
+					'id':u.id,
+					'name':u.name,
+					'birthday':checkdb(u.birthday),
+					'gender':checkdb(u.gender),
+					'school':checkdb(u.school),
+					'degree':checkdb(u.degree),
+					'department':checkdb(u.department),
+					'hometown':checkdb(u.hometown),
+					'likeflag':'1' if utoken.is_likeuser(u) else '0',
+					'match':'1' if(utoken.is_likeuser(u) and u.is_likeuser(utoken)) else '0', 
+					'avatar':(avatarvoice.avatarurl + "_card.jpg") if avatarvoice.avatarurl!=None else '',
+					'voice':avatarvoice and avatarvoice.voiceurl or '',
+				}
 		else:
 			return None
 	try:
