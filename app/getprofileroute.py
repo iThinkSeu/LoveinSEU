@@ -38,7 +38,6 @@ def getprofile():
 			lookcount = u.lookcount if u.lookcount !=None else 0
 			lookcount = str(lookcount)#所有的返回都转化成string
 			weme = str(u.weme) 
-
 		else:
 			state = 'fail'
 			reason = '用户不存在'
@@ -97,7 +96,7 @@ def getprofile():
 	 	                'birthday':birthday,
 	 	                'preference':preference,
 	 	                'hobby':hobby,
-	 	                'phone':phone,
+	 	                'phone':"xxxx",
 	 	                'wechat':wechat,
 	 	                'qq':qq,
 	 	                'hometown':hometown,
@@ -158,10 +157,7 @@ def getprofilebyid():
 				birthflag = '0' 
 			
 			constellation = getconstelleation(u.birthday)
-			certification = '1' if u.certification else '0'
-			avatarvoice = u.avatarvoices.first()
-			voiceurl = avatarvoice and avatarvoice.voiceurl or ''
-
+			certification = checkdb(u.certification)
 
 		else:
 			state = 'fail'
@@ -186,7 +182,6 @@ def getprofilebyid():
 			followflag = ''
 			birthflag = '' 
 			certification = ''
-			voiceurl = ''
 
 	except Exception, e:
 		print e
@@ -212,7 +207,6 @@ def getprofilebyid():
 		followflag = ''
 		birthflag = '' 
 		certification = ''
-		voiceurl = ''
 
 	response = jsonify({'username':username,
 						'state':state,
@@ -226,7 +220,7 @@ def getprofilebyid():
 	 	                'birthday':birthday,
 	 	                'preference':preference,
 	 	                'hobby':hobby,
-	 	                'phone':phone,
+	 	                'phone':"xxxx",
 	 	                'wechat':wechat,
 	 	                'qq':qq,
 	 	                'hometown':hometown,
@@ -236,7 +230,6 @@ def getprofilebyid():
 	 	                'birthflag':birthflag,
 	 	                'id':id,
 	 	                'certification':certification,
-	 	                'constellation':constellation,
-	 	                'voice':voiceurl
+	 	                'constellation':constellation
 	 	                })
 	return response
