@@ -28,7 +28,7 @@ def checkapkversion():
 			v3_newest = wemeapk.v3
 			numNow = v1_now*10000 + v2_now*100 + v3_now
 			numNewest = v1_newest*10000 + v2_newest*100 + v3_newest
-			numNewest = 10400
+			#numNewest = 10400
 			if numNow < numNewest:
 				update_flag = "yes"
 				apkurl = wemeapk.wemeurl
