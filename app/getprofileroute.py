@@ -159,8 +159,7 @@ def getprofilebyid():
 			constellation = getconstelleation(u.birthday)
 			certification = checkdb(u.certification)
 			avatarvoice = u.avatarvoices.first()
-			
-			voice = avatarvoice and avatarvoice.voiceurl or '',
+			voice = avatarvoice and avatarvoice.voiceurl or ''
 
 		else:
 			state = 'fail'
