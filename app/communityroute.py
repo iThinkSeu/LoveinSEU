@@ -309,6 +309,7 @@ def getpostlist():
 				title = postlist[i].title if postlist[i].title !=None else ''
 				body = postlist[i].body if postlist[i].body !=None else ''
 				gender =  postlist[i].author.gender if postlist[i].author.gender != None else ''
+				certification = postlist[i].author.certification or '0'
 				postimage = postlist[i].images.all()
 				if len(body) > 150:
 					body = body[0:149]
@@ -322,7 +323,7 @@ def getpostlist():
 					urlthum = "http://218.244.147.240:80/community/postattachs/" + str(topicid) + "-" + str(postlist[i].id) + "-" + str(number) + "_thumbnail.jpg"
 					image.append(url)
 					thumbnail.append(urlthum)
-				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"gender":gender,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image,"thumbnail":thumbnail}
+				output = {"postid":postlist[i].id,"userid":postlist[i].author.id,"name":name,"school":school,"gender":gender,"timestamp":postlist[i].timestamp,"title":title,"body":body,"likenumber":postlist[i].likenumber,"commentnumber":postlist[i].commentnumber,"imageurl":image,"thumbnail":thumbnail, "certification":certification}
 				result.append(output)
 		else:
 			state = 'fail'
@@ -358,6 +359,7 @@ def getpostdetail():
 			body = post.body if post.body !=None else ''
 			gender =  post.author.gender if post.author.gender != None else ''
 			topicid = post.topic.id
+			certification = post.author.certification or ''
 			postimage = post.images.all()
 			image = []
 			thumbnail = []
@@ -377,7 +379,7 @@ def getpostdetail():
 				flag = '1'
 			else:
 				flag = '0'
-			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":LL,"flag":flag}
+			result = {"postid":post.id,"userid":post.author.id,"name":name,"school":school,"gender":gender,"timestamp":post.timestamp,"title":title,"body":body,"likenumber":post.likenumber,"commentnumber":post.commentnumber,"imageurl":image,"thumbnail":thumbnail,"likeusers":LL,"flag":flag, 'certification':certification}
 		else:
 			state = 'fail'
 			reason = 'no user'
@@ -510,13 +512,14 @@ def getpostcomment():
 				school = items.author.school if items.author.school != None else ''
 				gender = items.author.gender if items.author.gender != None else ''
 				body = items.body if items.body != None else ''
+				certification = items.author.certification or '0'
 				likeuserstemp = items.likeusers.all()
 				L = [(temp2.userid) for temp2 in likeuserstemp]
 				if u.id in L:
 					flag = '1'
 				else:
 					flag = '0'
-				output = {"id":items.id,"image":image,"thumbnail":thumbnail,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag}
+				output = {"id":items.id,"image":image,"thumbnail":thumbnail,"userid":items.author.id,"name":name,"school":school,"gender":gender,"timestamp":items.timestamp,"body":body,"likenumber":items.likenumber,"commentnumber":len(ctcresult),"reply":ctcresult,"flag":flag, "certification":certification}
 				result.append(output)
 		else:
 			state = 'fail'
