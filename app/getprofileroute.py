@@ -22,7 +22,10 @@ def get_personal_images():
 		if u and uu:
 			state = 'successful'
 			reason = ''
-			imgs = uu.personalimages.filter(PersonalImage.id > img_id).order_by(PersonalImage.timestamp.desc()).limit(10)
+			if img_id == 0:
+				imgs = uu.personalimages.filter(PersonalImage.disable == 0).order_by(PersonalImage.id.desc()).limit(10)
+			else:
+				imgs = uu.personalimages.filter(and_(PersonalImage.id < img_id, PersonalImage.disable == 0)).order_by(PersonalImage.id.desc()).limit(10)
 			result = [{'userid':uu.id, 'id':img.id, 'timestamp': img.timestamp, 'username':uu.name, 'thumbnail':img.thumbnail_url, 'image':img.url} for img in imgs]
 		else:
 			state = 'fail'
