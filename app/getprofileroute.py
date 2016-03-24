@@ -11,6 +11,35 @@ getprofile_route = Blueprint('getprofile_route', __name__)
 def checkdb(dbNone):
 	return dbNone if dbNone!=None else ''
 
+@getprofile_route.route("/getpersonalimages", methods=['POST'])
+def get_personal_images():
+	try:
+		token = request.json['token']
+		userid = str(request.json['userid'])
+		img_id = int(request.json['previous_id'])
+		u = getuserinformation(token)
+		uu = getuserbyid(userid)
+		if u and uu:
+			state = 'successful'
+			reason = ''
+			imgs = uu.personalimages.filter(PersonalImage.id > img_id).order_by(PersonalImage.timestamp.desc()).limit(10)
+			result = [{'userid':uu.id, 'id':img.id, 'timestamp': img.timestamp, 'username':uu.name, 'thumbnail':img.thumbnail_url, 'image':img.url} for img in imgs]
+		else:
+			state = 'fail'
+			reason = 'invalid'
+			result = ''
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+
+	return jsonify({
+			'state':state,
+			'reason':reason,
+			'result':result
+		})
+
 @getprofile_route.route("/getprofile",methods=['GET','POST'])
 def getprofile():
 	try:
