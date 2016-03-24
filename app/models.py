@@ -678,7 +678,7 @@ class PersonalImage(db.Model):
 	thumbnail_url = db.Column(db.String(128))
 	disable = db.Column(db.Boolean, default=False)
 
-	user = db.relationship('user', foreign_keys=[User.id], backref=db.backref('personalimages', lazy = 'dynamic'), lazy='joined', cascade = 'all, delete-orphan')
+	user = db.relationship('users', foreign_keys=[User.id], backref=db.backref('personalimages', lazy = 'dynamic'), lazy='joined', cascade = 'all, delete-orphan')
 
 	def add(self):
 		try:
