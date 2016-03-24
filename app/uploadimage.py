@@ -233,12 +233,12 @@ def uploadavatar():
 		except Exception, e:
 			print e 
 			state = 'fail'
-			reason = '上传图片失败,请重传'
+			reason = str(e) #'上传图片失败,请重传'
 	except Exception, e:
 		print e 
 		id=''
 		state = 'fail'
-		reason='异常,请重传'
+		reason= str(e) # '异常,请重传'
 
 
 	response = jsonify({'id':id,
