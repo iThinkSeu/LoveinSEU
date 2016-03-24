@@ -200,7 +200,7 @@ def uploadavatar():
 				dst = '/home/www/static/personalimages/' + str(id) + '_' + suffix
 				url = 'http://218.244.147.240:80/static/personalimages/' + str(id) + '_' + suffix
 				thumbnail_url = url + "_thumbnail.jpg"
-				tmp = PersonalImage(userid=int(id), url=url, thumbnail = thumbnail_url)
+				tmp = PersonalImage(userid=int(id), url=url, thumbnail_url = thumbnail_url)
 				tmp.add()
 				
 			else:
@@ -233,12 +233,12 @@ def uploadavatar():
 		except Exception, e:
 			print e 
 			state = 'fail'
-			reason = str(e) #'上传图片失败,请重传'
+			reason = '上传图片失败,请重传'
 	except Exception, e:
 		print e 
 		id=''
 		state = 'fail'
-		reason= str(e) # '异常,请重传'
+		reason= '异常,请重传'
 
 
 	response = jsonify({'id':id,
