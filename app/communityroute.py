@@ -10,6 +10,32 @@ from cache import *
 community_route = Blueprint('community_route', __name__)
 
 
+@community_route.route('/deletepost', methods=['POST']) 
+def delete_post():
+	try:
+		token = request.json['token']
+		u = getuserinformation(token)
+		postid = int(request.json['postid'])
+		if u:
+			post = u.posts.filter_by(id=postid).first()
+			if post:
+				state = 'successful'
+				reason = ''
+				post.disable = 1
+				post.add()
+			else:
+				state = 'fail'
+				reason = 'invalid'
+		else:
+			state = 'fail'
+			reason = 'invalid'
+
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+	return jsonify({'state':state , 'reason':reason})
+
 @community_route.route("/publishpost",methods=['POST'])
 def publishpost():
 	try:
@@ -409,7 +435,7 @@ def getusertimeline():
 		u = getuserinformation(token)
 		if u is not None:
 			user = getuserbyid(userid)
-			posts = user.posts.order_by(models.post.timestamp.desc()).paginate(page_num, per_page=10, error_out=False)
+			posts = user.posts.filter_by(disable = 0).order_by(models.post.timestamp.desc()).paginate(page_num, per_page=10, error_out=False)
 			result = [{'postid':str(p.id), 'title':p.title, 'body':p.body, 'time':p.timestamp, 'topic':p.topic.theme, 'image':postimg_url(p, p.images.first().imageid) if p.images.first() else ''} for p in posts.items]
 			state = 'successful'
 			reason = ''
