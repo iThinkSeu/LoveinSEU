@@ -7,9 +7,11 @@ from PIL import Image
 import string
 #import Image
 import shutil
-
+import uuid
 
 upload_image = Blueprint('upload_image', __name__)
+
+
 
 @upload_image.route("/uploadavatar", methods=['POST'])
 def uploadavatar():
@@ -192,6 +194,15 @@ def uploadavatar():
 					dstnewest = '/home/www/static/androidapk/' + "weme_newest.apk"
 					shutil.copy(src, dstnewest)
 					os.chmod(dstnewest, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP  | stat.S_IROTH)
+			elif type == "-16":
+				#type = -16 表示上传生活照
+				suffix = str(uuid.uuid4())
+				dst = '/home/www/static/personalimages/' + str(id) + '_' + suffix
+				url = 'http://218.244.147.240:80/static/personalimages/' + str(id) + '_' + suffix
+				thumbnail_url = url + "_thumbnail.jpg"
+				tmp = PersonalImage(userid=int(id), url=url, thumbnail = thumbnail_url)
+				tmp.add()
+				
 			else:
 				state = 'fail'
 				reason = 'no this type'				
@@ -210,7 +221,7 @@ def uploadavatar():
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')
-			if type == "-4" or type == "-10" or type == "-9" or type == "-2" or type == "-14":
+			if type == "-4" or type == "-10" or type == "-9" or type == "-2" or type == "-14" or type == "-16":
 				fp = Image.open(dst)
 				fp.thumbnail((200,200))
 				fp.save(dst + '_thumbnail.jpg')

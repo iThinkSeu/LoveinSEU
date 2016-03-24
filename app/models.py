@@ -669,6 +669,27 @@ class imageURL(db.Model):
 			db.session.rollback()
 			return 2		
 
+class PersonalImage(db.Model):
+	__tablename__ = "personalimages"
+	id = db.Column(db.Integer, primary_key = True)
+	userid = db.Column(db.Integer, db.ForeignKey("users.id"))
+	timestamp = db.Column(db.DateTime, default = datetime.now)
+	url = db.Column(db.String(128))
+	thumbnail_url = db.Column(db.String(128))
+	disable = db.Column(db.Boolean, default=False)
+
+	user = db.relationship('user', foreign_keys=[User.id], backref=db.backref('personalimages', lazy = 'dynamic'), lazy='joined', cascade = 'all, delete-orphan')
+
+	def add(self):
+		try:
+			db.session.add(self)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			print e
+			db.session.rollback()
+			return 1
+
 class Activity(db.Model):
 	__tablename__="activitys"
 	id = db.Column(db.Integer,primary_key=True)
