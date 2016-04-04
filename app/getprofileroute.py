@@ -188,7 +188,7 @@ def getprofilebyid():
 			else:
 				birthflag = '0' 
 			
-			constellation = u.birthday and getconstelleation(u.birthday) or u"未知"
+			constellation = u.birthday and getconstelleation(u.birthday) or ""
 			certification = u.certification or '0'
 			avatarvoice = u.avatarvoices.first()
 			voice = avatarvoice and avatarvoice.voiceurl or ''
