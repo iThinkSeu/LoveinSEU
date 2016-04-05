@@ -222,6 +222,8 @@ class User(db.Model):
 	weme = db.Column(db.Integer,default = 100)
 	certification = db.Column(db.Boolean,default =False)
 	timestamp = db.Column(db.DateTime,default = datetime.now)
+	tags = db.Column(db.UnicodeText)
+
 	#relation
 	#all users followed by this
 	followeds = db.relationship('Follow', foreign_keys = [Follow.follower_id], backref = db.backref('follower', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')

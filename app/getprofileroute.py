@@ -11,6 +11,72 @@ getprofile_route = Blueprint('getprofile_route', __name__)
 def checkdb(dbNone):
 	return dbNone if dbNone!=None else ''
 
+
+@getprofile_route.route("/gettagsbyid", methods=['POST'])
+def get_tags_by_id():
+	try:
+		token = request.json['token']
+		userid = str(request.json['userid'])
+		u = getuserinformation(token)
+		uu = getuserbyid(userid)
+		if u and uu:
+			state = 'successful'
+			reason = ''
+			if uu.tags == None:
+				result = ''
+			else:
+				tags = json.loads(uu.tags)
+				if tags:
+					result = {"tags":tags}
+		else:
+			state = 'fail'
+			reason = 'invalid'
+			result = ''
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		result = ''
+	return jsonify({
+			'state':state,
+			'reason':reason,
+			'result':result
+		})
+
+@getprofile_route.route("/settags", methods=['POST'])
+def set_tags():
+	try:
+		token = request.json['token']
+		tags = json.dumps(request.json['tags'])
+		tags_json = json.loads(tags)
+		u = getuserinformation(token)
+		if u and tags_json:
+			state = 'successful'
+			reason = ''
+			## maybe we need do some "fancy checks" for security concern...
+			if tags_json["custom"] and isinstance(tags_json["custom"], list):
+				u.tags = json.dumps(tags_json)
+				try:
+					db.session.add(u)
+					db.session.commit()
+				except Exception, e:
+					db.session.rollback()	
+			else:
+				state = 'fail'
+				reason = 'invalid format'
+		else:
+			state = 'fail'
+			reason = 'invalid'
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+	return jsonify({
+			'state':state,
+			'reason':reason,
+		})
+
+
 @getprofile_route.route("/getpersonalimages", methods=['POST'])
 def get_personal_images():
 	try:
