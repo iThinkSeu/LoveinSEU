@@ -194,7 +194,7 @@ def getprofile():
 	 	                'birthday':birthday,
 	 	                'preference':preference,
 	 	                'hobby':hobby,
-	 	                'phone':"",
+	 	                'phone':phone,
 	 	                'wechat':wechat,
 	 	                'qq':qq,
 	 	                'hometown':hometown,
@@ -225,7 +225,7 @@ def getprofilebyid():
 			birthday = checkdb(u.birthday)
 			hobby = checkdb(u.hobby)
 			preference = checkdb(u.preference) 
-			phone = checkdb(u.phone)
+			phone = (u.id == u2.id) and checkdb(u.phone) or ""
 			wechat = checkdb(u.wechat)
 			qq = checkdb(u.qq)
 			hometown = checkdb(u.hometown)
@@ -322,7 +322,7 @@ def getprofilebyid():
 	 	                'birthday':birthday,
 	 	                'preference':preference,
 	 	                'hobby':hobby,
-	 	                'phone':"",
+	 	                'phone':phone,
 	 	                'wechat':wechat,
 	 	                'qq':qq,
 	 	                'hometown':hometown,

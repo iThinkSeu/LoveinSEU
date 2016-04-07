@@ -59,6 +59,11 @@ def editprofileinfo():
 				state = 'fail'
 				reason = '请输入性别信息！'	
 			
+			if u.certification:
+				if u.school != school or u.department != department or u.degree != degree:
+					state = 'fail'
+					reason = '已认证用户不能修改学校信息'
+
 			u.name = name
 			#u.gender = gender
 			u.birthday = birthday
