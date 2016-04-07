@@ -336,3 +336,113 @@ def getprofilebyid():
 	 	                'voice':voice
 	 	                })
 	return response
+
+@getprofile_route.route("/getprofilebyidphone",methods=['GET','POST'])
+def getprofilebyidphone():
+	try:
+		id = request.json['id']
+		token = request.json['token']
+		u2=getuserinformation(token)
+		u=getuserbyid(id)
+ 		if u!=None and u2!=None:
+			state = 'successful'
+			reason = ''
+			lookcount = u.lookcount if u.lookcount !=None else 0
+			lookcount = str(lookcount)
+			username = checkdb(u.username) 
+			school = checkdb(u.school) 				
+			degree = checkdb(u.degree)
+			department = checkdb(u.department)
+			enrollment = checkdb(u.enrollment)
+			name = checkdb(u.name)
+			gender = checkdb(u.gender)
+			birthday = checkdb(u.birthday)
+			hobby = checkdb(u.hobby)
+			preference = checkdb(u.preference) 
+			phone = checkdb(u.phone)
+			wechat = checkdb(u.wechat)
+			qq = checkdb(u.qq)
+			hometown = checkdb(u.hometown)
+			id = checkdb(u.id)
+			weme = str(u.weme)
+			#好友关系
+			
+			constellation = u.birthday and getconstelleation(u.birthday) or ""
+			certification = u.certification or '0'
+			avatarvoice = u.avatarvoices.first()
+			voice = avatarvoice and avatarvoice.voiceurl or ''
+
+		else:
+			state = 'fail'
+			reason = '用户不存在'
+			username = 'Nouser'
+			school=''
+			degree=''
+			department = ''
+			enrollment = ''
+			name = ''
+			gender = ''
+			birthday = ''
+			hobby = ''
+			preference = ''
+			phone = ''
+			wechat = ''
+			qq = ''
+			hometown = ''
+			id = ''
+			lookcount = ''
+			weme = ''
+			certification = ''
+			voice = ''
+
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = '异常'	
+		username='e'
+		school=''
+		degree=''
+		department = ''
+		enrollment = ''
+		name = ''
+		gender = ''
+		birthday = ''
+		hobby = ''
+		preference = ''
+		phone = ''
+		wechat = ''
+		qq = ''
+		hometown = ''
+		id = ''
+		lookcount = ''
+		weme = ''
+		certification = ''
+		voice = ''
+
+	response = jsonify({'username':username,
+						'state':state,
+						'reason':reason,
+	 	                'school':school,
+	 	                'degree':degree,
+	 	                'department':department,
+	 	                'enrollment':enrollment,
+	 	                'name':name,
+	 	                'gender':gender,
+	 	                'birthday':birthday,
+	 	                'preference':preference,
+	 	                'hobby':hobby,
+	 	                'phone':phone,
+	 	                'wechat':wechat,
+	 	                'qq':qq,
+	 	                'hometown':hometown,
+	 	                'lookcount':lookcount,
+	 	                'weme':weme,
+	 	                'id':id,
+	 	                'certification':certification,
+	 	                'constellation':constellation,
+	 	                'voice':voice
+	 	                })
+	return response
+
+
+
