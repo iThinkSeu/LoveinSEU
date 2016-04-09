@@ -45,7 +45,12 @@ def uploadIOSDeviceToken():
 			reason = ''
 			if u.iosdevicetoken is not None:
 				u.iosdevicetoken.devicetoken = devicetoken
-				db.session.commit()
+				u.iosdevicetoken.timestamp = datetime.now()
+				try: 
+					db.session.add(u)
+					db.session.commit()
+				except:
+					db.session.rollback()
 			else:
 				iosdevicetoken = IOSDeviceToken(devicetoken = devicetoken)
 				u.add_ios_device_token(iosdevicetoken)

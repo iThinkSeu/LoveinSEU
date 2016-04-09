@@ -80,7 +80,6 @@ def editprofileinfo():
 			try:
 				db.session.add(u)
 				db.session.commit()
-				db.session.close()	
 			except Exception, e:
 				state = 'fail'
 				reason = 'exception'
