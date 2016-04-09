@@ -7,9 +7,8 @@ from apns import APNs, Payload
 
 
 def send_notification(token_hex, payload):
-	client = APNs(use_sandbox=True, cert_file="cert/cert.pem", key_file="cert/key.pem")
+	client = APNs(use_sandbox=False, cert_file="cert/cert.pem", key_file="cert/key.pem")
 	client.gateway_server.send_notification(token_hex, payload)
-
 
 def notify_follow_to_user(u, friend):
 	try:
