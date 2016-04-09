@@ -5,23 +5,18 @@ from models import *
 import string
 from apns import APNs, Payload
 
-apns = APNs(use_sandbox=True, cert_file='cert/cert.pem', key_file='cert/key.pem')
 
-def send_message_to_user(userid, alert):
-	try:
-		u = getuserbyid(userid)
-		if u is not None and u.iosdevicetoken is not None :
-			payload = Payload(alert=alert, sound="default")
-			apns.gateway_server.send_notification(u.iosdevicetoken.devicetoken, payload)
-	except Exception, e:
-		print e
+def send_notification(token_hex, payload):
+	client = APNs(use_sandbox=True, cert_file="cert/cert.pem", key_file="cert/key.pem")
+	client.gateway_server.send_notification(token_hex, payload)
+
 
 def notify_follow_to_user(u, friend):
 	try:
 		if (u is not None) and (u.iosdevicetoken is not None) and (friend is not None):
 			alert = friend.name + u' 关注了你'
 			payload = Payload(alert=alert, sound="default", custom = {'type':'follow', 'userid':friend.id})
-			apns.gateway_server.send_notification(u.iosdevicetoken.devicetoken, payload)
+			send_notification(u.iosdevicetoken.devicetoken, payload)
 	except Exception, e:
 		print e
 
@@ -30,7 +25,7 @@ def notify_message_to_user(u, friend):
 		if (u is not None) and (u.iosdevicetoken is not None) and (friend is not None):
 			alert = friend.name + u' 给你发了一条私信'
 			payload = Payload(alert=alert, sound="default", custom = {'type':'message', 'userid':friend.id})
-			apns.gateway_server.send_notification(u.iosdevicetoken.devicetoken, payload)
+			send_notification(u.iosdevicetoken.devicetoken, payload)
 	except Exception, e:
 		print e
 

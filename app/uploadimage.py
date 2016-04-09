@@ -5,7 +5,6 @@ from models import *
 import os, stat
 from PIL import Image, ExifTags, ImageOps
 import string
-#import Image
 import shutil
 import uuid
 
