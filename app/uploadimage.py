@@ -154,10 +154,15 @@ def uploadavatar():
 				a.addlifeimage(u,m)
 			elif type == "-10":
 				#type = -10 表示上传活动海报照片
-				dst = '/home/www/activity/activityimages/' + str(activityid) + '-' +str(number)
-				images = getImageURLbyid(number)
-				activity = getactivitybyid(activityid)
-				activity.addimage(images)
+				#dst = '/home/www/activity/activityimages/' + str(activityid) + '-' +str(number)
+				#images = getImageURLbyid(number)
+				#activity = getactivitybyid(activityid)
+				#activity.addimage(images)
+				dst = '/home/www/picture/activitylifeimages/' + str(activityid)+'-'+str(id)+'-'+str(number)
+				a = getactivitybyid(activityid)
+				#u = getuserbyid(id)
+				m = getImageURLbyid(number)
+				a.addlifeimage(u,m)
 			elif type == "-11":
 				#type = -11 表示上传美食卡片
 				foodcardid = string.atoi(str(jsonstring.get('foodcardid','0')))
