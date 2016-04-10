@@ -114,7 +114,7 @@ def system_notificatioin():
 							'name':c.author.name,
 							'gender':c.author.gender,
 							'school':c.author.school,
-							'verified':c.author.certification or '0'
+							'certification':c.author.certification or '0'
 						},
 						'comment':c.body,
 						'timestamp':c.timestamp,
