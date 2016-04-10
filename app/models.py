@@ -830,6 +830,7 @@ class comment(db.Model):
 	likenumber = db.Column(db.Integer,default = 0)
 	commentnumber = db.Column(db.Integer,default = 0)
 	disable = db.Column(db.Boolean,default = False)
+	readflag = db.Column(db.Boolean, default = False)
 	likeusers = db.relationship('likecomment', foreign_keys = [likecomment.commentid], backref = db.backref('likewhatcomment', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')
 	#评论的图片，以附件的形式上传
 	images = db.relationship('commentimageAttach', foreign_keys = [commentimageAttach.commentid], backref = db.backref('comments', lazy='joined'), lazy='dynamic', cascade = 'all, delete-orphan')

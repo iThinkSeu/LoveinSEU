@@ -10,6 +10,137 @@ from push import *
 personalmessage_route = Blueprint('personalmessage_route', __name__)
 
 
+@personalmessage_route.route("/unreadmessagenum", methods=['POST'])
+def unread_message_num():
+	try:
+		token = request.json['token']
+		u = getuserinformation(token)
+		if u != None:
+			id = u.id
+			m = getMessageList(id)
+			unReadnum = 0
+			for j in range(len(m)):
+				if m[j].state == '1':
+					unReadnum=unReadnum+1
+			posts = u.posts.order_by(post.timestamp.desc()).all()
+			comments = u.comments.order_by(comment.timestamp.desc()).all()
+			for p in posts:
+				unReadnum += comment.query.filter(and_(comment.postid == p.id, comment.commentid == -1, comment.readflag == False, comment.authorid != u.id)).order_by(comment.timestamp.desc()).count()
+			for c in comments:
+				unReadnum += comment.query.filter(and_(comment.commentid==c.id, comment.readflag == False, comment.authorid != u.id)).order_by(comment.timestamp.desc()).count()
+			state = 'successful'
+			reason = ''
+		else:
+			state = 'fail'
+			reason = 'invalid'
+			number = ''
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		number = ''
+
+	response = jsonify({'state':state,
+						'reason':reason,
+						'number':str(unReadnum)})
+	return response
+
+
+@personalmessage_route.route("/readcommunitynotification", methods=["POST"])
+def read_community_notification():
+	try:
+		token = request.json['token']
+		commentid = int(request.json['commentid'])
+		u = getuserinformation(token)
+		if u != None:
+			state = 'successful'
+			reason = ''
+			c = comment.query.filter(comment.id==commentid).first()
+			if c:
+				flag = False
+				if c.commentid == -1:
+					p = post.query.filter(and_(post.id == c.postid, post.authorid == u.id)).first()
+					if p:
+						flag = True
+				else:
+					cc = comment.query.filter(and_(comment.id==c.commentid, comment.authorid==u.id)).first()
+					if cc:
+						flag = True
+				
+				if flag:
+					c.readflag = True
+					try:
+						db.session.add(c)
+						db.session.commit()
+					except:
+						db.session.rollback()
+			else:
+				state = 'fail'
+				reason = 'invalid'
+		else:
+			state = 'fail'
+			reason = 'invalid'
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+	return jsonify({
+			'state':state,
+			'reason':reason
+		})
+
+@personalmessage_route.route("/systemnotification", methods=['POST'])
+def system_notificatioin():
+	try:
+		token = request.json['token']
+		u = getuserinformation(token)
+		if u != None:
+			state = 'successful'
+			reason = ''
+			posts = u.posts.order_by(post.timestamp.desc()).all()
+			comments = u.comments.order_by(comment.timestamp.desc()).all()
+			total_unread_comments = []
+			for p in posts:
+				unread_comments = comment.query.filter(and_(comment.postid == p.id, comment.commentid == -1, comment.readflag == 0, comment.authorid != u.id)).order_by(comment.timestamp.desc()).all()
+				if unread_comments:
+					total_unread_comments += unread_comments
+			for c in comments:
+				unread_comments = comment.query.filter(and_(comment.commentid==c.id, comment.readflag == 0, comment.authorid != u.id)).order_by(comment.timestamp.desc()).all()
+				if unread_comments:
+					total_unread_comments += unread_comments
+
+			data = [
+					{
+					'type':'community',
+					'content': {
+						'author': {
+							'id':c.author.id,
+							'name':c.author.name,
+							'gender':c.author.gender,
+							'school':c.author.school,
+							'verified':c.author.certification or '0'
+						},
+						'comment':c.body,
+						'timestamp':c.timestamp,
+						'postid':c.postid,
+						'commentid':c.id
+						}
+					} 
+				 	for c in total_unread_comments]
+		
+
+		else:
+			state = 'fail'
+			reason = 'invalid'
+			data = ''
+	except Exception, e:
+		print e
+		state = 'fail'
+		reason = 'exception'
+		data = ''
+
+	return jsonify({'state':state, 'reason':reason, 'data':data})
+
 @personalmessage_route.route("/sendmessage",methods = ['POST'])
 def sendmessage():
 	try:
