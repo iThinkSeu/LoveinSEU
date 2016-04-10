@@ -16,12 +16,8 @@ def unread_message_num():
 		token = request.json['token']
 		u = getuserinformation(token)
 		if u != None:
-			id = u.id
-			m = getMessageList(id)
 			unReadnum = 0
-			for j in range(len(m)):
-				if m[j].state == '1':
-					unReadnum=unReadnum+1
+			unReadnum += Message.query.filter(and_(Message.RecId == u.id, Message.state=='1')).count()
 			posts = u.posts.order_by(post.timestamp.desc()).all()
 			comments = u.comments.order_by(comment.timestamp.desc()).all()
 			for p in posts:
@@ -306,12 +302,7 @@ def getmessageunreadnumber():
 		token = request.json['token']
 		u = getuserinformation(token)
 		if u != None:
-			id = u.id
-			m = getMessageList(id)
-			unReadnum = 0
-			for j in range(len(m)):
-				if m[j].state == '1':
-					unReadnum=unReadnum+1
+			unReadnum = Message.query.filter(and_(Message.RecId == u.id, Message.state=='1')).count()
 			state = 'successful'
 			reason = ''
 		else:
