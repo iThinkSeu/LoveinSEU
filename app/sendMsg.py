@@ -46,3 +46,6 @@ def send_reset_password_code(phone, code):
 	except Exception,e:
 		print(e)
 		return 1
+def zhengqingnian():
+	print "hi SEU!^^"
+	pass
