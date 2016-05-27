@@ -1,4 +1,4 @@
-#-*- coding: UTF-8 -*- 
+#-*- coding: UTF-8 -*-
 """
 from flask import Flask,jsonify,json
 """
@@ -30,7 +30,7 @@ from schoolcertification import certification_route
 from androidApk import androidapk_route
 
 from share.share import share
-from dbSetting import create_app,db 
+from dbSetting import create_app,db
 from push import push
 
 from cache import *
