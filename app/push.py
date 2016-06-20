@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from flask import Blueprint
 from flask import request,jsonify,json
 from models import *
 import string
 from apns import APNs, Payload
 
-client = APNs(use_sandbox=False, cert_file="cert/cert.pem", key_file="cert/key.pem", enhanced = True)
+client = APNs(use_sandbox=False, cert_file="cert/cert.pem", key_file="cert/key.pem", enhanced = False)
 
 def send_notification(token_hex, payload):
 	client.gateway_server.send_notification(token_hex, payload)
@@ -45,7 +45,7 @@ def uploadIOSDeviceToken():
 			if u.iosdevicetoken is not None:
 				u.iosdevicetoken.devicetoken = devicetoken
 				u.iosdevicetoken.timestamp = datetime.now()
-				try: 
+				try:
 					db.session.add(u)
 					db.session.commit()
 				except:
