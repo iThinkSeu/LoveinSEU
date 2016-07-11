@@ -233,7 +233,21 @@ def uploadavatar():
 				thumbnail_url = url + "_thumbnail.jpg"
 				tmp = PersonalImage(userid=int(id), url=url, thumbnail_url = thumbnail_url)
 				tmp.add()
-				
+			elif type == "10":
+				#type = 10 表示食光
+				dst = '/home/www/static/shiguang/avatar/' + str(number)
+			elif type == "11":
+				#type = 11 表示食光
+				dst = '/home/www/static/shiguang/cusAvatar/' + str(number)
+			elif type == "12":
+				#type = 12 表示食光
+				dst = '/home/www/static/shiguang/foodimg/' + str(number)
+			elif type == "13":
+				#type = 13 表示食光
+				dst = '/home/www/static/shiguang/homeimg/' + str(number)
+			elif type == "14":
+				#type = 14 表示食光
+				dst = '/home/www/static/shiguang/top/' + str(number)
 			else:
 				state = 'fail'
 				reason = 'no this type'				
@@ -254,7 +268,7 @@ def uploadavatar():
 				fp = thumnail_enhanced(fp, 200, 200)
 				if fp:
 					fp.save(dst + '_thumbnail.jpg')
-			if type == "-4" or type == "-10" or type == "-9" or type == "-2" or type == "-14" or type == "-16":
+			if type == "-4" or type == "-10" or type == "-9" or type == "-2" or type == "-14" or type == "-16" or type == "10" or type == "11":
 				fp = Image.open(dst)
 				# fp.thumbnail((200,200))
 				fp = thumnail_enhanced(fp, 200, 200)
