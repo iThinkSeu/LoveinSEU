@@ -223,3 +223,61 @@ def login():
 	#print state, reason
 	return response
 
+@check_page.route("/testhello",methods=["GET","POST"])
+def testhello():
+	return "hello world"
+
+@check_page.route("/testdb",methods=['POST'])
+def testdb():
+	try:
+		username = "ithinker"
+		password = "25d55ad283aa400af464c76d713c07ad"
+		u=User(username=username,password=password)
+		gender = ''
+		if u.isExisted():
+			state = 'successful'
+			tmp = getTokeninformation(username)
+			token = tmp.token
+			gender = tmp.gender
+			id = tmp.id
+			reason = ''
+		else:
+			tempuser = User.query.filter_by(username=username).first()
+			if tempuser != None:
+				pwd = generatemd5(tempuser.password)
+				if pwd == password:
+					state = 'successful'
+					token = tempuser.token
+					reason = ''
+					id = tempuser.id
+					tempuser.password = pwd
+					tempuser.addpwd()
+					gender = tempuser.gender
+				else:
+					id=''
+					state = 'fail'
+					token = 'None'
+					reason = '用户名密码错误'
+			else:
+				id=''
+				state = 'fail'
+				token = 'None'
+				reason = '用户名密码错误'
+	except Exception, e:
+		print "login error!!"
+		print e
+		state = 'fail'
+		reason='服务器异常'
+		token = 'None'
+		id = ''
+
+	response = jsonify({'id':id,
+						'gender':gender,
+						'state':state,
+						'reason':reason,
+						'token':token})
+	#print state, reason
+	return response
+
+
+
