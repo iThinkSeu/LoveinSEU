@@ -227,7 +227,7 @@ def login():
 def testhello():
 	return "hello world"
 
-@check_page.route("/testdb",methods=['POST'])
+@check_page.route("/testdb",methods=["GET","POST"])
 def testdb():
 	try:
 		username = "ithinker"
